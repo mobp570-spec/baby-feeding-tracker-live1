@@ -680,7 +680,14 @@ function formatDate(date){
 function dateKey(date){
     const d = new Date(date);
     d.setHours(0,0,0,0);
-    return d.toISOString();
+
+    // Store the calendar date without converting it to UTC.
+    // This prevents Malaysia/Asia time from becoming the previous day.
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+
+    return `${y}-${m}-${day}T00:00:00`;
 }
 
 function createSelect(options, value = ""){
@@ -870,7 +877,7 @@ function createPage(dateString = dateKey(new Date()), rows = []){
     const date = new Date(dateString);
     date.setHours(0,0,0,0);
 
-    page.dataset.date = date.toISOString();
+    page.dataset.date = dateKey(date);
 
     page.innerHTML = `
         <div class="page-meta">
@@ -1099,6 +1106,32 @@ function showPage(index){
     updatePageSummary(pages[currentPage]);
 }
 
+function normalizePageDatesToToday(){
+    if(!pages.length) return false;
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const lastIndex = pages.length - 1;
+    let changed = false;
+
+    pages.forEach((page, index) => {
+        const target = new Date(today);
+        target.setDate(today.getDate() - (lastIndex - index));
+
+        const targetKey = dateKey(target);
+
+        if(page.dataset.date !== targetKey){
+            page.dataset.date = targetKey;
+            const dateSpan = page.querySelector(".date-badge span");
+            if(dateSpan) dateSpan.textContent = formatDate(target);
+            changed = true;
+        }
+    });
+
+    return changed;
+}
+
 function isCurrentDatePage(page){
     if(!page) return false;
 
@@ -1115,10 +1148,10 @@ function updateNavigation(){
     $("#prevPageBtn").style.display =
         currentPage === 0 ? "none" : "";
 
-    $("#nextPageBtn").textContent =
+    $("#nextPageBtn").innerHTML =
         currentPage < pages.length - 1
-            ? "Next →"
-            : "Next Day →";
+            ? "Next →<br>下一页"
+            : "Next Day →<br>下一天";
 
     const addButton = $("#addBtn");
     const isCurrentDate = isCurrentDatePage(pages[currentPage]);
@@ -1197,6 +1230,10 @@ function applyRemoteData(saved){
         currentPage = 0;
     }
 
+    // Keep the newest page on today's local calendar date.
+    // Older pages become previous days while keeping all their rows/data.
+    normalizePageDatesToToday();
+
     applyingRemote = false;
     showPage(currentPage);
 }
@@ -1216,7 +1253,7 @@ function startFirestore(){
             applyingRemote = true;
             $("#pages").replaceChildren();
             pages = [];
-            createPage();
+            createPage(dateKey(new Date()));
             currentPage = 0;
             applyingRemote = false;
             showPage(0);
