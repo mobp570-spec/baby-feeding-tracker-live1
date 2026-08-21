@@ -548,6 +548,38 @@ td.action-cell{
         padding:8px 4px;
     }
 }
+
+/* Firebase login */
+.auth-overlay{
+    position:fixed; inset:0; z-index:99999; display:none;
+    align-items:center; justify-content:center; padding:18px;
+    background:rgba(53,35,43,.45); backdrop-filter:blur(4px);
+}
+.auth-overlay.show{display:flex;}
+.auth-box{
+    width:min(390px,100%); background:#fff; border:1px solid var(--line);
+    border-radius:20px; padding:20px; box-shadow:0 20px 60px rgba(80,30,50,.25);
+}
+.auth-box h2{margin:0 0 6px;text-align:center;color:var(--pink-700);font-size:21px;}
+.auth-box p{margin:0 0 14px;text-align:center;color:var(--muted);font-size:12px;}
+.auth-box label{display:block;margin:9px 0 5px;color:var(--pink-700);font-size:11px;font-weight:700;}
+.auth-box input{
+    width:100%;padding:10px;border:1px solid var(--pink-300);
+    border-radius:10px;background:#fff;box-sizing:border-box;
+}
+.auth-actions{display:flex;gap:7px;margin-top:14px;}
+.auth-actions .btn{flex:1;}
+.auth-error{min-height:18px;margin-top:8px;color:var(--danger);font-size:11px;text-align:center;}
+.firebase-status{text-align:center;color:var(--muted);font-size:10px;padding:5px 10px;}
+.firebase-status.error{color:var(--danger);}
+.auth-badge{
+    position:fixed;right:10px;bottom:10px;z-index:9998;display:none;
+    padding:7px 10px;border:1px solid var(--line);border-radius:12px;
+    background:rgba(255,255,255,.96);color:var(--pink-700);
+    font-size:10px;box-shadow:var(--shadow);cursor:pointer;
+}
+.auth-badge.show{display:block;}
+
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -571,45 +603,43 @@ td.action-cell{
         <button class="icon-btn" id="deletePageBtn" title="Delete / Clear current page" aria-label="Delete or clear current page">🗑</button>
     </div>
 
+    <div class="firebase-status" id="firebaseStatus">☁️ Connecting to Firebase...</div>
+
     <section class="card">
         <div id="pages"></div>
     </section>
 
     <div class="controls">
-        <div style="width:100%;text-align:center;color:var(--muted);font-size:10px;">
-            🔒 Viewing is public · Editing requires admin login
-            <br>公开查看 · 修改需要管理员登录
-        </div>
         <button class="btn btn-primary" id="addBtn">＋ Add Row<br>添加一行</button>
         <button class="btn btn-soft" id="prevPageBtn">← Previous<br>上一页</button>
         <button class="btn btn-soft" id="nextPageBtn">Next →<br>下一页</button>
-        <button class="btn btn-soft" id="loginBtn">🔐 Admin Login<br>管理员登录</button>
     </div>
 
 </main>
 
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-box">
+    <h2>🔐 Login Required</h2>
+    <p>Please log in to make changes to the tracker.</p>
+    <label for="authUsername">Username</label>
+    <input id="authUsername" type="text" autocomplete="username" placeholder="admin">
+    <label for="authPassword">Password</label>
+    <input id="authPassword" type="password" autocomplete="current-password" placeholder="Password">
+    <div class="auth-error" id="authError"></div>
+    <div class="auth-actions">
+      <button class="btn btn-soft" id="authCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="authLoginBtn">Login</button>
+    </div>
+  </div>
+</div>
+<div class="auth-badge" id="authBadge" title="Tap to sign out"></div>
+
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-import {
-    getFirestore,
-    doc,
-    getDoc,
-    setDoc
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
-import {
-    getAuth,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
-/*
- * IMPORTANT:
- * Replace these values with the Firebase Web App configuration
- * from Firebase Console > Project settings > Your apps.
- *
- * The Firebase Functions client is also used for the secure admin login.
- */
 const firebaseConfig = {
     apiKey: "AIzaSyD-VGobD51rndQnp22hef9paZT3-V_uK8Q",
     authDomain: "baby-feeding-tracker-b2035.firebaseapp.com",
@@ -619,176 +649,26 @@ const firebaseConfig = {
     appId: "1:7883630691:web:4849ef386713ad66e3b056",
     measurementId: "G-Z3C6Q22RWC"
 };
-
-const firebaseApp = initializeApp(firebaseConfig);
-const db = getFirestore(firebaseApp);
-const auth = getAuth(firebaseApp);
-const DATA_DOC = doc(db, "babyTracker", "main");
-
-const ADMIN_USERNAME = "admin";
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const trackerRef = doc(db, "babyTracker", "main");
 const ADMIN_EMAIL = "admin@babyfeedingtracker.com";
-
-let firebaseReady = true;
-let editUnlocked = false;
-let firebaseSaveTimer = null;
-
-function updateAuthUI(){
-    updateEditLockUI();
-}
-
-onAuthStateChanged(auth, user => {
-    editUnlocked = !!user;
-    updateAuthUI();
-});
-
-async function requestEditLogin(){
-    if(editUnlocked) return true;
-
-    const username = prompt("Username / 用户名:");
-    if(username === null) return false;
-
-    const password = prompt("Password / 密码:");
-    if(password === null) return false;
-
-    if(username.trim().toLowerCase() !== ADMIN_USERNAME){
-        alert("Incorrect username.\n用户名错误。");
-        return false;
-    }
-
-    try{
-        await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
-        editUnlocked = true;
-        updateEditLockUI();
-        return true;
-    }catch(error){
-        console.error("Admin login failed:", error);
-        let message = "Incorrect username or password.\n用户名或密码错误。";
-        if(error?.code === "auth/too-many-requests") {
-            message = "Too many login attempts. Please wait and try again.";
-        }
-        alert(message);
-        return false;
-    }
-}
-
-function updateEditLockUI(){
-    const locked = !editUnlocked;
-    document.querySelectorAll(
-        "#addBtn,#prevPageBtn,#nextPageBtn,#deletePageBtn," +
-        "tbody select,tbody input,tbody button"
-    ).forEach(el => {
-        if(el.id === "prevPageBtn" || el.id === "nextPageBtn") return;
-        el.dataset.editLocked = locked ? "true" : "false";
-    });
-
-    const loginBtn = document.querySelector("#loginBtn");
-    if(loginBtn){
-        loginBtn.innerHTML = editUnlocked
-            ? "🔓 Admin Unlocked<br>管理员已登录"
-            : "🔐 Admin Login<br>管理员登录";
-    }
-
-    const brand = document.querySelector(".brand h1");
-    if(brand){
-        brand.textContent = locked
-            ? "Baby Feeding Tracker ✨ 🔒"
-            : "Baby Feeding Tracker ✨ 🔓";
-    }
-}
-
-async function ensureEditAccess(){
-    if(editUnlocked) return true;
-    return await requestEditLogin();
-}
-
-async function saveDataToFirebase(){
-    if(!firebaseReady){
-        console.warn("Firebase is not ready; data was not saved.");
-        return;
-    }
-
-    const data = {
-        currentPage,
-        pages: pages.map(page => ({
-            date: page.dataset.date,
-            rows: getPageRows(page)
-        })),
-        updatedAt: new Date().toISOString()
-    };
-
-    try{
-        await setDoc(DATA_DOC, data);
-    }catch(error){
-        console.error("Could not save data to Firebase:", error);
-        alert("Could not save changes to Firebase.\n请检查 Firebase 设置。");
-    }
-}
-
-async function saveData(){
-    if(!editUnlocked) return;
-
-    clearTimeout(firebaseSaveTimer);
-    firebaseSaveTimer = setTimeout(() => {
-        saveDataToFirebase();
-    }, 250);
-}
-
-async function loadDataFromFirebase(){
-    if(!firebaseReady){
-        createPage();
-        currentPage = 0;
-        showPage(currentPage);
-        return;
-    }
-
-    try{
-        const snapshot = await getDoc(DATA_DOC);
-
-        if(snapshot.exists()){
-            const saved = snapshot.data();
-
-            $("#pages").replaceChildren();
-            pages = [];
-
-            if(saved?.pages?.length){
-                saved.pages.forEach(pageData => {
-                    createPage(
-                        pageData.date || dateKey(new Date()),
-                        pageData.rows || []
-                    );
-                });
-
-                currentPage = Math.min(
-                    Number(saved.currentPage) || 0,
-                    pages.length - 1
-                );
-            }else{
-                createPage();
-                currentPage = 0;
-            }
-        }else{
-            createPage();
-            currentPage = 0;
-        }
-
-        showPage(currentPage);
-    }catch(error){
-        console.error("Could not load Firebase data:", error);
-        alert("Could not load the tracker data from Firebase.");
-        createPage();
-        currentPage = 0;
-        showPage(currentPage);
-    }
-}
-
+let currentUser = null, pendingAction = null, applyingRemote = false, firebaseConnected = false;
+function setFirebaseStatus(message,error=false){const el=$("#firebaseStatus");if(el){el.textContent=message;el.classList.toggle("error",error);}}
+function isEditor(){return !!currentUser;}
+function requireLogin(action){if(isEditor()){action();return;}pendingAction=action;$("#authUsername").value="admin";$("#authPassword").value="";$("#authError").textContent="";$("#authOverlay").classList.add("show");$("#authPassword").focus();}
+function closeLogin(){$("#authOverlay").classList.remove("show");pendingAction=null;$("#authError").textContent="";}
+async function login(){const username=$("#authUsername").value.trim(),password=$("#authPassword").value,error=$("#authError");if(!username||!password){error.textContent="Please enter username and password.";return;}const email=username.toLowerCase()==="admin"?ADMIN_EMAIL:username;try{$("#authLoginBtn").disabled=true;error.textContent="Signing in...";await signInWithEmailAndPassword(auth,email,password);$("#authOverlay").classList.remove("show");const action=pendingAction;pendingAction=null;if(action)action();}catch(err){console.error(err);error.textContent=err.code==="auth/invalid-credential"||err.code==="auth/wrong-password"||err.code==="auth/user-not-found"?"Incorrect username or password.":(err.message||"Login failed.");}finally{$("#authLoginBtn").disabled=false;}}
+onAuthStateChanged(auth,user=>{currentUser=user||null;const badge=$("#authBadge");if(currentUser){badge.textContent="🔓 Admin editing mode";badge.classList.add("show");setFirebaseStatus("☁️ Firebase connected • Editing enabled");}else{badge.classList.remove("show");setFirebaseStatus(firebaseConnected?"☁️ Firebase connected • View only":"☁️ Connecting to Firebase...");}updateNavigation();});
+$("#authLoginBtn").addEventListener("click",login);$("#authCancelBtn").addEventListener("click",closeLogin);$("#authOverlay").addEventListener("click",e=>{if(e.target.id==="authOverlay")closeLogin();});$("#authPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login();});$("#authBadge").addEventListener("click",async()=>{if(currentUser&&confirm("Sign out of editing mode?"))await signOut(auth);});
 
 const MILK_OPTIONS = [90, 120, 150];
 const DIAPER_OPTIONS = ["Pee/尿尿", "Poop/大便"];
 
 let pages = [];
 let currentPage = 0;
-
-const $ = selector => document.querySelector(selector);
+let loadingData = false;
 
 function formatDate(date){
     return new Intl.DateTimeFormat("en-GB",{
@@ -836,12 +716,25 @@ function createMilkSelect(value = "0"){
         select.value = savedValue;
     }
 
-    select.addEventListener("change", async () => {
-        const previousValue = select.dataset.previousValue ?? "0";
+    select.addEventListener("change", () => {
+        if(!isEditor()){
+            const oldValue = String(value ?? "0");
+            select.value = oldValue;
+            requireLogin(() => {
+                if(select.value === "custom"){
+                    const input = prompt("Enter milk amount in ML:\n请输入奶量（ML）：");
+                    const amount = input === null ? null : Number(input.trim());
 
-        if(!(await ensureEditAccess())){
-            select.value = previousValue;
-            refreshCurrentPage();
+                    if(amount === null || input.trim() === "" || Number.isNaN(amount) || amount < 0){
+                        select.value = "0";
+                    }else{
+                        addCustomMilkOption(select, String(amount));
+                        select.value = String(amount);
+                    }
+                }
+                refreshCurrentPage();
+                saveData();
+            });
             return;
         }
 
@@ -850,19 +743,16 @@ function createMilkSelect(value = "0"){
             const amount = input === null ? null : Number(input.trim());
 
             if(amount === null || input.trim() === "" || Number.isNaN(amount) || amount < 0){
-                select.value = previousValue;
+                select.value = "0";
             }else{
                 addCustomMilkOption(select, String(amount));
                 select.value = String(amount);
             }
         }
 
-        select.dataset.previousValue = select.value;
         refreshCurrentPage();
         saveData();
     });
-
-    select.dataset.previousValue = select.value;
 
     return select;
 }
@@ -896,8 +786,11 @@ function createTimeControl(savedTime = ""){
     logButton.className = "btn btn-primary btn-small";
     logButton.innerHTML = "Log Time<br>记录时间";
 
-    logButton.addEventListener("click", async () => {
-        if(!(await ensureEditAccess())) return;
+    logButton.addEventListener("click", () => {
+        if(!isEditor()){
+            requireLogin(() => logButton.click());
+            return;
+        }
 
         const time = new Date().toLocaleTimeString([],{
             hour:"numeric",
@@ -934,8 +827,11 @@ function createTimeControl(savedTime = ""){
     setButton.className = "btn btn-soft btn-small";
     setButton.textContent = "✓";
 
-    setButton.addEventListener("click", async () => {
-        if(!(await ensureEditAccess())) return;
+    setButton.addEventListener("click", () => {
+        if(!isEditor()){
+            requireLogin(() => setButton.click());
+            return;
+        }
 
         if(!hours.value || !minutes.value){
             alert("Please select the time.\n请选择时间。");
@@ -1039,9 +935,13 @@ function addRowToPage(page, data = {}, shouldSave = true){
     burp.type = "checkbox";
     burp.className = "check";
     burp.checked = Boolean(data.burp);
-    burp.addEventListener("change", async () => {
-        if(!(await ensureEditAccess())){
+    burp.addEventListener("change", () => {
+        if(!isEditor()){
             burp.checked = !burp.checked;
+            requireLogin(() => {
+                burp.checked = !burp.checked;
+                saveData();
+            });
             return;
         }
         saveData();
@@ -1059,9 +959,15 @@ function addRowToPage(page, data = {}, shouldSave = true){
         data.diaper || DIAPER_OPTIONS[0]
     );
 
-    diaper.addEventListener("change", async () => {
-        if(!(await ensureEditAccess())){
-            updatePageSummary(page);
+    diaper.addEventListener("change", () => {
+        if(!isEditor()){
+            const oldValue = data.diaper || DIAPER_OPTIONS[0];
+            diaper.value = oldValue;
+            requireLogin(() => {
+                diaper.value = oldValue;
+                updatePageSummary(page);
+                saveData();
+            });
             return;
         }
         updatePageSummary(page);
@@ -1078,8 +984,11 @@ function addRowToPage(page, data = {}, shouldSave = true){
     clearButton.className = "btn btn-soft btn-small";
     clearButton.textContent = "Clear";
 
-    clearButton.addEventListener("click", async () => {
-        if(!(await ensureEditAccess())) return;
+    clearButton.addEventListener("click", () => {
+        if(!isEditor()){
+            requireLogin(() => clearButton.click());
+            return;
+        }
 
         timeCell.replaceChildren(createTimeControl());
         burp.checked = false;
@@ -1094,8 +1003,12 @@ function addRowToPage(page, data = {}, shouldSave = true){
     deleteButton.className = "btn btn-danger btn-small";
     deleteButton.textContent = "Delete";
 
-    deleteButton.addEventListener("click", async () => {
-        if(!(await ensureEditAccess())) return;
+    deleteButton.addEventListener("click", () => {
+        if(!isEditor()){
+            requireLogin(() => deleteButton.click());
+            return;
+        }
+
         if(!confirm("Delete this row?")) return;
 
         row.remove();
@@ -1235,6 +1148,88 @@ function getPageRows(page){
         milk:row.cells[3].querySelector("select").value,
         diaper:row.cells[4].querySelector("select").value
     }));
+}
+
+async function saveData(){
+    if(applyingRemote || !currentUser) return;
+
+    const data = {
+        currentPage,
+        pages: pages.map(page => ({
+            date: page.dataset.date,
+            rows: getPageRows(page)
+        })),
+        updatedAt: new Date().toISOString(),
+        updatedBy: currentUser.uid
+    };
+
+    try{
+        await setDoc(trackerRef, data);
+        setFirebaseStatus("☁️ Saved to Firebase");
+    }catch(error){
+        console.error("Firestore save error:", error);
+        setFirebaseStatus("❌ Could not save to Firebase", true);
+        alert("Could not save the change to Firebase. Please check your internet connection.");
+    }
+}
+
+function applyRemoteData(saved){
+    applyingRemote = true;
+
+    $("#pages").replaceChildren();
+    pages = [];
+
+    if(saved?.pages?.length){
+        saved.pages.forEach(pageData => {
+            createPage(
+                pageData.date || dateKey(new Date()),
+                pageData.rows || []
+            );
+        });
+
+        currentPage = Math.min(
+            Number.isInteger(saved.currentPage) ? saved.currentPage : 0,
+            pages.length - 1
+        );
+    }else{
+        createPage();
+        currentPage = 0;
+    }
+
+    applyingRemote = false;
+    showPage(currentPage);
+}
+
+function startFirestore(){
+    onSnapshot(trackerRef, snapshot => {
+        firebaseConnected = true;
+
+        if(snapshot.exists()){
+            applyRemoteData(snapshot.data());
+            setFirebaseStatus(
+                currentUser
+                    ? "☁️ Firebase connected • Editing enabled"
+                    : "☁️ Firebase connected • View only"
+            );
+        }else{
+            applyingRemote = true;
+            $("#pages").replaceChildren();
+            pages = [];
+            createPage();
+            currentPage = 0;
+            applyingRemote = false;
+            showPage(0);
+
+            setFirebaseStatus(
+                currentUser
+                    ? "☁️ Firebase connected • Ready"
+                    : "☁️ Firebase connected • View only"
+            );
+        }
+    }, error => {
+        console.error("Firestore listener error:", error);
+        setFirebaseStatus("❌ Could not connect to Firestore", true);
+    });
 }
 
 function addNextPage(){
@@ -1622,8 +1617,11 @@ $("#downloadPdfBtn").addEventListener(
     downloadCurrentPagePDF
 );
 
-$("#addBtn").addEventListener("click", async () => {
-    if(!(await ensureEditAccess())) return;
+$("#addBtn").addEventListener("click", () => {
+    if(!isEditor()){
+        requireLogin(() => $("#addBtn").click());
+        return;
+    }
 
     const page = pages[currentPage];
 
@@ -1649,11 +1647,15 @@ $("#prevPageBtn").addEventListener("click", () => {
     });
 });
 
-$("#nextPageBtn").addEventListener("click", async () => {
+$("#nextPageBtn").addEventListener("click", () => {
+    if(!isEditor()){
+        requireLogin(() => $("#nextPageBtn").click());
+        return;
+    }
+
     if(currentPage < pages.length - 1){
         showPage(currentPage + 1);
     }else{
-        if(!(await ensureEditAccess())) return;
         addNextPage();
     }
 
@@ -1663,22 +1665,12 @@ $("#nextPageBtn").addEventListener("click", async () => {
     });
 });
 
-$("#deletePageBtn").addEventListener(
-    "click",
-    async () => {
-        if(!(await ensureEditAccess())) return;
-        deleteCurrentPage();
-    }
-);
-
-$("#loginBtn").addEventListener("click", async () => {
-    if(editUnlocked){
-        if(confirm("Sign out of admin editing mode?\n退出管理员编辑模式？")){
-            await signOut(auth);
-        }
+$("#deletePageBtn").addEventListener("click", () => {
+    if(!isEditor()){
+        requireLogin(() => $("#deletePageBtn").click());
         return;
     }
-    await ensureEditAccess();
+    deleteCurrentPage();
 });
 
 $("#fullscreenBtn").addEventListener("click", async () => {
@@ -1694,7 +1686,7 @@ document.addEventListener("fullscreenchange", () => {
         document.fullscreenElement ? "✕" : "⛶";
 });
 
-loadDataFromFirebase();
+startFirestore();
 </script>
 </body>
 </html>
