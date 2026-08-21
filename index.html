@@ -622,9 +622,9 @@ td.action-cell{
     <h2>🔐 Login Required</h2>
     <p>Please log in to make changes to the tracker.</p>
     <label for="authUsername">Username</label>
-    <input id="authUsername" type="text" autocomplete="username" placeholder="admin">
+    <input id="authUsername" type="text" autocomplete="username" placeholder="...">
     <label for="authPassword">Password</label>
-    <input id="authPassword" type="password" autocomplete="current-password" placeholder="Password">
+    <input id="authPassword" type="password" autocomplete="current-password" placeholder="...">
     <div class="auth-error" id="authError"></div>
     <div class="auth-actions">
       <button class="btn btn-soft" id="authCancelBtn">Cancel</button>
@@ -655,7 +655,6 @@ const db = getFirestore(app);
 const trackerRef = doc(db, "babyTracker", "main");
 const ADMIN_EMAIL = "admin@babyfeedingtracker.com";
 let currentUser = null, pendingAction = null, applyingRemote = false, firebaseConnected = false;
-const $ = selector => document.querySelector(selector);
 function setFirebaseStatus(message,error=false){const el=$("#firebaseStatus");if(el){el.textContent=message;el.classList.toggle("error",error);}}
 function isEditor(){return !!currentUser;}
 function requireLogin(action){if(isEditor()){action();return;}pendingAction=action;$("#authUsername").value="admin";$("#authPassword").value="";$("#authError").textContent="";$("#authOverlay").classList.add("show");$("#authPassword").focus();}
@@ -680,14 +679,7 @@ function formatDate(date){
 function dateKey(date){
     const d = new Date(date);
     d.setHours(0,0,0,0);
-
-    // Store the calendar date without converting it to UTC.
-    // This prevents Malaysia/Asia time from becoming the previous day.
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-
-    return `${y}-${m}-${day}T00:00:00`;
+    return d.toISOString();
 }
 
 function createSelect(options, value = ""){
@@ -877,7 +869,7 @@ function createPage(dateString = dateKey(new Date()), rows = []){
     const date = new Date(dateString);
     date.setHours(0,0,0,0);
 
-    page.dataset.date = dateKey(date);
+    page.dataset.date = date.toISOString();
 
     page.innerHTML = `
         <div class="page-meta">
@@ -1106,32 +1098,6 @@ function showPage(index){
     updatePageSummary(pages[currentPage]);
 }
 
-function normalizePageDatesToToday(){
-    if(!pages.length) return false;
-
-    const today = new Date();
-    today.setHours(0,0,0,0);
-
-    const lastIndex = pages.length - 1;
-    let changed = false;
-
-    pages.forEach((page, index) => {
-        const target = new Date(today);
-        target.setDate(today.getDate() - (lastIndex - index));
-
-        const targetKey = dateKey(target);
-
-        if(page.dataset.date !== targetKey){
-            page.dataset.date = targetKey;
-            const dateSpan = page.querySelector(".date-badge span");
-            if(dateSpan) dateSpan.textContent = formatDate(target);
-            changed = true;
-        }
-    });
-
-    return changed;
-}
-
 function isCurrentDatePage(page){
     if(!page) return false;
 
@@ -1148,10 +1114,10 @@ function updateNavigation(){
     $("#prevPageBtn").style.display =
         currentPage === 0 ? "none" : "";
 
-    $("#nextPageBtn").innerHTML =
+    $("#nextPageBtn").textContent =
         currentPage < pages.length - 1
-            ? "Next →<br>下一页"
-            : "Next Day →<br>下一天";
+            ? "Next →"
+            : "Next Day →";
 
     const addButton = $("#addBtn");
     const isCurrentDate = isCurrentDatePage(pages[currentPage]);
@@ -1230,10 +1196,6 @@ function applyRemoteData(saved){
         currentPage = 0;
     }
 
-    // Keep the newest page on today's local calendar date.
-    // Older pages become previous days while keeping all their rows/data.
-    normalizePageDatesToToday();
-
     applyingRemote = false;
     showPage(currentPage);
 }
@@ -1253,7 +1215,7 @@ function startFirestore(){
             applyingRemote = true;
             $("#pages").replaceChildren();
             pages = [];
-            createPage(dateKey(new Date()));
+            createPage();
             currentPage = 0;
             applyingRemote = false;
             showPage(0);
