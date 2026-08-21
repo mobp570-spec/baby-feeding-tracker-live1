@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baby Feeding Tracker</title>
+
+<style>
+:root{
+    --pink-50:#fff8fa;
+    --pink-100:#fff0f4;
+    --pink-200:#ffdce7;
+    --pink-300:#ffc3d5;
+    --pink-400:#ef9db8;
+    --pink-500:#dc7197;
+    --pink-700:#a84265;
+    --ink:#35232b;
+    --muted:#8f6f7b;
+    --line:#f1d7df;
+    --success:#2f9d68;
+    --danger:#d95d73;
+    --shadow:0 12px 35px rgba(172,81,112,.12);
+}
+
+*{ box-sizing:border-box; }
+
+html, body{
+    margin:0;
+    min-height:100vh;
+    width:100%;
+    overflow-x:hidden;
+    font-family:Arial,sans-serif;
+    color:var(--ink);
+    background:
+        radial-gradient(circle at 15px 15px,rgba(255,195,213,.38) 0 5px,transparent 6px),
+        linear-gradient(135deg,#fff 0%,#fff7fa 48%,#fff 100%);
+    background-size:55px 55px,auto;
+}
+
+button,input,select{ font:inherit; }
+
+.app{
+    width:100%;
+    max-width:1100px;
+    margin:auto;
+    padding:10px 8px 24px;
+}
+
+.topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:10px;
+}
+
+.topbar-left{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex:none;
+}
+
+.icon-btn{
+    width:40px;
+    height:40px;
+    flex:none;
+    display:grid;
+    place-items:center;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:rgba(255,255,255,.9);
+    color:var(--pink-700);
+    cursor:pointer;
+    box-shadow:0 4px 14px rgba(172,81,112,.08);
+    transition:.2s;
+}
+
+.icon-btn:hover{
+    transform:translateY(-2px);
+    background:var(--pink-50);
+}
+
+.brand{
+    flex:1;
+    text-align:center;
+    padding:10px;
+    border-radius:16px;
+    background:rgba(255,255,255,.88);
+    box-shadow:var(--shadow);
+}
+
+.brand h1{
+    margin:0;
+    font-size:clamp(17px,4vw,27px);
+    color:var(--pink-700);
+}
+
+.card{
+    width:100%;
+    background:rgba(255,255,255,.94);
+    border:1px solid rgba(241,215,223,.85);
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+}
+
+.page-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    padding:10px;
+    border-bottom:1px solid var(--line);
+}
+
+.date-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:7px 9px;
+    border-radius:10px;
+    background:var(--pink-50);
+    color:var(--pink-700);
+    font-weight:700;
+    font-size:12px;
+}
+
+.page-info{
+    color:var(--muted);
+    font-size:11px;
+    text-align:right;
+}
+
+/* TABLE */
+.table-wrap{
+    width:100%;
+    overflow:hidden;
+}
+
+table{
+    width:100%;
+    table-layout:fixed;
+    border-collapse:collapse;
+    border:1px solid var(--line);
+}
+
+th:nth-child(1), td:nth-child(1){ width:7%; }
+th:nth-child(2), td:nth-child(2){ width:24%; }
+th:nth-child(3), td:nth-child(3){ width:9%; }
+th:nth-child(4), td:nth-child(4){ width:16%; }
+th:nth-child(5), td:nth-child(5){ width:17%; }
+th:nth-child(6), td:nth-child(6){ width:27%; }
+
+th{
+    padding:7px 2px;
+    background:var(--pink-100);
+    color:var(--pink-700);
+    font-size:11px;
+    line-height:1.25;
+    word-break:break-word;
+    text-align:center;
+    vertical-align:middle;
+    border:1px solid var(--line);
+}
+
+td{
+    padding:6px 2px;
+    text-align:center;
+    vertical-align:middle;
+    font-size:11px;
+    overflow:hidden;
+    border:1px solid var(--line);
+}
+
+tbody tr{ transition:.18s; }
+tbody tr:hover{ background:#fffafd; }
+
+select{
+    width:100%;
+    min-width:0;
+    max-width:100%;
+    padding:7px 2px;
+    border:1px solid var(--pink-300);
+    border-radius:8px;
+    color:var(--ink);
+    background-color:#fff;
+    cursor:pointer;
+    font-size:11px;
+    text-align:center;
+}
+
+select:focus,input:focus{
+    outline:none;
+    border-color:var(--pink-500);
+    box-shadow:0 0 0 3px rgba(220,113,151,.15);
+}
+
+.check{
+    width:17px;
+    height:17px;
+    accent-color:var(--pink-500);
+    cursor:pointer;
+}
+
+.time-box{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+}
+
+.manual-time{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:1px;
+    padding:3px;
+    border:1px solid var(--pink-200);
+    border-radius:8px;
+    background:var(--pink-50);
+}
+
+.manual-time select{
+    min-width:0;
+    width:30%;
+    padding:3px 0;
+    border:0;
+    background:transparent;
+    font-size:10px;
+}
+
+.time-value{
+    font-weight:700;
+    color:var(--pink-700);
+    white-space:normal;
+    word-break:break-word;
+    font-size:11px;
+}
+
+.btn{
+    border:0;
+    border-radius:9px;
+    padding:8px 9px;
+    cursor:pointer;
+    font-weight:700;
+    transition:.2s;
+    font-size:11px;
+    text-align:center;
+}
+
+.btn:hover{ transform:translateY(-2px); }
+.btn:active{ transform:translateY(0); }
+
+.btn-primary{
+    background:linear-gradient(135deg,var(--pink-500),var(--pink-400));
+    color:white;
+    box-shadow:0 7px 16px rgba(220,113,151,.24);
+}
+
+.btn-soft{
+    background:var(--pink-100);
+    color:var(--pink-700);
+}
+
+.btn-danger{
+    background:#fff1f3;
+    color:var(--danger);
+}
+
+.btn-small{
+    padding:5px 4px;
+    font-size:9px;
+    line-height:1.2;
+}
+
+.time-box .btn-small{ width:100%; }
+
+/* ACTION CELL */
+td.action-cell{
+    padding:4px 2px;
+    text-align:center;
+    vertical-align:middle;
+}
+
+.action-buttons{
+    width:100%;
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+}
+
+.action-buttons .btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:85%;
+    min-height:28px;
+    margin:0 auto;
+    padding:6px 3px;
+    font-size:10px;
+    font-weight:800;
+    border-radius:8px;
+    white-space:nowrap;
+    text-align:center;
+}
+
+.summary{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+    padding:10px;
+    border-top:1px solid var(--line);
+    background:linear-gradient(180deg,#fff,#fff9fb);
+}
+
+.summary-item{
+    padding:9px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:white;
+}
+
+.summary-label{
+    display:block;
+    color:var(--muted);
+    font-size:10px;
+    margin-bottom:4px;
+}
+
+.summary-value{
+    font-size:15px;
+    font-weight:800;
+}
+
+/* MILK GOAL STATUS */
+.milkTotal{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    min-width:78px;
+    min-height:46px;
+    padding:7px 10px;
+    border:3px solid var(--danger);
+    border-radius:50%;
+}
+
+.milkTotal::before{
+    content:"✕";
+    font-size:17px;
+    font-weight:900;
+    line-height:1;
+}
+
+.milkTotal.status-success{
+    color:var(--success);
+    border-color:var(--success);
+    animation:milkSuccessPulse 1.5s ease-in-out infinite;
+}
+
+.milkTotal.status-success::before{
+    content:"✓";
+}
+
+.milkTotal.status-warning{
+    color:var(--danger);
+    border-color:var(--danger);
+    animation:milkWarningPulse 1s ease-in-out infinite;
+}
+
+@keyframes milkSuccessPulse{
+    0%,100%{
+        transform:scale(1);
+        box-shadow:0 0 0 0 rgba(47,157,104,.35);
+    }
+    50%{
+        transform:scale(1.06);
+        box-shadow:0 0 0 8px rgba(47,157,104,0);
+    }
+}
+
+@keyframes milkWarningPulse{
+    0%,100%{
+        transform:scale(1);
+        box-shadow:0 0 0 0 rgba(217,93,115,.40);
+    }
+    50%{
+        transform:scale(1.08);
+        box-shadow:0 0 0 10px rgba(217,93,115,0);
+    }
+}
+
+@media(prefers-reduced-motion:reduce){
+    .milkTotal{
+        animation:none !important;
+    }
+}
+
+.status-success{ color:var(--success); }
+.status-warning{ color:var(--danger); }
+
+.controls{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:6px;
+    padding:12px 0 0;
+}
+
+.controls .btn{
+    flex:1;
+    min-width:90px;
+}
+
+.btn:disabled{
+    opacity:.45 !important;
+    cursor:not-allowed !important;
+    transform:none !important;
+    box-shadow:none;
+}
+
+@media(max-width:600px){
+    .app{ padding:6px 4px 18px; }
+    .topbar{ gap:5px; margin-bottom:7px; }
+
+    .topbar-left{
+        gap:5px;
+    }
+
+    .icon-btn{
+        width:34px;
+        height:34px;
+        border-radius:10px;
+    }
+
+    .brand{ padding:8px 4px; }
+    .brand h1{ font-size:16px; }
+    .card{ border-radius:13px; }
+    .page-meta{ padding:7px; }
+
+    .date-badge{
+        padding:6px 7px;
+        font-size:10px;
+    }
+
+    .page-info{ font-size:9px; }
+
+    th{
+        padding:6px 1px;
+        font-size:9px;
+        border:1px solid var(--line);
+    }
+
+    td{
+        padding:5px 1px;
+        font-size:9px;
+        border:1px solid var(--line);
+    }
+
+    select{
+        padding:5px 0;
+        font-size:9px;
+        border-radius:6px;
+    }
+
+    .check{
+        width:15px;
+        height:15px;
+    }
+
+    .btn{
+        font-size:10px;
+        padding:7px 5px;
+    }
+
+    .btn-small{
+        font-size:8px;
+        padding:4px 2px;
+    }
+
+    .manual-time{ padding:2px; }
+
+    .manual-time select{
+        font-size:8px;
+        padding:2px 0;
+    }
+
+    .time-value{ font-size:9px; }
+    .time-box{ gap:3px; }
+
+    td.action-cell{
+        padding:4px 1px;
+        text-align:center;
+        vertical-align:middle;
+    }
+
+    .action-buttons{
+        width:100%;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+        gap:5px;
+    }
+
+    .action-buttons .btn{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        width:88%;
+        min-height:27px;
+        margin:0 auto;
+        padding:5px 2px;
+        font-size:9px;
+        font-weight:800;
+        white-space:nowrap;
+        text-align:center;
+    }
+
+    .summary{
+        gap:5px;
+        padding:7px;
+    }
+
+    .summary-item{
+        padding:7px 5px;
+        border-radius:9px;
+    }
+
+    .summary-label{ font-size:9px; }
+    .summary-value{ font-size:12px; }
+
+    .controls{
+        gap:5px;
+        padding-top:9px;
+    }
+
+    .controls .btn{
+        min-width:0;
+        padding:8px 4px;
+    }
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+<body>
+<main class="app">
+
+    <div class="topbar">
+        <div class="topbar-left">
+            <button class="icon-btn" id="fullscreenBtn" title="Fullscreen" aria-label="Fullscreen">⛶</button>
+
+            <button class="icon-btn" id="downloadPdfBtn" title="Download PDF" aria-label="Download PDF">⬇</button>
+        </div>
+
+        <div class="brand">
+            <h1>Baby Feeding Tracker ✨</h1>
+        </div>
+
+        <button class="icon-btn" id="deletePageBtn" title="Delete / Clear current page" aria-label="Delete or clear current page">🗑</button>
+    </div>
+
+    <section class="card">
+        <div id="pages"></div>
+    </section>
+
+    <div class="controls">
+        <div style="width:100%;text-align:center;color:var(--muted);font-size:10px;">
+            🔒 Viewing is public · Editing requires admin login
+            <br>公开查看 · 修改需要管理员登录
+        </div>
+        <button class="btn btn-primary" id="addBtn">＋ Add Row<br>添加一行</button>
+        <button class="btn btn-soft" id="prevPageBtn">← Previous<br>上一页</button>
+        <button class="btn btn-soft" id="nextPageBtn">Next →<br>下一页</button>
+        <button class="btn btn-soft" id="loginBtn">🔐 Admin Login<br>管理员登录</button>
+    </div>
+
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+/*
+ * IMPORTANT:
+ * Replace these values with the Firebase Web App configuration
+ * from Firebase Console > Project settings > Your apps.
+ *
+ * The Firebase Functions client is also used for the secure admin login.
+ */
+const firebaseConfig = {
+    apiKey: "AIzaSyD-VGobD51rndQnp22hef9paZT3-V_uK8Q",
+    authDomain: "baby-feeding-tracker-b2035.firebaseapp.com",
+    projectId: "baby-feeding-tracker-b2035",
+    storageBucket: "baby-feeding-tracker-b2035.firebasestorage.app",
+    messagingSenderId: "7883630691",
+    appId: "1:7883630691:web:4849ef386713ad66e3b056",
+    measurementId: "G-Z3C6Q22RWC"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+const auth = getAuth(firebaseApp);
+const DATA_DOC = doc(db, "babyTracker", "main");
+
+const ADMIN_USERNAME = "admin";
+const ADMIN_EMAIL = "admin@babyfeedingtracker.com";
+
+let firebaseReady = true;
+let editUnlocked = false;
+let firebaseSaveTimer = null;
+
+function updateAuthUI(){
+    updateEditLockUI();
+}
+
+onAuthStateChanged(auth, user => {
+    editUnlocked = !!user;
+    updateAuthUI();
+});
+
+async function requestEditLogin(){
+    if(editUnlocked) return true;
+
+    const username = prompt("Username / 用户名:");
+    if(username === null) return false;
+
+    const password = prompt("Password / 密码:");
+    if(password === null) return false;
+
+    if(username.trim().toLowerCase() !== ADMIN_USERNAME){
+        alert("Incorrect username.\n用户名错误。");
+        return false;
+    }
+
+    try{
+        await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
+        editUnlocked = true;
+        updateEditLockUI();
+        return true;
+    }catch(error){
+        console.error("Admin login failed:", error);
+        let message = "Incorrect username or password.\n用户名或密码错误。";
+        if(error?.code === "auth/too-many-requests") {
+            message = "Too many login attempts. Please wait and try again.";
+        }
+        alert(message);
+        return false;
+    }
+}
+
+function updateEditLockUI(){
+    const locked = !editUnlocked;
+    document.querySelectorAll(
+        "#addBtn,#prevPageBtn,#nextPageBtn,#deletePageBtn," +
+        "tbody select,tbody input,tbody button"
+    ).forEach(el => {
+        if(el.id === "prevPageBtn" || el.id === "nextPageBtn") return;
+        el.dataset.editLocked = locked ? "true" : "false";
+    });
+
+    const loginBtn = document.querySelector("#loginBtn");
+    if(loginBtn){
+        loginBtn.innerHTML = editUnlocked
+            ? "🔓 Admin Unlocked<br>管理员已登录"
+            : "🔐 Admin Login<br>管理员登录";
+    }
+
+    const brand = document.querySelector(".brand h1");
+    if(brand){
+        brand.textContent = locked
+            ? "Baby Feeding Tracker ✨ 🔒"
+            : "Baby Feeding Tracker ✨ 🔓";
+    }
+}
+
+async function ensureEditAccess(){
+    if(editUnlocked) return true;
+    return await requestEditLogin();
+}
+
+async function saveDataToFirebase(){
+    if(!firebaseReady){
+        console.warn("Firebase is not ready; data was not saved.");
+        return;
+    }
+
+    const data = {
+        currentPage,
+        pages: pages.map(page => ({
+            date: page.dataset.date,
+            rows: getPageRows(page)
+        })),
+        updatedAt: new Date().toISOString()
+    };
+
+    try{
+        await setDoc(DATA_DOC, data);
+    }catch(error){
+        console.error("Could not save data to Firebase:", error);
+        alert("Could not save changes to Firebase.\n请检查 Firebase 设置。");
+    }
+}
+
+async function saveData(){
+    if(!editUnlocked) return;
+
+    clearTimeout(firebaseSaveTimer);
+    firebaseSaveTimer = setTimeout(() => {
+        saveDataToFirebase();
+    }, 250);
+}
+
+async function loadDataFromFirebase(){
+    if(!firebaseReady){
+        createPage();
+        currentPage = 0;
+        showPage(currentPage);
+        return;
+    }
+
+    try{
+        const snapshot = await getDoc(DATA_DOC);
+
+        if(snapshot.exists()){
+            const saved = snapshot.data();
+
+            $("#pages").replaceChildren();
+            pages = [];
+
+            if(saved?.pages?.length){
+                saved.pages.forEach(pageData => {
+                    createPage(
+                        pageData.date || dateKey(new Date()),
+                        pageData.rows || []
+                    );
+                });
+
+                currentPage = Math.min(
+                    Number(saved.currentPage) || 0,
+                    pages.length - 1
+                );
+            }else{
+                createPage();
+                currentPage = 0;
+            }
+        }else{
+            createPage();
+            currentPage = 0;
+        }
+
+        showPage(currentPage);
+    }catch(error){
+        console.error("Could not load Firebase data:", error);
+        alert("Could not load the tracker data from Firebase.");
+        createPage();
+        currentPage = 0;
+        showPage(currentPage);
+    }
+}
+
+
+const MILK_OPTIONS = [90, 120, 150];
+const DIAPER_OPTIONS = ["Pee/尿尿", "Poop/大便"];
+
+let pages = [];
+let currentPage = 0;
+
+const $ = selector => document.querySelector(selector);
+
+function formatDate(date){
+    return new Intl.DateTimeFormat("en-GB",{
+        day:"2-digit", month:"2-digit", year:"numeric"
+    }).format(date);
+}
+
+function dateKey(date){
+    const d = new Date(date);
+    d.setHours(0,0,0,0);
+    return d.toISOString();
+}
+
+function createSelect(options, value = ""){
+    const select = document.createElement("select");
+
+    options.forEach(item => {
+        const option = document.createElement("option");
+        option.value = String(item.value ?? item);
+        option.textContent = item.label ?? item;
+        select.appendChild(option);
+    });
+
+    if(value !== "") select.value = String(value);
+    return select;
+}
+
+function createMilkSelect(value = "0"){
+    const options = [
+        {label:"Medicine / 药物", value:"0"},
+        ...MILK_OPTIONS.map(amount => ({
+            label:`${amount} ML`,
+            value:String(amount)
+        })),
+        {label:"Type ML / 输入奶量", value:"custom"}
+    ];
+
+    const select = createSelect(options);
+    const savedValue = String(value);
+
+    if([...select.options].some(option => option.value === savedValue)){
+        select.value = savedValue;
+    }else if(savedValue !== "custom" && !Number.isNaN(Number(savedValue))){
+        addCustomMilkOption(select, savedValue);
+        select.value = savedValue;
+    }
+
+    select.addEventListener("change", async () => {
+        const previousValue = select.dataset.previousValue ?? "0";
+
+        if(!(await ensureEditAccess())){
+            select.value = previousValue;
+            refreshCurrentPage();
+            return;
+        }
+
+        if(select.value === "custom"){
+            const input = prompt("Enter milk amount in ML:\n请输入奶量（ML）：");
+            const amount = input === null ? null : Number(input.trim());
+
+            if(amount === null || input.trim() === "" || Number.isNaN(amount) || amount < 0){
+                select.value = previousValue;
+            }else{
+                addCustomMilkOption(select, String(amount));
+                select.value = String(amount);
+            }
+        }
+
+        select.dataset.previousValue = select.value;
+        refreshCurrentPage();
+        saveData();
+    });
+
+    select.dataset.previousValue = select.value;
+
+    return select;
+}
+
+function addCustomMilkOption(select, amount){
+    const exists = [...select.options].some(
+        option => option.value === String(amount)
+    );
+
+    if(exists) return;
+
+    const option = document.createElement("option");
+    option.value = String(amount);
+    option.textContent = `${amount} ML`;
+
+    select.insertBefore(
+        option,
+        select.querySelector('option[value="custom"]')
+    );
+}
+
+function createTimeControl(savedTime = ""){
+    if(savedTime){
+        return createLoggedTime(savedTime);
+    }
+
+    const container = document.createElement("div");
+    container.className = "time-box";
+
+    const logButton = document.createElement("button");
+    logButton.className = "btn btn-primary btn-small";
+    logButton.innerHTML = "Log Time<br>记录时间";
+
+    logButton.addEventListener("click", async () => {
+        if(!(await ensureEditAccess())) return;
+
+        const time = new Date().toLocaleTimeString([],{
+            hour:"numeric",
+            minute:"2-digit",
+            hour12:true
+        });
+
+        container.replaceWith(createLoggedTime(time));
+        saveData();
+    });
+
+    const manual = document.createElement("div");
+    manual.className = "manual-time";
+
+    const hours = createSelect([
+        {label:"HH", value:""},
+        ...Array.from({length:12}, (_,i) => ({
+            label:String(i + 1),
+            value:String(i + 1)
+        }))
+    ]);
+
+    const minutes = createSelect([
+        {label:"MM", value:""},
+        ...Array.from({length:60}, (_,i) => {
+            const value = String(i).padStart(2,"0");
+            return {label:value, value};
+        })
+    ]);
+
+    const period = createSelect(["AM","PM"]);
+
+    const setButton = document.createElement("button");
+    setButton.className = "btn btn-soft btn-small";
+    setButton.textContent = "✓";
+
+    setButton.addEventListener("click", async () => {
+        if(!(await ensureEditAccess())) return;
+
+        if(!hours.value || !minutes.value){
+            alert("Please select the time.\n请选择时间。");
+            return;
+        }
+
+        const time = `${hours.value}:${minutes.value} ${period.value}`;
+        container.replaceWith(createLoggedTime(time));
+        saveData();
+    });
+
+    manual.append(
+        hours,
+        document.createTextNode(":"),
+        minutes,
+        period,
+        setButton
+    );
+
+    container.append(logButton, manual);
+    return container;
+}
+
+function createLoggedTime(time){
+    const span = document.createElement("span");
+    span.className = "time-value";
+    span.textContent = time;
+    return span;
+}
+
+function createPage(dateString = dateKey(new Date()), rows = []){
+    const page = document.createElement("div");
+    page.className = "page";
+
+    const date = new Date(dateString);
+    date.setHours(0,0,0,0);
+
+    page.dataset.date = date.toISOString();
+
+    page.innerHTML = `
+        <div class="page-meta">
+            <div class="date-badge">📅 <span>${formatDate(date)}</span></div>
+            <div class="page-info"></div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Line<br>行号</th>
+                        <th>Time<br>时间</th>
+                        <th>Burp<br>拍嗝</th>
+                        <th>Milk<br>奶量</th>
+                        <th>Diaper<br>尿布</th>
+                        <th>Action<br>操作</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="summary">
+            <div class="summary-item">
+                <span class="summary-label">Total Milk / 总奶量</span>
+                <span class="summary-value milkTotal">0 ML</span>
+            </div>
+
+            <div class="summary-item">
+                <span class="summary-label">Poop Count / 大便次数</span>
+                <span class="summary-value poopTotal">0 time today</span>
+            </div>
+        </div>
+    `;
+
+    $("#pages").appendChild(page);
+    pages.push(page);
+
+    rows.forEach(row => addRowToPage(page, row, false));
+
+    if(rows.length === 0){
+        addRowToPage(page, {}, false);
+    }
+
+    updatePageSummary(page);
+    return page;
+}
+
+function addRowToPage(page, data = {}, shouldSave = true){
+    const tbody = page.querySelector("tbody");
+    const row = document.createElement("tr");
+
+    const lineCell = document.createElement("td");
+    row.appendChild(lineCell);
+
+    const timeCell = document.createElement("td");
+    timeCell.appendChild(createTimeControl(data.time || ""));
+    row.appendChild(timeCell);
+
+    const burpCell = document.createElement("td");
+    const burp = document.createElement("input");
+    burp.type = "checkbox";
+    burp.className = "check";
+    burp.checked = Boolean(data.burp);
+    burp.addEventListener("change", async () => {
+        if(!(await ensureEditAccess())){
+            burp.checked = !burp.checked;
+            return;
+        }
+        saveData();
+    });
+    burpCell.appendChild(burp);
+    row.appendChild(burpCell);
+
+    const milkCell = document.createElement("td");
+    milkCell.appendChild(createMilkSelect(data.milk ?? "0"));
+    row.appendChild(milkCell);
+
+    const diaperCell = document.createElement("td");
+    const diaper = createSelect(
+        DIAPER_OPTIONS,
+        data.diaper || DIAPER_OPTIONS[0]
+    );
+
+    diaper.addEventListener("change", async () => {
+        if(!(await ensureEditAccess())){
+            updatePageSummary(page);
+            return;
+        }
+        updatePageSummary(page);
+        saveData();
+    });
+
+    diaperCell.appendChild(diaper);
+    row.appendChild(diaperCell);
+
+    const actionCell = document.createElement("td");
+    actionCell.className = "action-cell";
+
+    const clearButton = document.createElement("button");
+    clearButton.className = "btn btn-soft btn-small";
+    clearButton.textContent = "Clear";
+
+    clearButton.addEventListener("click", async () => {
+        if(!(await ensureEditAccess())) return;
+
+        timeCell.replaceChildren(createTimeControl());
+        burp.checked = false;
+        milkCell.replaceChildren(createMilkSelect("0"));
+        diaper.value = DIAPER_OPTIONS[0];
+
+        updatePageSummary(page);
+        saveData();
+    });
+
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "btn btn-danger btn-small";
+    deleteButton.textContent = "Delete";
+
+    deleteButton.addEventListener("click", async () => {
+        if(!(await ensureEditAccess())) return;
+        if(!confirm("Delete this row?")) return;
+
+        row.remove();
+        renumberRows(page);
+        updatePageSummary(page);
+        saveData();
+    });
+
+    const actionButtons = document.createElement("div");
+    actionButtons.className = "action-buttons";
+    actionButtons.append(clearButton, deleteButton);
+
+    actionCell.appendChild(actionButtons);
+    row.appendChild(actionCell);
+
+    tbody.appendChild(row);
+
+    renumberRows(page);
+    updatePageSummary(page);
+
+    if(shouldSave) saveData();
+}
+
+function renumberRows(page){
+    [...page.querySelectorAll("tbody tr")].forEach((row,index) => {
+        row.cells[0].textContent = index + 1;
+    });
+}
+
+function updatePageSummary(page){
+    const milkSelects = page.querySelectorAll(
+        "tbody td:nth-child(4) select"
+    );
+
+    const diaperSelects = page.querySelectorAll(
+        "tbody td:nth-child(5) select"
+    );
+
+    const total = [...milkSelects].reduce((sum, select) => {
+        return sum + (Number(select.value) || 0);
+    }, 0);
+
+    const poopCount = [...diaperSelects]
+        .filter(select => select.value === "Poop/大便")
+        .length;
+
+    const milkTotal = page.querySelector(".milkTotal");
+    const milkGoalReached = total >= 720;
+
+    milkTotal.className = `summary-value milkTotal ${
+        milkGoalReached ? "status-success" : "status-warning"
+    }`;
+
+    milkTotal.setAttribute(
+        "aria-label",
+        milkGoalReached
+            ? "Milk goal reached: 720 ML or more"
+            : "Milk goal not reached: below 720 ML"
+    );
+
+    milkTotal.textContent = `${total} ML`;
+
+    page.querySelector(".poopTotal").textContent =
+        `${poopCount} time${poopCount === 1 ? "" : "s"} today · 今天大便${poopCount}次`;
+}
+
+function updatePageInfo(){
+    const current = pages[currentPage];
+    if(!current) return;
+
+    current.querySelector(".page-info").innerHTML =
+        `Page ${currentPage + 1} of ${pages.length}<br>` +
+        `第${currentPage + 1}页，共${pages.length}页`;
+}
+
+function showPage(index){
+    if(index < 0 || index >= pages.length) return;
+
+    pages.forEach((page,i) => {
+        page.style.display = i === index ? "block" : "none";
+    });
+
+    currentPage = index;
+
+    updatePageInfo();
+    updateNavigation();
+    updatePageSummary(pages[currentPage]);
+}
+
+function isCurrentDatePage(page){
+    if(!page) return false;
+
+    const pageDate = new Date(page.dataset.date);
+    const today = new Date();
+
+    pageDate.setHours(0,0,0,0);
+    today.setHours(0,0,0,0);
+
+    return pageDate.getTime() === today.getTime();
+}
+
+function updateNavigation(){
+    $("#prevPageBtn").style.display =
+        currentPage === 0 ? "none" : "";
+
+    $("#nextPageBtn").textContent =
+        currentPage < pages.length - 1
+            ? "Next →"
+            : "Next Day →";
+
+    const addButton = $("#addBtn");
+    const isCurrentDate = isCurrentDatePage(pages[currentPage]);
+
+    addButton.disabled = !isCurrentDate;
+
+    if(!isCurrentDate){
+        addButton.innerHTML = "Date Locked<br>仅限当天添加";
+        addButton.style.opacity = "0.45";
+        addButton.style.cursor = "not-allowed";
+    }else{
+        addButton.innerHTML = "＋ Add Row<br>添加一行";
+        addButton.style.opacity = "1";
+        addButton.style.cursor = "pointer";
+    }
+}
+
+function refreshCurrentPage(){
+    if(pages[currentPage]){
+        updatePageSummary(pages[currentPage]);
+    }
+}
+
+function getPageRows(page){
+    return [...page.querySelectorAll("tbody tr")].map(row => ({
+        time:row.cells[1].querySelector(".time-value")?.textContent || "",
+        burp:row.cells[2].querySelector("input").checked,
+        milk:row.cells[3].querySelector("select").value,
+        diaper:row.cells[4].querySelector("select").value
+    }));
+}
+
+function addNextPage(){
+    const lastPage = pages[pages.length - 1];
+    const nextDate = new Date(lastPage.dataset.date);
+
+    nextDate.setDate(nextDate.getDate() + 1);
+
+    createPage(dateKey(nextDate));
+    showPage(pages.length - 1);
+    saveData();
+}
+
+function deleteCurrentPage(){
+    if(!pages.length) return;
+
+    if(pages.length === 1){
+        if(!confirm(
+            "Clear all records on this page?\n清除此页面的所有记录？"
+        )) return;
+
+        const page = pages[0];
+
+        page.querySelector("tbody").replaceChildren();
+        addRowToPage(page, {}, false);
+
+        currentPage = 0;
+
+        showPage(0);
+        saveData();
+        return;
+    }
+
+    if(!confirm(
+        "Delete this page and all its records?\n删除此页面及所有记录？"
+    )) return;
+
+    const deletedPage = pages[currentPage];
+
+    deletedPage.remove();
+    pages.splice(currentPage, 1);
+
+    currentPage = Math.min(currentPage, pages.length - 1);
+
+    showPage(currentPage);
+    saveData();
+}
+
+function getPdfFileDate(dateString){
+    const date = new Date(dateString);
+    const months = [
+        "JAN","FEB","MAR","APR","MAY","JUN",
+        "JUL","AUG","SEP","OCT","NOV","DEC"
+    ];
+
+    return `${months[date.getMonth()]}${String(date.getDate()).padStart(2,"0")}${date.getFullYear()}`;
+}
+
+async function downloadCurrentPagePDF(){
+    const page = pages[currentPage];
+
+    if(!page) return;
+
+    if(!window.jspdf || !window.jspdf.jsPDF || !window.html2canvas){
+        alert("PDF generator could not be loaded. Please check your internet connection and try again.");
+        return;
+    }
+
+    const downloadButton = $("#downloadPdfBtn");
+    const originalHTML = downloadButton.innerHTML;
+    const originalTitle = downloadButton.title;
+
+    try{
+        downloadButton.disabled = true;
+        downloadButton.textContent = "⏳";
+        downloadButton.title = "Preparing PDF...";
+
+        const printArea = document.createElement("div");
+
+        printArea.style.position = "fixed";
+        printArea.style.left = "-100000px";
+        printArea.style.top = "0";
+        printArea.style.width = "900px";
+        printArea.style.padding = "28px";
+        printArea.style.background = "#fff8fa";
+        printArea.style.fontFamily = "Arial, 'Microsoft YaHei', 'Noto Sans SC', 'PingFang SC', sans-serif";
+        printArea.style.color = "#35232b";
+
+        const title = document.createElement("div");
+        title.style.marginBottom = "18px";
+
+        title.innerHTML = `
+            <div style="
+                text-align:center;
+                font-size:30px;
+                font-weight:800;
+                color:#a84265;
+                letter-spacing:.3px;
+                margin-bottom:12px;
+            ">Baby Feeding Tracker ✨</div>
+            <div style="
+                text-align:left;
+                color:#a84265;
+                font-size:15px;
+                font-weight:700;
+                margin-bottom:6px;
+            ">📅 ${formatDate(new Date(page.dataset.date))}</div>
+        `;
+
+        printArea.appendChild(title);
+
+        const pageCopy = page.cloneNode(true);
+
+        const pageMeta = pageCopy.querySelector(".page-meta");
+        if(pageMeta) pageMeta.remove();
+
+        const liveRows = [...page.querySelectorAll("tbody tr")].map((liveRow, rowIndex) => {
+            const liveCells = [...liveRow.querySelectorAll(":scope > td")];
+            const milkSelect = liveCells[3]?.querySelector("select");
+            const diaperSelect = liveCells[4]?.querySelector("select");
+
+            let milkText = "";
+
+            if(milkSelect){
+                const rawMilk = String(milkSelect.value ?? "").trim();
+
+                if(rawMilk === "0" || rawMilk === ""){
+                    milkText = "Medicine / 药物";
+                }else if(!Number.isNaN(Number(rawMilk))){
+                    milkText = `${rawMilk} ML`;
+                }else{
+                    milkText =
+                        milkSelect.options[milkSelect.selectedIndex]
+                        ?.textContent?.trim() || rawMilk;
+                }
+            }
+
+            return {
+                line: String(rowIndex + 1),
+                time: liveCells[1]?.querySelector(".time-value")?.textContent?.trim() || "-",
+                burp: liveCells[2]?.querySelector('input[type="checkbox"]')?.checked ? "✓" : "—",
+                milk: milkText || "Medicine / 药物",
+                diaper: diaperSelect
+                    ? (diaperSelect.options[diaperSelect.selectedIndex]?.textContent?.trim() || diaperSelect.value)
+                    : "-"
+            };
+        });
+
+        pageCopy.querySelectorAll("thead tr, tbody tr").forEach(row => {
+            const cells = row.querySelectorAll("th, td");
+
+            if(cells.length >= 6){
+                cells[cells.length - 1].remove();
+            }
+        });
+
+        [...pageCopy.querySelectorAll("tbody tr")].forEach((copiedRow, index) => {
+            const data = liveRows[index];
+
+            if(!data) return;
+
+            const copiedCells = [...copiedRow.querySelectorAll(":scope > td")];
+
+            const values = [
+                data.line,
+                data.time,
+                data.burp,
+                data.milk,
+                data.diaper
+            ];
+
+            copiedCells.forEach((cell, cellIndex) => {
+                if(cellIndex < 5){
+                    cell.replaceChildren();
+
+                    const valueText = document.createElement("span");
+                    valueText.textContent = values[cellIndex];
+                    valueText.style.display = "inline";
+                    valueText.style.padding = "0";
+                    valueText.style.border = "0";
+                    valueText.style.background = "transparent";
+                    valueText.style.fontWeight =
+                        cellIndex === 0 ? "700" : "600";
+                    valueText.style.color = "#35232b";
+
+                    cell.appendChild(valueText);
+                }
+            });
+        });
+
+        const table = pageCopy.querySelector("table");
+
+        if(table){
+            table.style.width = "100%";
+            table.style.tableLayout = "fixed";
+            table.style.borderCollapse = "collapse";
+            table.style.background = "#fff";
+
+            const widths = ["10%","30%","12%","22%","26%"];
+
+            pageCopy.querySelectorAll("thead tr").forEach(row => {
+                [...row.children].forEach((cell, index) => {
+                    cell.style.width = widths[index] || "";
+                });
+            });
+
+            pageCopy.querySelectorAll("tbody tr").forEach(row => {
+                [...row.children].forEach((cell, index) => {
+                    cell.style.width = widths[index] || "";
+                });
+            });
+
+            pageCopy.querySelectorAll("th").forEach(cell => {
+                cell.style.background = "#fff0f4";
+                cell.style.color = "#a84265";
+                cell.style.border = "1px solid #f1d7df";
+                cell.style.padding = "10px 6px";
+                cell.style.fontWeight = "800";
+                cell.style.textAlign = "center";
+                cell.style.verticalAlign = "middle";
+            });
+
+            pageCopy.querySelectorAll("td").forEach(cell => {
+                cell.style.border = "1px solid #f1d7df";
+                cell.style.padding = "9px 6px";
+                cell.style.textAlign = "center";
+                cell.style.verticalAlign = "middle";
+                cell.style.background = "#fff";
+            });
+        }
+
+        pageCopy.querySelectorAll(
+            ".action-cell, .action-buttons, button, .controls, .icon-btn"
+        ).forEach(element => {
+            element.style.display = "none";
+        });
+
+        pageCopy.querySelectorAll('input[type="checkbox"]').forEach(input => {
+            const mark = document.createElement("span");
+            mark.textContent = input.checked ? "✓" : "—";
+            mark.style.fontSize = "18px";
+            mark.style.fontWeight = "800";
+            mark.style.color = input.checked ? "#2f9d68" : "#8f6f7b";
+            input.replaceWith(mark);
+        });
+
+        const summary = pageCopy.querySelector(".summary");
+
+        if(summary){
+            summary.style.marginTop = "18px";
+            summary.style.padding = "0";
+            summary.style.display = "grid";
+            summary.style.gridTemplateColumns = "1fr 1fr";
+            summary.style.gap = "14px";
+            summary.style.border = "0";
+            summary.style.background = "transparent";
+
+            summary.querySelectorAll(".summary-item").forEach(item => {
+                item.style.padding = "16px";
+                item.style.border = "1px solid #f1d7df";
+                item.style.borderRadius = "14px";
+                item.style.background = "#fff";
+            });
+        }
+
+        printArea.appendChild(pageCopy);
+
+        const footer = document.createElement("div");
+        footer.style.textAlign = "center";
+        footer.style.marginTop = "18px";
+        footer.style.paddingTop = "12px";
+        footer.style.borderTop = "1px solid #f1d7df";
+        footer.style.color = "#8f6f7b";
+        footer.style.fontSize = "11px";
+        footer.textContent = "Baby Feeding Tracker by Set";
+
+        printArea.appendChild(footer);
+        document.body.appendChild(printArea);
+
+        const canvas = await html2canvas(printArea, {
+            backgroundColor:"#fff8fa",
+            scale:2,
+            useCORS:true,
+            logging:false
+        });
+
+        printArea.remove();
+
+        const { jsPDF } = window.jspdf;
+
+        const pdf = new jsPDF({
+            orientation:"portrait",
+            unit:"mm",
+            format:"a4"
+        });
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 10;
+
+        const imageData = canvas.toDataURL("image/png");
+        const imageWidth = pageWidth - (margin * 2);
+        const imageHeight =
+            canvas.height * imageWidth / canvas.width;
+
+        const printableHeight = pageHeight - (margin * 2);
+
+        if(imageHeight <= printableHeight){
+            pdf.addImage(
+                imageData,
+                "PNG",
+                margin,
+                margin,
+                imageWidth,
+                imageHeight
+            );
+        }else{
+            const scale = imageWidth / canvas.width;
+            const pageCanvasHeight =
+                Math.floor(printableHeight / scale);
+
+            let sourceY = 0;
+            let pageNumber = 0;
+
+            while(sourceY < canvas.height){
+                const sliceHeight = Math.min(
+                    pageCanvasHeight,
+                    canvas.height - sourceY
+                );
+
+                const slice = document.createElement("canvas");
+                slice.width = canvas.width;
+                slice.height = sliceHeight;
+
+                const context = slice.getContext("2d");
+
+                context.drawImage(
+                    canvas,
+                    0,
+                    sourceY,
+                    canvas.width,
+                    sliceHeight,
+                    0,
+                    0,
+                    canvas.width,
+                    sliceHeight
+                );
+
+                if(pageNumber > 0) pdf.addPage();
+
+                const sliceData = slice.toDataURL("image/png");
+                const renderedHeight = sliceHeight * scale;
+
+                pdf.addImage(
+                    sliceData,
+                    "PNG",
+                    margin,
+                    margin,
+                    imageWidth,
+                    renderedHeight
+                );
+
+                sourceY += sliceHeight;
+                pageNumber++;
+            }
+        }
+
+        const filename =
+            `BFT_${getPdfFileDate(page.dataset.date)}.pdf`;
+
+        pdf.save(filename);
+
+    }catch(error){
+        console.error("Could not create PDF:", error);
+        alert("Could not create the PDF. Please try again.");
+    }finally{
+        downloadButton.disabled = false;
+        downloadButton.innerHTML = originalHTML;
+        downloadButton.title = originalTitle;
+    }
+}
+
+$("#downloadPdfBtn").addEventListener(
+    "click",
+    downloadCurrentPagePDF
+);
+
+$("#addBtn").addEventListener("click", async () => {
+    if(!(await ensureEditAccess())) return;
+
+    const page = pages[currentPage];
+
+    if(!isCurrentDatePage(page)){
+        alert("You can only add a row on today's date.\n只能在当天添加记录。");
+        return;
+    }
+
+    addRowToPage(page);
+
+    window.scrollTo({
+        top:document.body.scrollHeight,
+        behavior:"smooth"
+    });
+});
+
+$("#prevPageBtn").addEventListener("click", () => {
+    showPage(currentPage - 1);
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+});
+
+$("#nextPageBtn").addEventListener("click", async () => {
+    if(currentPage < pages.length - 1){
+        showPage(currentPage + 1);
+    }else{
+        if(!(await ensureEditAccess())) return;
+        addNextPage();
+    }
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+});
+
+$("#deletePageBtn").addEventListener(
+    "click",
+    async () => {
+        if(!(await ensureEditAccess())) return;
+        deleteCurrentPage();
+    }
+);
+
+$("#loginBtn").addEventListener("click", async () => {
+    if(editUnlocked){
+        if(confirm("Sign out of admin editing mode?\n退出管理员编辑模式？")){
+            await signOut(auth);
+        }
+        return;
+    }
+    await ensureEditAccess();
+});
+
+$("#fullscreenBtn").addEventListener("click", async () => {
+    if(document.fullscreenElement){
+        await document.exitFullscreen();
+    }else{
+        await document.documentElement.requestFullscreen();
+    }
+});
+
+document.addEventListener("fullscreenchange", () => {
+    $("#fullscreenBtn").textContent =
+        document.fullscreenElement ? "✕" : "⛶";
+});
+
+loadDataFromFirebase();
+</script>
+</body>
+</html>
