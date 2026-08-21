@@ -1133,8 +1133,8 @@ function updatePageSummary(page){
 
     page.querySelector(".poopTotal").textContent =
     poopCount === 0
-        ? "Pooped 0 time"
-        : `Pooped ${poopCount} time${poopCount === 1 ? "" : "s"} this day`;
+        ? "Pooped 0 time this day. 今天排便0次。"
+        : `Pooped ${poopCount} time${poopCount === 1 ? "" : "s"} this day. 今天大便${poopCount}次。`;
 }
 
 function updatePageInfo(){
