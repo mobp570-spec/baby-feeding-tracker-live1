@@ -622,9 +622,9 @@ td.action-cell{
     <h2>🔐 Login Required</h2>
     <p>Please log in to make changes to the tracker.</p>
     <label for="authUsername">Username</label>
-    <input id="authUsername" type="text" autocomplete="username" placeholder="....">
+    <input id="authUsername" type="text" autocomplete="username" placeholder="...">
     <label for="authPassword">Password</label>
-    <input id="authPassword" type="password" autocomplete="current-password" placeholder="....">
+    <input id="authPassword" type="password" autocomplete="current-password" placeholder="...">
     <div class="auth-error" id="authError"></div>
     <div class="auth-actions">
       <button class="btn btn-soft" id="authCancelBtn">Cancel</button>
@@ -654,13 +654,13 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const trackerRef = doc(db, "babyTracker", "main");
 const ADMIN_EMAIL = "admin@babyfeedingtracker.com";
-let currentUser = null, pendingAction = null, applyingRemote = false, firebaseConnected = false;
+let currentUser = null, pendingAction = null, applyingRemote = false, firebaseConnected = false, firestoreUnsubscribe = null;
 function setFirebaseStatus(message,error=false){const el=$("#firebaseStatus");if(el){el.textContent=message;el.classList.toggle("error",error);}}
 function isEditor(){return !!currentUser;}
-function requireLogin(action){if(isEditor()){action();return;}pendingAction=action;$("#authUsername").value="";$("#authPassword").value="";$("#authError").textContent="";$("#authOverlay").classList.add("show");$("#authPassword").focus();}
+function requireLogin(action){if(isEditor()){action();return;}pendingAction=action;$("#authUsername").value="admin";$("#authPassword").value="";$("#authError").textContent="";$("#authOverlay").classList.add("show");$("#authPassword").focus();}
 function closeLogin(){$("#authOverlay").classList.remove("show");pendingAction=null;$("#authError").textContent="";}
 async function login(){const username=$("#authUsername").value.trim(),password=$("#authPassword").value,error=$("#authError");if(!username||!password){error.textContent="Please enter username and password.";return;}const email=username.toLowerCase()==="admin"?ADMIN_EMAIL:username;try{$("#authLoginBtn").disabled=true;error.textContent="Signing in...";await signInWithEmailAndPassword(auth,email,password);$("#authOverlay").classList.remove("show");const action=pendingAction;pendingAction=null;if(action)action();}catch(err){console.error(err);error.textContent=err.code==="auth/invalid-credential"||err.code==="auth/wrong-password"||err.code==="auth/user-not-found"?"Incorrect username or password.":(err.message||"Login failed.");}finally{$("#authLoginBtn").disabled=false;}}
-onAuthStateChanged(auth,user=>{currentUser=user||null;const badge=$("#authBadge");if(currentUser){badge.textContent="🔓 Admin editing mode";badge.classList.add("show");setFirebaseStatus("☁️ Firebase connected • Editing enabled");}else{badge.classList.remove("show");setFirebaseStatus(firebaseConnected?"☁️ Firebase connected • View only":"☁️ Connecting to Firebase...");}updateNavigation();});
+onAuthStateChanged(auth,user=>{currentUser=user||null;const badge=$("#authBadge");if(currentUser){badge.textContent="🔓 Admin editing mode";badge.classList.add("show");setFirebaseStatus(firebaseConnected?"☁️ Firebase connected • Editing enabled":"☁️ Connecting to Firebase...");}else{badge.classList.remove("show");setFirebaseStatus(firebaseConnected?"☁️ Firebase connected • View only":"☁️ Connecting to Firebase...");}updateNavigation();});
 $("#authLoginBtn").addEventListener("click",login);$("#authCancelBtn").addEventListener("click",closeLogin);$("#authOverlay").addEventListener("click",e=>{if(e.target.id==="authOverlay")closeLogin();});$("#authPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login();});$("#authBadge").addEventListener("click",async()=>{if(currentUser&&confirm("Sign out of editing mode?"))await signOut(auth);});
 
 const MILK_OPTIONS = [90, 120, 150];
@@ -1201,35 +1201,66 @@ function applyRemoteData(saved){
 }
 
 function startFirestore(){
-    onSnapshot(trackerRef, snapshot => {
-        firebaseConnected = true;
+    // Everyone can view the tracker. Firestore Rules should allow reads
+    // for everyone and writes only for authenticated users.
+    if(firestoreUnsubscribe){
+        firestoreUnsubscribe();
+        firestoreUnsubscribe = null;
+    }
 
-        if(snapshot.exists()){
-            applyRemoteData(snapshot.data());
-            setFirebaseStatus(
-                currentUser
-                    ? "☁️ Firebase connected • Editing enabled"
-                    : "☁️ Firebase connected • View only"
-            );
-        }else{
-            applyingRemote = true;
-            $("#pages").replaceChildren();
-            pages = [];
-            createPage();
-            currentPage = 0;
-            applyingRemote = false;
-            showPage(0);
+    setFirebaseStatus("☁️ Connecting to Firebase...");
 
-            setFirebaseStatus(
-                currentUser
-                    ? "☁️ Firebase connected • Ready"
-                    : "☁️ Firebase connected • View only"
-            );
+    firestoreUnsubscribe = onSnapshot(
+        trackerRef,
+        snapshot => {
+            firebaseConnected = true;
+
+            if(snapshot.exists()){
+                applyRemoteData(snapshot.data());
+
+                setFirebaseStatus(
+                    currentUser
+                        ? "☁️ Firebase connected • Editing enabled"
+                        : "☁️ Firebase connected • View only"
+                );
+            }else{
+                applyingRemote = true;
+                $("#pages").replaceChildren();
+                pages = [];
+                createPage();
+                currentPage = 0;
+                applyingRemote = false;
+                showPage(0);
+
+                setFirebaseStatus(
+                    currentUser
+                        ? "☁️ Firebase connected • Ready"
+                        : "☁️ Firebase connected • View only"
+                );
+            }
+        },
+        error => {
+            console.error("Firestore listener error:", error);
+            firebaseConnected = false;
+
+            if(error.code === "permission-denied"){
+                setFirebaseStatus(
+                    "🔒 Firestore read permission denied",
+                    true
+                );
+            }else if(error.code === "unavailable"){
+                setFirebaseStatus(
+                    "📡 Firebase unavailable — check internet",
+                    true
+                );
+            }else{
+                setFirebaseStatus(
+                    "❌ Could not connect to Firestore",
+                    true
+                );
+            }
         }
-    }, error => {
-        console.error("Firestore listener error:", error);
-        setFirebaseStatus("❌ Could not connect to Firestore", true);
-    });
+    );
 }
 
 function addNextPage(){
