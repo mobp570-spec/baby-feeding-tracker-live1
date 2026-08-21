@@ -1200,6 +1200,17 @@ function applyRemoteData(saved){
     showPage(currentPage);
 }
 
+// If Firebase JavaScript fails to initialize or the browser blocks the
+// module/CDN, do not leave the user staring at "Connecting..." forever.
+setTimeout(() => {
+    if(!firebaseConnected){
+        setFirebaseStatus(
+            "⚠️ Firebase did not respond — check the browser console/network",
+            true
+        );
+    }
+}, 12000);
+
 function startFirestore(){
     // Everyone can view the tracker. Firestore Rules should allow reads
     // for everyone and writes only for authenticated users.
@@ -1215,27 +1226,54 @@ function startFirestore(){
         snapshot => {
             firebaseConnected = true;
 
-            if(snapshot.exists()){
-                applyRemoteData(snapshot.data());
+            // Show that Firestore itself responded before rendering the data.
+            setFirebaseStatus(
+                currentUser
+                    ? "☁️ Firebase connected • Loading data..."
+                    : "☁️ Firebase connected • Loading data..."
+            );
+
+            try {
+                if(snapshot.exists()){
+                    applyRemoteData(snapshot.data());
+                }else{
+                    applyingRemote = true;
+                    $("#pages").replaceChildren();
+                    pages = [];
+                    createPage();
+                    currentPage = 0;
+                    applyingRemote = false;
+                    showPage(0);
+                }
 
                 setFirebaseStatus(
                     currentUser
                         ? "☁️ Firebase connected • Editing enabled"
                         : "☁️ Firebase connected • View only"
                 );
-            }else{
+
+            } catch(renderError) {
+                console.error("Firebase data/render error:", renderError);
+
+                // Keep the tracker usable even if old/corrupt Firestore data
+                // cannot be rendered.
                 applyingRemote = true;
-                $("#pages").replaceChildren();
-                pages = [];
-                createPage();
-                currentPage = 0;
+
+                try {
+                    $("#pages").replaceChildren();
+                    pages = [];
+                    createPage();
+                    currentPage = 0;
+                    showPage(0);
+                } catch(fallbackError) {
+                    console.error("Fallback tracker render error:", fallbackError);
+                }
+
                 applyingRemote = false;
-                showPage(0);
 
                 setFirebaseStatus(
-                    currentUser
-                        ? "☁️ Firebase connected • Ready"
-                        : "☁️ Firebase connected • View only"
+                    "⚠️ Firebase connected, but saved data could not be loaded",
+                    true
                 );
             }
         },
