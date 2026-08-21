@@ -1132,7 +1132,9 @@ function updatePageSummary(page){
     milkTotal.textContent = `${total} ML`;
 
     page.querySelector(".poopTotal").textContent =
-        `${poopCount} time${poopCount === 1 ? "" : "s"} today · 今天大便${poopCount}次`;
+    poopCount === 0
+        ? "Pooped 0 time"
+        : `Pooped ${poopCount} time${poopCount === 1 ? "" : "s"} this day`;
 }
 
 function updatePageInfo(){
