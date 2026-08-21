@@ -655,6 +655,7 @@ const db = getFirestore(app);
 const trackerRef = doc(db, "babyTracker", "main");
 const ADMIN_EMAIL = "admin@babyfeedingtracker.com";
 let currentUser = null, pendingAction = null, applyingRemote = false, firebaseConnected = false;
+const $ = selector => document.querySelector(selector);
 function setFirebaseStatus(message,error=false){const el=$("#firebaseStatus");if(el){el.textContent=message;el.classList.toggle("error",error);}}
 function isEditor(){return !!currentUser;}
 function requireLogin(action){if(isEditor()){action();return;}pendingAction=action;$("#authUsername").value="admin";$("#authPassword").value="";$("#authError").textContent="";$("#authOverlay").classList.add("show");$("#authPassword").focus();}
