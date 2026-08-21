@@ -1042,7 +1042,7 @@ function addRowToPage(page, data = {}, shouldSave = true){
 
     const clearButton = document.createElement("button");
     clearButton.className = "btn btn-soft btn-small";
-    clearButton.textContent = "Clear";
+    clearButton.textContent = "Clear / 清除 ";
 
     clearButton.addEventListener("click", () => {
         if(!isEditor()){
@@ -1061,7 +1061,7 @@ function addRowToPage(page, data = {}, shouldSave = true){
 
     const deleteButton = document.createElement("button");
     deleteButton.className = "btn btn-danger btn-small";
-    deleteButton.textContent = "Delete";
+    deleteButton.textContent = "Delete / 删除";
 
     deleteButton.addEventListener("click", () => {
         if(!isEditor()){
