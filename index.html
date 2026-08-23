@@ -931,7 +931,7 @@ function createPage(dateString = dateKey(new Date()), rows = []){
 
     page.innerHTML = `
         <div class="page-meta">
-            <div class="date-badge">📅 <span>${formatDate(date)}</span></div>
+            <div class="date-badge">🗓️ <span>${formatDate(date)}</span></div>
             <div class="page-info"></div>
         </div>
 
@@ -1426,7 +1426,7 @@ async function downloadCurrentPagePDF(){
                 font-size:15px;
                 font-weight:700;
                 margin-bottom:6px;
-            ">📅 ${formatDate(new Date(page.dataset.date))}</div>
+            ">🗓️ ${formatDate(new Date(page.dataset.date))}</div>
         `;
 
         printArea.appendChild(title);
