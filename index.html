@@ -714,7 +714,7 @@ onAuthStateChanged(auth,user=>{
 });
 $("#authLoginBtn").addEventListener("click",login);$("#authCancelBtn").addEventListener("click",closeLogin);$("#authOverlay").addEventListener("click",e=>{if(e.target.id==="authOverlay")closeLogin();});$("#authPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login();});$("#authBadge").addEventListener("click",async()=>{if(currentUser&&confirm("Sign out of editing mode?"))await signOut(auth);});
 
-const MILK_OPTIONS = [90, 120, 150];
+const MILK_OPTIONS = [60, 90, 120, 150];
 const DIAPER_OPTIONS = ["Pee/尿尿", "Poop/大便"];
 
 let pages = [];
