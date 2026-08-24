@@ -437,32 +437,28 @@ td.action-cell{
 }
 
 .temperature-box{
-    min-height:70px;
+    min-height:40px;
     max-height:220px;
     overflow-y:auto;
-    padding:9px;
-    border:1px solid var(--pink-200);
-    border-radius:14px;
-    background:var(--pink-50);
+    padding:4px 2px;
+    background:transparent;
 }
 
 .temperature-empty{
     text-align:center;
     color:var(--muted);
     font-size:10px;
-    padding:14px 5px;
+    padding:10px 5px;
 }
 
 .temperature-entry{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:8px;
-    padding:8px 9px;
-    margin-bottom:6px;
-    border:1px solid var(--line);
-    border-radius:10px;
-    background:#fff;
+    gap:10px;
+    padding:7px 2px;
+    margin-bottom:2px;
+    background:transparent;
 }
 
 .temperature-entry:last-child{
@@ -479,18 +475,6 @@ td.action-cell{
     color:var(--muted);
     font-size:10px;
     text-align:right;
-}
-
-.temperature-delete{
-    flex:none;
-    border:0;
-    border-radius:7px;
-    padding:5px 7px;
-    background:#fff1f3;
-    color:var(--danger);
-    cursor:pointer;
-    font-size:9px;
-    font-weight:700;
 }
 
 @media(max-width:600px){
@@ -1097,28 +1081,7 @@ function renderTemperatures(page, temperatures = []){
         time.className = "temperature-time";
         time.textContent = formatTemperatureTimestamp(item.timestamp);
 
-        const deleteButton = document.createElement("button");
-        deleteButton.className = "temperature-delete";
-        deleteButton.type = "button";
-        deleteButton.textContent = "Delete / 删除";
-
-        deleteButton.addEventListener("click", () => {
-            if(!isEditor()){
-                requireLogin(() => deleteButton.click());
-                return;
-            }
-
-            entry.remove();
-            if(!box.querySelector(".temperature-entry")){
-                const empty = document.createElement("div");
-                empty.className = "temperature-empty";
-                empty.textContent = "No temperature recorded yet. / 尚未记录体温。";
-                box.appendChild(empty);
-            }
-            saveData();
-        });
-
-        entry.append(value, time, deleteButton);
+        entry.append(value, time);
         box.appendChild(entry);
     });
 }
@@ -1168,28 +1131,7 @@ function setupTemperatureSection(page, temperatures = []){
         time.className = "temperature-time";
         time.textContent = formatTemperatureTimestamp(timestamp);
 
-        const deleteButton = document.createElement("button");
-        deleteButton.className = "temperature-delete";
-        deleteButton.type = "button";
-        deleteButton.textContent = "Delete / 删除";
-
-        deleteButton.onclick = () => {
-            if(!isEditor()){
-                requireLogin(() => deleteButton.click());
-                return;
-            }
-
-            entry.remove();
-            if(!box.querySelector(".temperature-entry")){
-                const empty = document.createElement("div");
-                empty.className = "temperature-empty";
-                empty.textContent = "No temperature recorded yet. / 尚未记录体温。";
-                box.appendChild(empty);
-            }
-            saveData();
-        };
-
-        entry.append(value, time, deleteButton);
+        entry.append(value, time);
         box.appendChild(entry);
 
         select.value = "";
@@ -1846,7 +1788,7 @@ async function downloadCurrentPagePDF(){
         }
 
         pageCopy.querySelectorAll(
-            ".action-cell, .action-buttons, button, .controls, .icon-btn, .temperature-delete"
+            ".action-cell, .action-buttons, button, .controls, .icon-btn"
         ).forEach(element => {
             element.style.display = "none";
         });
