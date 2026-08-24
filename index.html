@@ -833,9 +833,8 @@ function createSelect(options, value = ""){
     return select;
 }
 
-function createMilkSelect(value = ""){
+function createMilkSelect(value = "0"){
     const options = [
-        {label:"", value:""},
         {label:"Medicine / 药物", value:"0"},
         ...MILK_OPTIONS.map(amount => ({
             label:`${amount} ML`,
@@ -864,7 +863,7 @@ function createMilkSelect(value = ""){
                     const amount = input === null ? null : Number(input.trim());
 
                     if(amount === null || input.trim() === "" || Number.isNaN(amount) || amount < 0){
-                        select.value = "";
+                        select.value = "0";
                     }else{
                         addCustomMilkOption(select, String(amount));
                         select.value = String(amount);
@@ -881,7 +880,7 @@ function createMilkSelect(value = ""){
             const amount = input === null ? null : Number(input.trim());
 
             if(amount === null || input.trim() === "" || Number.isNaN(amount) || amount < 0){
-                select.value = "";
+                select.value = "0";
             }else{
                 addCustomMilkOption(select, String(amount));
                 select.value = String(amount);
@@ -1231,8 +1230,7 @@ function addRowToPage(page, data = {}, shouldSave = true){
     row.appendChild(burpCell);
 
     const milkCell = document.createElement("td");
-    const milkSelect = createMilkSelect(data.milk ?? "");
-    milkCell.appendChild(milkSelect);
+    milkCell.appendChild(createMilkSelect(data.milk ?? "0"));
     row.appendChild(milkCell);
 
     const diaperCell = document.createElement("td");
@@ -1259,33 +1257,6 @@ function addRowToPage(page, data = {}, shouldSave = true){
     diaperCell.appendChild(diaper);
     row.appendChild(diaperCell);
 
-    function updateMedicineVisibility(){
-        const isMedicine = milkSelect.value === "0";
-
-        if(isMedicine){
-            burp.checked = false;
-            diaper.value = DIAPER_OPTIONS[0];
-
-            // Merge Burp + Milk + Diaper into one cell for Medicine.
-            if(burpCell.parentNode === row) burpCell.remove();
-            if(diaperCell.parentNode === row) diaperCell.remove();
-            milkCell.colSpan = 3;
-            milkCell.style.textAlign = "center";
-        }else{
-            // Restore the three separate columns.
-            milkCell.colSpan = 1;
-            milkCell.style.textAlign = "";
-            if(burpCell.parentNode !== row) row.insertBefore(burpCell, milkCell);
-            if(diaperCell.parentNode !== row) row.insertBefore(diaperCell, actionCell);
-        }
-    }
-
-    milkSelect.addEventListener("change", () => {
-        updateMedicineVisibility();
-        updatePageSummary(page);
-        saveData();
-    });
-
     const actionCell = document.createElement("td");
     actionCell.className = "action-cell";
 
@@ -1301,17 +1272,7 @@ function addRowToPage(page, data = {}, shouldSave = true){
 
         timeCell.replaceChildren(createTimeControl());
         burp.checked = false;
-        milkCell.replaceChildren(createMilkSelect(""));
-        const newMilkSelect = milkCell.querySelector("select");
-        newMilkSelect.addEventListener("change", () => {
-            milkSelect.value = newMilkSelect.value;
-            updateMedicineVisibility();
-            saveData();
-        });
-        milkCell.colSpan = 1;
-        milkCell.style.textAlign = "";
-        if(burpCell.parentNode !== row) row.insertBefore(burpCell, milkCell);
-        if(diaperCell.parentNode !== row) row.insertBefore(diaperCell, actionCell);
+        milkCell.replaceChildren(createMilkSelect("0"));
         diaper.value = DIAPER_OPTIONS[0];
 
         updatePageSummary(page);
@@ -1342,8 +1303,6 @@ function addRowToPage(page, data = {}, shouldSave = true){
 
     actionCell.appendChild(actionButtons);
     row.appendChild(actionCell);
-
-    updateMedicineVisibility();
 
     tbody.appendChild(row);
 
@@ -1723,9 +1682,7 @@ async function downloadCurrentPagePDF(){
             if(milkSelect){
                 const rawMilk = String(milkSelect.value ?? "").trim();
 
-                if(rawMilk === ""){
-                    milkText = "";
-                }else if(rawMilk === "0"){
+                if(rawMilk === "0" || rawMilk === ""){
                     milkText = "Medicine / 药物";
                 }else if(!Number.isNaN(Number(rawMilk))){
                     milkText = `${rawMilk} ML`;
@@ -1740,7 +1697,7 @@ async function downloadCurrentPagePDF(){
                 line: String(rowIndex + 1),
                 time: liveCells[1]?.querySelector(".time-value")?.textContent?.trim() || "-",
                 burp: liveCells[2]?.querySelector('input[type="checkbox"]')?.checked ? "✓" : "—",
-                milk: milkText || "—",
+                milk: milkText || "Medicine / 药物",
                 diaper: diaperSelect
                     ? (diaperSelect.options[diaperSelect.selectedIndex]?.textContent?.trim() || diaperSelect.value)
                     : "-"
