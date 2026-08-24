@@ -239,6 +239,56 @@ select:focus,input:focus{
     font-size:11px;
 }
 
+.feeding-cell{
+    padding:5px 3px;
+}
+
+.feeding-controls{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    width:100%;
+}
+
+.feeding-controls .milk-select{
+    flex:1 1 55%;
+}
+
+.feeding-controls .diaper-select{
+    flex:1 1 35%;
+}
+
+.feeding-controls .check-wrap{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 22px;
+}
+
+.feeding-controls.medicine-mode .diaper-select,
+.feeding-controls.medicine-mode .check-wrap{
+    display:none;
+}
+
+.feeding-controls.medicine-mode .milk-select{
+    flex:1 1 100%;
+}
+
+@media(max-width:600px){
+    .feeding-cell{
+        padding:4px 2px;
+    }
+
+    .feeding-controls{
+        gap:3px;
+    }
+
+    .feeding-controls .check-wrap{
+        flex-basis:18px;
+    }
+}
+
 .btn{
     border:0;
     border-radius:9px;
@@ -466,9 +516,13 @@ td.action-cell{
 }
 
 .temperature-value{
-    color:var(--pink-700);
+    color:var(--success);
     font-weight:800;
     font-size:13px;
+}
+
+.temperature-value.temperature-high{
+    color:var(--danger);
 }
 
 .temperature-time{
@@ -833,29 +887,35 @@ function createSelect(options, value = ""){
     return select;
 }
 
-function createMilkSelect(value = "0"){
+function createMilkSelect(value = "0", onChange = null){
     const options = [
-        {label:"Medicine / 药物", value:"0"},
+        {label:"", value:"0"},
         ...MILK_OPTIONS.map(amount => ({
             label:`${amount} ML`,
             value:String(amount)
         })),
+        {label:"Medicine / 药物", value:"medicine"},
         {label:"Type ML / 输入奶量", value:"custom"}
     ];
 
     const select = createSelect(options);
-    const savedValue = String(value);
+    select.className = "milk-select";
+
+    const savedValue = String(value ?? "0");
 
     if([...select.options].some(option => option.value === savedValue)){
         select.value = savedValue;
-    }else if(savedValue !== "custom" && !Number.isNaN(Number(savedValue))){
+    }else if(savedValue !== "custom" && savedValue !== "medicine" && !Number.isNaN(Number(savedValue))){
         addCustomMilkOption(select, savedValue);
         select.value = savedValue;
+    }else{
+        select.value = "0";
     }
 
     select.addEventListener("change", () => {
+        const oldValue = String(value ?? "0");
+
         if(!isEditor()){
-            const oldValue = String(value ?? "0");
             select.value = oldValue;
             requireLogin(() => {
                 if(select.value === "custom"){
@@ -869,6 +929,8 @@ function createMilkSelect(value = "0"){
                         select.value = String(amount);
                     }
                 }
+
+                if(onChange) onChange();
                 refreshCurrentPage();
                 saveData();
             });
@@ -887,6 +949,7 @@ function createMilkSelect(value = "0"){
             }
         }
 
+        if(onChange) onChange();
         refreshCurrentPage();
         saveData();
     });
@@ -909,6 +972,86 @@ function addCustomMilkOption(select, amount){
         option,
         select.querySelector('option[value="custom"]')
     );
+}
+
+function updateFeedingMode(feedingControls, milkSelect){
+    if(!feedingControls || !milkSelect) return;
+
+    const isMedicine = milkSelect.value === "medicine";
+    feedingControls.classList.toggle("medicine-mode", isMedicine);
+}
+
+function createFeedingControls(data = {}, onChange = null){
+    const feedingControls = document.createElement("div");
+    feedingControls.className = "feeding-controls";
+
+    const checkWrap = document.createElement("span");
+    checkWrap.className = "check-wrap";
+
+    const burp = document.createElement("input");
+    burp.type = "checkbox";
+    burp.className = "check";
+    burp.checked = Boolean(data.burp);
+
+    burp.addEventListener("change", () => {
+        if(!isEditor()){
+            burp.checked = !burp.checked;
+            requireLogin(() => {
+                burp.checked = !burp.checked;
+                if(onChange) onChange();
+                saveData();
+            });
+            return;
+        }
+
+        if(onChange) onChange();
+        saveData();
+    });
+
+    checkWrap.appendChild(burp);
+
+    const milkSelect = createMilkSelect(data.milk ?? "0", () => {
+        updateFeedingMode(feedingControls, milkSelect);
+
+        if(milkSelect.value === "medicine"){
+            diaperSelect.value = DIAPER_OPTIONS[0];
+            burp.checked = false;
+        }
+
+        if(onChange) onChange();
+    });
+
+    const diaperSelect = createSelect(
+        DIAPER_OPTIONS,
+        data.diaper || DIAPER_OPTIONS[0]
+    );
+    diaperSelect.className = "diaper-select";
+
+    diaperSelect.addEventListener("change", () => {
+        if(!isEditor()){
+            const oldValue = data.diaper || DIAPER_OPTIONS[0];
+            diaperSelect.value = oldValue;
+            requireLogin(() => {
+                diaperSelect.value = oldValue;
+                if(onChange) onChange();
+                saveData();
+            });
+            return;
+        }
+
+        if(onChange) onChange();
+        saveData();
+    });
+
+    feedingControls.append(checkWrap, milkSelect, diaperSelect);
+    updateFeedingMode(feedingControls, milkSelect);
+
+    return {
+        container: feedingControls,
+        burp,
+        milkSelect,
+        diaperSelect
+    };
 }
 
 function createTimeControl(savedTime = ""){
@@ -1074,8 +1217,14 @@ function renderTemperatures(page, temperatures = []){
         entry.dataset.timestamp = String(item.timestamp ?? "");
 
         const value = document.createElement("span");
+        const temperatureNumber = Number(item.temperature);
+
         value.className = "temperature-value";
-        value.textContent = `${Number(item.temperature).toFixed(1)}°C`;
+        value.classList.toggle(
+            "temperature-high",
+            temperatureNumber >= 37.6
+        );
+        value.textContent = `${temperatureNumber.toFixed(1)}°C`;
 
         const time = document.createElement("span");
         time.className = "temperature-time";
@@ -1125,6 +1274,10 @@ function setupTemperatureSection(page, temperatures = []){
 
         const value = document.createElement("span");
         value.className = "temperature-value";
+        value.classList.toggle(
+            "temperature-high",
+            temperature >= 37.6
+        );
         value.textContent = `${temperature.toFixed(1)}°C`;
 
         const time = document.createElement("span");
@@ -1199,6 +1352,24 @@ function createPage(dateString = dateKey(new Date()), rows = [], temperatures = 
     return page;
 }
 
+function applyMedicineMerge(row, milkSelect, burp, diaper){
+    const isMedicine = milkSelect.value === "medicine";
+
+    if(isMedicine){
+        burp.checked = false;
+        diaper.value = DIAPER_OPTIONS[0];
+
+        // Hide Burp and Diaper cells and span the Milk cell across all 3 columns.
+        row.cells[2].style.display = "none";
+        row.cells[3].colSpan = 3;
+        row.cells[4].style.display = "none";
+    }else{
+        row.cells[2].style.display = "";
+        row.cells[3].removeAttribute("colspan");
+        row.cells[4].style.display = "";
+    }
+}
+
 function addRowToPage(page, data = {}, shouldSave = true){
     const tbody = page.querySelector("tbody");
     const row = document.createElement("tr");
@@ -1215,6 +1386,7 @@ function addRowToPage(page, data = {}, shouldSave = true){
     burp.type = "checkbox";
     burp.className = "check";
     burp.checked = Boolean(data.burp);
+
     burp.addEventListener("change", () => {
         if(!isEditor()){
             burp.checked = !burp.checked;
@@ -1226,11 +1398,18 @@ function addRowToPage(page, data = {}, shouldSave = true){
         }
         saveData();
     });
+
     burpCell.appendChild(burp);
     row.appendChild(burpCell);
 
     const milkCell = document.createElement("td");
-    milkCell.appendChild(createMilkSelect(data.milk ?? "0"));
+    const milkSelect = createMilkSelect(data.milk ?? "0", () => {
+        applyMedicineMerge(row, milkSelect, burp, diaper);
+        updatePageSummary(page);
+        saveData();
+    });
+
+    milkCell.appendChild(milkSelect);
     row.appendChild(milkCell);
 
     const diaperCell = document.createElement("td");
@@ -1243,6 +1422,7 @@ function addRowToPage(page, data = {}, shouldSave = true){
         if(!isEditor()){
             const oldValue = data.diaper || DIAPER_OPTIONS[0];
             diaper.value = oldValue;
+
             requireLogin(() => {
                 diaper.value = oldValue;
                 updatePageSummary(page);
@@ -1250,6 +1430,7 @@ function addRowToPage(page, data = {}, shouldSave = true){
             });
             return;
         }
+
         updatePageSummary(page);
         saveData();
     });
@@ -1272,8 +1453,13 @@ function addRowToPage(page, data = {}, shouldSave = true){
 
         timeCell.replaceChildren(createTimeControl());
         burp.checked = false;
-        milkCell.replaceChildren(createMilkSelect("0"));
+        milkSelect.value = "0";
         diaper.value = DIAPER_OPTIONS[0];
+
+        // Clear always restores the normal 3 separate columns.
+        row.cells[2].style.display = "";
+        row.cells[3].removeAttribute("colspan");
+        row.cells[4].style.display = "";
 
         updatePageSummary(page);
         saveData();
@@ -1305,6 +1491,9 @@ function addRowToPage(page, data = {}, shouldSave = true){
     row.appendChild(actionCell);
 
     tbody.appendChild(row);
+
+    // Apply the merge immediately for saved Medicine rows.
+    applyMedicineMerge(row, milkSelect, burp, diaper);
 
     renumberRows(page);
     updatePageSummary(page);
@@ -1458,41 +1647,28 @@ function refreshCurrentPage(){
 }
 
 function getPageRows(page){
-    return [...page.querySelectorAll("tbody tr")].map(row => ({
-        time:row.cells[1].querySelector(".time-value")?.textContent || "",
-        burp:row.cells[2].querySelector("input").checked,
-        milk:row.cells[3].querySelector("select").value,
-        diaper:row.cells[4].querySelector("select").value
-    }));
+    return [...page.querySelectorAll("tbody tr")].map(row => {
+        const cells = row.cells;
+
+        const medicineMode = cells[2]?.style.display === "none"
+            && cells[3]?.colSpan === 3;
+
+        const milkCell = medicineMode ? cells[3] : cells[3];
+        const milkSelect = milkCell?.querySelector("select");
+
+        return {
+            time: cells[1]?.querySelector(".time-value")?.textContent || "",
+            burp: medicineMode
+                ? false
+                : Boolean(cells[2]?.querySelector("input")?.checked),
+            milk: milkSelect?.value || "0",
+            diaper: medicineMode
+                ? DIAPER_OPTIONS[0]
+                : (cells[4]?.querySelector("select")?.value || DIAPER_OPTIONS[0])
+        };
+    });
 }
 
-async function saveData(){
-    if(applyingRemote || !currentUser) return;
-
-    syncCurrentPageTemperatures();
-
-    const data = {
-        currentPage,
-        pages: pages.map(page => ({
-            date: page.dataset.date,
-            rows: getPageRows(page),
-            temperatures: page === pages[currentPage]
-                ? getTemperatureData(document.querySelector(".temperature-card"))
-                : []
-        })),
-        updatedAt: new Date().toISOString(),
-        updatedBy: currentUser.uid
-    };
-
-    try{
-        await setDoc(trackerRef, data);
-        setFirebaseStatus("☁️ Saved to Firebase");
-    }catch(error){
-        console.error("Firestore save error:", error);
-        setFirebaseStatus("❌ Could not save to Firebase", true);
-        alert("Could not save the change to Firebase. Please check your internet connection.");
-    }
-}
 
 function applyRemoteData(saved){
     applyingRemote = true;
@@ -1674,16 +1850,22 @@ async function downloadCurrentPagePDF(){
 
         const liveRows = [...page.querySelectorAll("tbody tr")].map((liveRow, rowIndex) => {
             const liveCells = [...liveRow.querySelectorAll(":scope > td")];
-            const milkSelect = liveCells[3]?.querySelector("select");
-            const diaperSelect = liveCells[4]?.querySelector("select");
+            const medicineMode = liveCells[2]?.style.display === "none"
+                && liveCells[3]?.colSpan === 3;
+            const milkCell = liveCells[3];
+            const milkSelect = milkCell?.querySelector("select");
+            const diaperSelect = medicineMode ? null : liveCells[4]?.querySelector("select");
+            const burpCheckbox = medicineMode ? null : liveCells[2]?.querySelector(".check");
 
             let milkText = "";
 
             if(milkSelect){
                 const rawMilk = String(milkSelect.value ?? "").trim();
 
-                if(rawMilk === "0" || rawMilk === ""){
+                if(rawMilk === "medicine"){
                     milkText = "Medicine / 药物";
+                }else if(rawMilk === "0" || rawMilk === ""){
+                    milkText = "";
                 }else if(!Number.isNaN(Number(rawMilk))){
                     milkText = `${rawMilk} ML`;
                 }else{
@@ -1696,8 +1878,10 @@ async function downloadCurrentPagePDF(){
             return {
                 line: String(rowIndex + 1),
                 time: liveCells[1]?.querySelector(".time-value")?.textContent?.trim() || "-",
-                burp: liveCells[2]?.querySelector('input[type="checkbox"]')?.checked ? "✓" : "—",
-                milk: milkText || "Medicine / 药物",
+                burp: rawMilk === "medicine"
+                    ? ""
+                    : (burpCheckbox?.checked ? "✓" : "—"),
+                milk: milkText,
                 diaper: diaperSelect
                     ? (diaperSelect.options[diaperSelect.selectedIndex]?.textContent?.trim() || diaperSelect.value)
                     : "-"
@@ -1707,7 +1891,7 @@ async function downloadCurrentPagePDF(){
         pageCopy.querySelectorAll("thead tr, tbody tr").forEach(row => {
             const cells = row.querySelectorAll("th, td");
 
-            if(cells.length >= 6){
+            if(cells.length >= 4){
                 cells[cells.length - 1].remove();
             }
         });
@@ -1719,16 +1903,20 @@ async function downloadCurrentPagePDF(){
 
             const copiedCells = [...copiedRow.querySelectorAll(":scope > td")];
 
+            const feedingText = data.milk === "Medicine / 药物"
+                ? "Medicine / 药物"
+                : [data.burp, data.milk, data.diaper]
+                    .filter(Boolean)
+                    .join(" • ");
+
             const values = [
                 data.line,
                 data.time,
-                data.burp,
-                data.milk,
-                data.diaper
+                feedingText
             ];
 
             copiedCells.forEach((cell, cellIndex) => {
-                if(cellIndex < 5){
+                if(cellIndex < 3){
                     cell.replaceChildren();
 
                     const valueText = document.createElement("span");
@@ -1827,9 +2015,12 @@ async function downloadCurrentPagePDF(){
                         row.style.background = "#fff";
 
                         const temp = document.createElement("span");
-                        temp.textContent = `${Number(item.temperature).toFixed(1)}°C`;
+                        const pdfTemperature = Number(item.temperature);
+                        temp.textContent = `${pdfTemperature.toFixed(1)}°C`;
                         temp.style.fontWeight = "800";
-                        temp.style.color = "#a84265";
+                        temp.style.color = pdfTemperature >= 37.6
+                            ? "#d95d73"
+                            : "#2f9d68";
 
                         const stamp = document.createElement("span");
                         stamp.textContent = formatTemperatureTimestamp(item.timestamp);
