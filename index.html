@@ -1232,11 +1232,7 @@ function addRowToPage(page, data = {}, shouldSave = true){
 
     const milkCell = document.createElement("td");
     const milkSelect = createMilkSelect(data.milk ?? "");
-    const medicineLabel = document.createElement("span");
-    medicineLabel.className = "medicine-label";
-    medicineLabel.textContent = "Medicine / 药物";
-    medicineLabel.style.display = "none";
-    milkCell.append(milkSelect, medicineLabel);
+    milkCell.appendChild(milkSelect);
     row.appendChild(milkCell);
 
     const diaperCell = document.createElement("td");
@@ -1270,18 +1266,13 @@ function addRowToPage(page, data = {}, shouldSave = true){
             burp.checked = false;
             diaper.value = DIAPER_OPTIONS[0];
 
-            // Merge Burp + Milk + Diaper into one cell and display
-            // Medicine / 药物 as plain text instead of a dropdown.
-            milkSelect.style.display = "none";
-            medicineLabel.style.display = "inline";
+            // Merge Burp + Milk + Diaper into one cell for Medicine.
             if(burpCell.parentNode === row) burpCell.remove();
             if(diaperCell.parentNode === row) diaperCell.remove();
             milkCell.colSpan = 3;
             milkCell.style.textAlign = "center";
         }else{
-            // Restore the three separate columns and the milk dropdown.
-            milkSelect.style.display = "";
-            medicineLabel.style.display = "none";
+            // Restore the three separate columns.
             milkCell.colSpan = 1;
             milkCell.style.textAlign = "";
             if(burpCell.parentNode !== row) row.insertBefore(burpCell, milkCell);
@@ -1310,10 +1301,13 @@ function addRowToPage(page, data = {}, shouldSave = true){
 
         timeCell.replaceChildren(createTimeControl());
         burp.checked = false;
-        milkSelect.value = "";
-        milkSelect.style.display = "";
-        medicineLabel.style.display = "none";
-        if(milkSelect.parentNode !== milkCell) milkCell.appendChild(milkSelect);
+        milkCell.replaceChildren(createMilkSelect(""));
+        const newMilkSelect = milkCell.querySelector("select");
+        newMilkSelect.addEventListener("change", () => {
+            milkSelect.value = newMilkSelect.value;
+            updateMedicineVisibility();
+            saveData();
+        });
         milkCell.colSpan = 1;
         milkCell.style.textAlign = "";
         if(burpCell.parentNode !== row) row.insertBefore(burpCell, milkCell);
