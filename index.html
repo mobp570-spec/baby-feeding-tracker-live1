@@ -401,6 +401,122 @@ td.action-cell{
     }
 }
 
+/* TEMPERATURE */
+.temperature-card{
+    margin-top:10px;
+}
+
+.temperature-section{
+    padding:10px;
+    border-top:1px solid var(--line);
+    background:linear-gradient(180deg,#fff,#fff9fb);
+}
+
+.temperature-controls{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    margin-bottom:8px;
+}
+
+.temperature-select{
+    flex:1;
+    max-width:210px;
+    padding:9px 8px;
+    border:1px solid var(--pink-300);
+    border-radius:10px;
+    background:#fff;
+    color:var(--ink);
+    font-size:11px;
+    text-align:center;
+}
+
+.temperature-add-btn{
+    flex:0 0 auto;
+}
+
+.temperature-box{
+    min-height:70px;
+    max-height:220px;
+    overflow-y:auto;
+    padding:9px;
+    border:1px solid var(--pink-200);
+    border-radius:14px;
+    background:var(--pink-50);
+}
+
+.temperature-empty{
+    text-align:center;
+    color:var(--muted);
+    font-size:10px;
+    padding:14px 5px;
+}
+
+.temperature-entry{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:8px 9px;
+    margin-bottom:6px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:#fff;
+}
+
+.temperature-entry:last-child{
+    margin-bottom:0;
+}
+
+.temperature-value{
+    color:var(--pink-700);
+    font-weight:800;
+    font-size:13px;
+}
+
+.temperature-time{
+    color:var(--muted);
+    font-size:10px;
+    text-align:right;
+}
+
+.temperature-delete{
+    flex:none;
+    border:0;
+    border-radius:7px;
+    padding:5px 7px;
+    background:#fff1f3;
+    color:var(--danger);
+    cursor:pointer;
+    font-size:9px;
+    font-weight:700;
+}
+
+@media(max-width:600px){
+    .temperature-controls{
+        gap:5px;
+    }
+
+    .temperature-select{
+        max-width:none;
+        font-size:10px;
+        padding:8px 4px;
+    }
+
+    .temperature-entry{
+        padding:7px;
+    }
+
+    .temperature-value{
+        font-size:12px;
+    }
+
+    .temperature-time{
+        font-size:9px;
+    }
+}
+
 .status-success{ color:var(--success); }
 .status-warning{ color:var(--danger); }
 
@@ -605,6 +721,22 @@ td.action-cell{
 
     <section class="card">
         <div id="pages"></div>
+    </section>
+
+    <section class="card temperature-card">
+        <div class="temperature-section">
+            <div class="temperature-controls">
+                <select class="temperature-select" aria-label="Temperature">
+                    <option value="">🌡️ Select temperature / 选择体温</option>
+                </select>
+                <button class="btn btn-primary temperature-add-btn" type="button">
+                    ＋ Add Temperature<br>添加体温
+                </button>
+            </div>
+            <div class="temperature-box">
+                <div class="temperature-empty">No temperature recorded yet. / 尚未记录体温。</div>
+            </div>
+        </div>
     </section>
 
     <div class="controls">
@@ -920,7 +1052,188 @@ function createLoggedTime(time){
     return span;
 }
 
-function createPage(dateString = dateKey(new Date()), rows = []){
+const TEMPERATURE_OPTIONS = Array.from({length:141}, (_, i) => {
+    const value = (36 + i / 10).toFixed(1);
+    return {label:`${value}°C`, value};
+});
+
+function populateTemperatureSelect(select){
+    if(!select || select.options.length > 1) return;
+
+    TEMPERATURE_OPTIONS.forEach(item => {
+        const option = document.createElement("option");
+        option.value = item.value;
+        option.textContent = item.label;
+        select.appendChild(option);
+    });
+}
+
+function formatTemperatureTimestamp(timestamp){
+    if(!timestamp) return "";
+    const date = new Date(timestamp);
+    if(Number.isNaN(date.getTime())) return String(timestamp);
+
+    return date.toLocaleString([], {
+        day:"2-digit",
+        month:"2-digit",
+        year:"numeric",
+        hour:"numeric",
+        minute:"2-digit",
+        hour12:true
+    });
+}
+
+function getTemperatureData(page){
+    if(!page) return [];
+
+    return [...page.querySelectorAll(".temperature-entry")].map(entry => ({
+        temperature: entry.dataset.temperature || "",
+        timestamp: entry.dataset.timestamp || ""
+    }));
+}
+
+function syncCurrentPageTemperatures(){
+    const card = document.querySelector(".temperature-card");
+    if(pages[currentPage] && card){
+        pages[currentPage]._temperatureData = getTemperatureData(card);
+    }
+}
+
+function getSavedTemperaturesForPage(page){
+    return page?._temperatureData || [];
+}
+
+function renderTemperatures(page, temperatures = []){
+    const select = page.querySelector(".temperature-select");
+    const box = page.querySelector(".temperature-box");
+
+    if(!select || !box) return;
+
+    populateTemperatureSelect(select);
+    box.replaceChildren();
+
+    if(!temperatures.length){
+        const empty = document.createElement("div");
+        empty.className = "temperature-empty";
+        empty.textContent = "No temperature recorded yet. / 尚未记录体温。";
+        box.appendChild(empty);
+        return;
+    }
+
+    temperatures.forEach(item => {
+        const entry = document.createElement("div");
+        entry.className = "temperature-entry";
+        entry.dataset.temperature = String(item.temperature ?? "");
+        entry.dataset.timestamp = String(item.timestamp ?? "");
+
+        const value = document.createElement("span");
+        value.className = "temperature-value";
+        value.textContent = `${Number(item.temperature).toFixed(1)}°C`;
+
+        const time = document.createElement("span");
+        time.className = "temperature-time";
+        time.textContent = formatTemperatureTimestamp(item.timestamp);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "temperature-delete";
+        deleteButton.type = "button";
+        deleteButton.textContent = "Delete / 删除";
+
+        deleteButton.addEventListener("click", () => {
+            if(!isEditor()){
+                requireLogin(() => deleteButton.click());
+                return;
+            }
+
+            entry.remove();
+            if(!box.querySelector(".temperature-entry")){
+                const empty = document.createElement("div");
+                empty.className = "temperature-empty";
+                empty.textContent = "No temperature recorded yet. / 尚未记录体温。";
+                box.appendChild(empty);
+            }
+            saveData();
+        });
+
+        entry.append(value, time, deleteButton);
+        box.appendChild(entry);
+    });
+}
+
+function setupTemperatureSection(page, temperatures = []){
+    const temperatureCard = document.querySelector(".temperature-card");
+    if(!temperatureCard) return;
+
+    const select = temperatureCard.querySelector(".temperature-select");
+    const addButton = temperatureCard.querySelector(".temperature-add-btn");
+
+    populateTemperatureSelect(select);
+    renderTemperatures(temperatureCard, temperatures);
+
+    addButton.onclick = () => {
+        if(!isEditor()){
+            requireLogin(() => addButton.click());
+            return;
+        }
+
+        if(!select.value){
+            alert("Please select a temperature.\n请选择体温。");
+            return;
+        }
+
+        const temperature = Number(select.value);
+        if(Number.isNaN(temperature) || temperature < 36 || temperature > 50){
+            alert("Please select a temperature from 36°C to 50°C.\n请选择36°C至50°C之间的体温。");
+            return;
+        }
+
+        const box = temperatureCard.querySelector(".temperature-box");
+        const empty = box.querySelector(".temperature-empty");
+        if(empty) empty.remove();
+
+        const timestamp = new Date().toISOString();
+        const entry = document.createElement("div");
+        entry.className = "temperature-entry";
+        entry.dataset.temperature = temperature.toFixed(1);
+        entry.dataset.timestamp = timestamp;
+
+        const value = document.createElement("span");
+        value.className = "temperature-value";
+        value.textContent = `${temperature.toFixed(1)}°C`;
+
+        const time = document.createElement("span");
+        time.className = "temperature-time";
+        time.textContent = formatTemperatureTimestamp(timestamp);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "temperature-delete";
+        deleteButton.type = "button";
+        deleteButton.textContent = "Delete / 删除";
+
+        deleteButton.onclick = () => {
+            if(!isEditor()){
+                requireLogin(() => deleteButton.click());
+                return;
+            }
+
+            entry.remove();
+            if(!box.querySelector(".temperature-entry")){
+                const empty = document.createElement("div");
+                empty.className = "temperature-empty";
+                empty.textContent = "No temperature recorded yet. / 尚未记录体温。";
+                box.appendChild(empty);
+            }
+            saveData();
+        };
+
+        entry.append(value, time, deleteButton);
+        box.appendChild(entry);
+
+        select.value = "";
+        saveData();
+    };
+}
+function createPage(dateString = dateKey(new Date()), rows = [], temperatures = []){
     const page = document.createElement("div");
     page.className = "page";
 
@@ -973,6 +1286,10 @@ function createPage(dateString = dateKey(new Date()), rows = []){
         addRowToPage(page, {}, false);
     }
 
+    page._temperatureData = Array.isArray(temperatures) ? temperatures : [];
+    if(page === pages[currentPage]){
+        setupTemperatureSection(page, page._temperatureData);
+    }
     updatePageSummary(page);
     return page;
 }
@@ -1156,6 +1473,14 @@ function showPage(index){
     updatePageInfo();
     updateNavigation();
     updatePageSummary(pages[currentPage]);
+
+    const temperatureCard = document.querySelector(".temperature-card");
+    if(temperatureCard){
+        renderTemperatures(
+            temperatureCard,
+            getSavedTemperaturesForPage(pages[currentPage])
+        );
+    }
 }
 
 function normalizePageDatesToToday(){
@@ -1239,11 +1564,16 @@ function getPageRows(page){
 async function saveData(){
     if(applyingRemote || !currentUser) return;
 
+    syncCurrentPageTemperatures();
+
     const data = {
         currentPage,
         pages: pages.map(page => ({
             date: page.dataset.date,
-            rows: getPageRows(page)
+            rows: getPageRows(page),
+            temperatures: page === pages[currentPage]
+                ? getTemperatureData(document.querySelector(".temperature-card"))
+                : []
         })),
         updatedAt: new Date().toISOString(),
         updatedBy: currentUser.uid
@@ -1269,7 +1599,8 @@ function applyRemoteData(saved){
         saved.pages.forEach(pageData => {
             createPage(
                 pageData.date || dateKey(new Date()),
-                pageData.rows || []
+                pageData.rows || [],
+                pageData.temperatures || []
             );
         });
 
@@ -1552,7 +1883,7 @@ async function downloadCurrentPagePDF(){
         }
 
         pageCopy.querySelectorAll(
-            ".action-cell, .action-buttons, button, .controls, .icon-btn"
+            ".action-cell, .action-buttons, button, .controls, .icon-btn, .temperature-delete"
         ).forEach(element => {
             element.style.display = "none";
         });
@@ -1565,6 +1896,55 @@ async function downloadCurrentPagePDF(){
             mark.style.color = input.checked ? "#2f9d68" : "#8f6f7b";
             input.replaceWith(mark);
         });
+
+        syncCurrentPageTemperatures();
+        const liveTemperatures = getSavedTemperaturesForPage(page);
+
+        const temperatureSection = pageCopy.querySelector(".temperature-section");
+        if(temperatureSection){
+            temperatureSection.querySelector(".temperature-controls")?.remove();
+
+            const temperatureBox = temperatureSection.querySelector(".temperature-box");
+            if(temperatureBox){
+                temperatureBox.replaceChildren();
+
+                if(liveTemperatures.length){
+                    liveTemperatures.forEach(item => {
+                        const row = document.createElement("div");
+                        row.style.display = "flex";
+                        row.style.justifyContent = "space-between";
+                        row.style.alignItems = "center";
+                        row.style.gap = "12px";
+                        row.style.padding = "8px 10px";
+                        row.style.marginBottom = "6px";
+                        row.style.border = "1px solid #f1d7df";
+                        row.style.borderRadius = "10px";
+                        row.style.background = "#fff";
+
+                        const temp = document.createElement("span");
+                        temp.textContent = `${Number(item.temperature).toFixed(1)}°C`;
+                        temp.style.fontWeight = "800";
+                        temp.style.color = "#a84265";
+
+                        const stamp = document.createElement("span");
+                        stamp.textContent = formatTemperatureTimestamp(item.timestamp);
+                        stamp.style.color = "#8f6f7b";
+                        stamp.style.fontSize = "11px";
+
+                        row.append(temp, stamp);
+                        temperatureBox.appendChild(row);
+                    });
+                }else{
+                    const empty = document.createElement("div");
+                    empty.textContent = "No temperature recorded yet. / 尚未记录体温。";
+                    empty.style.textAlign = "center";
+                    empty.style.color = "#8f6f7b";
+                    empty.style.fontSize = "11px";
+                    empty.style.padding = "12px";
+                    temperatureBox.appendChild(empty);
+                }
+            }
+        }
 
         const summary = pageCopy.querySelector(".summary");
 
