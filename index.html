@@ -786,41 +786,6 @@ const trackerRef = doc(db, "babyTracker", "main");
 const ADMIN_EMAIL = "admin@babyfeedingtracker.com";
 let currentUser = null, pendingAction = null, applyingRemote = false, firebaseConnected = false;
 
-// Automatically sign out after 30 seconds with no user activity.
-const INACTIVITY_LIMIT = 30 * 1000;
-let inactivityTimer = null;
-
-function clearInactivityTimer(){
-    if(inactivityTimer){
-        clearTimeout(inactivityTimer);
-        inactivityTimer = null;
-    }
-}
-
-function resetInactivityTimer(){
-    clearInactivityTimer();
-
-    if(!currentUser) return;
-
-    inactivityTimer = setTimeout(async () => {
-        if(!currentUser) return;
-
-        try{
-            await signOut(auth);
-            alert("You have been automatically logged out after 30 seconds of inactivity.");
-        }catch(error){
-            console.error("Automatic logout error:", error);
-        }
-    }, INACTIVITY_LIMIT);
-}
-
-function recordUserActivity(){
-    if(currentUser) resetInactivityTimer();
-}
-
-["click","keydown","touchstart","mousemove","scroll"].forEach(eventName => {
-    document.addEventListener(eventName, recordUserActivity, {passive:true});
-});
 const $ = selector => document.querySelector(selector);
 function setFirebaseStatus(message,error=false){const el=$("#firebaseStatus");if(el){el.textContent=message;el.classList.toggle("error",error);}}
 function isEditor(){return !!currentUser;}
@@ -835,9 +800,7 @@ onAuthStateChanged(auth,user=>{
         badge.textContent="🔓 Admin editing mode";
         badge.classList.add("show");
         setFirebaseStatus("☁️ Firebase connected • Editing enabled");
-        resetInactivityTimer();
     }else{
-        clearInactivityTimer();
         badge.classList.remove("show");
         setFirebaseStatus(firebaseConnected?"☁️ Firebase connected • View only":"☁️ Connecting to Firebase...");
     }
