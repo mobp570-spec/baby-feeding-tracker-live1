@@ -1352,18 +1352,27 @@ function createPage(dateString = dateKey(new Date()), rows = [], temperatures = 
     return page;
 }
 
-function applyMedicineMerge(row, milkSelect, burp, diaper){
+function applyMedicineMerge(row, milkSelect, burp, diaper, medicineText = null){
     const isMedicine = milkSelect.value === "medicine";
 
     if(isMedicine){
         burp.checked = false;
         diaper.value = DIAPER_OPTIONS[0];
 
+        // Show Medicine as plain text instead of the dropdown.
+        milkSelect.style.display = "none";
+        if(medicineText){
+            medicineText.textContent = "Medicine / 药物";
+            medicineText.style.display = "inline";
+        }
+
         // Hide Burp and Diaper cells and span the Milk cell across all 3 columns.
         row.cells[2].style.display = "none";
         row.cells[3].colSpan = 3;
         row.cells[4].style.display = "none";
     }else{
+        milkSelect.style.display = "";
+        if(medicineText) medicineText.style.display = "none";
         row.cells[2].style.display = "";
         row.cells[3].removeAttribute("colspan");
         row.cells[4].style.display = "";
@@ -1403,13 +1412,18 @@ function addRowToPage(page, data = {}, shouldSave = true){
     row.appendChild(burpCell);
 
     const milkCell = document.createElement("td");
+    const medicineText = document.createElement("span");
+    medicineText.textContent = "Medicine / 药物";
+    medicineText.style.display = "none";
+    medicineText.style.fontWeight = "700";
+
     const milkSelect = createMilkSelect(data.milk ?? "0", () => {
-        applyMedicineMerge(row, milkSelect, burp, diaper);
+        applyMedicineMerge(row, milkSelect, burp, diaper, medicineText);
         updatePageSummary(page);
         saveData();
     });
 
-    milkCell.appendChild(milkSelect);
+    milkCell.append(milkSelect, medicineText);
     row.appendChild(milkCell);
 
     const diaperCell = document.createElement("td");
@@ -1457,6 +1471,8 @@ function addRowToPage(page, data = {}, shouldSave = true){
         diaper.value = DIAPER_OPTIONS[0];
 
         // Clear always restores the normal 3 separate columns.
+        milkSelect.style.display = "";
+        if(medicineText) medicineText.style.display = "none";
         row.cells[2].style.display = "";
         row.cells[3].removeAttribute("colspan");
         row.cells[4].style.display = "";
@@ -1493,7 +1509,8 @@ function addRowToPage(page, data = {}, shouldSave = true){
     tbody.appendChild(row);
 
     // Apply the merge immediately for saved Medicine rows.
-    applyMedicineMerge(row, milkSelect, burp, diaper);
+
+    applyMedicineMerge(row, milkSelect, burp, diaper, medicineText);
 
     renumberRows(page);
     updatePageSummary(page);
