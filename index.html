@@ -1646,6 +1646,31 @@ function refreshCurrentPage(){
     }
 }
 
+async function saveData(){
+    if(applyingRemote || !isEditor()) return;
+
+    try{
+        // Keep the currently visible temperature entries in sync before saving.
+        syncCurrentPageTemperatures();
+
+        const data = {
+            currentPage,
+            pages: pages.map(page => ({
+                date: page.dataset.date || dateKey(new Date()),
+                rows: getPageRows(page),
+                temperatures: getSavedTemperaturesForPage(page)
+            }))
+        };
+
+        setFirebaseStatus("☁️ Saving...");
+        await setDoc(trackerRef, data, { merge: false });
+        setFirebaseStatus("☁️ Saved • Firebase connected");
+    }catch(error){
+        console.error("Firestore save error:", error);
+        setFirebaseStatus("❌ Could not save data", true);
+    }
+}
+
 function getPageRows(page){
     return [...page.querySelectorAll("tbody tr")].map(row => {
         const cells = row.cells;
