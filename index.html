@@ -781,6 +781,7 @@ td.action-cell{
         <button class="btn btn-primary" id="addBtn">＋ Add Row<br>添加一行</button>
         <button class="btn btn-soft" id="prevPageBtn">← Previous<br>上一页</button>
         <button class="btn btn-soft" id="nextPageBtn">Next →<br>下一页</button>
+        <button class="btn btn-soft" id="lastPageBtn">Last →|<br>最后一页</button>
     </div>
 
 </main>
@@ -1641,6 +1642,10 @@ function updateNavigation(){
             ? "Next →<br>下一页"
             : "Next Day →<br>下一天";
 
+    // Hide the Last Page button when already on the final page.
+    $("#lastPageBtn").style.display =
+        currentPage === pages.length - 1 ? "none" : "";
+
     const addButton = $("#addBtn");
     const isCurrentDate = isCurrentDatePage(pages[currentPage]);
 
@@ -2265,6 +2270,22 @@ $("#nextPageBtn").addEventListener("click", () => {
         showPage(currentPage + 1);
     }else{
         addNextPage();
+    }
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+});
+
+$("#lastPageBtn").addEventListener("click", () => {
+    if(!isEditor()){
+        requireLogin(() => $("#lastPageBtn").click());
+        return;
+    }
+
+    if(pages.length){
+        showPage(pages.length - 1);
     }
 
     window.scrollTo({
