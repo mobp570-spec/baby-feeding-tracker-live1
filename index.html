@@ -572,6 +572,24 @@ td.action-cell{
     min-width:90px;
 }
 
+/* PAST-DATE LOCKING */
+.page.past-date-locked .action-cell,
+.page.past-date-locked .action-head{
+    display:none !important;
+}
+
+.page.past-date-locked input,
+.page.past-date-locked select,
+.page.past-date-locked button{
+    pointer-events:none;
+    cursor:not-allowed !important;
+    opacity:.62;
+}
+
+.page.past-date-locked .temperature-add-btn{
+    display:none;
+}
+
 .btn:disabled{
     opacity:.45 !important;
     cursor:not-allowed !important;
@@ -1292,6 +1310,42 @@ function setupTemperatureSection(page, temperatures = []){
         saveData();
     };
 }
+function getStartOfToday(){
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    return today;
+}
+
+function isPastDatePage(page){
+    if(!page) return false;
+
+    const pageDate = new Date(page.dataset.date);
+    if(Number.isNaN(pageDate.getTime())) return false;
+
+    pageDate.setHours(0,0,0,0);
+    return pageDate.getTime() < getStartOfToday().getTime();
+}
+
+function lockPastDatePage(page){
+    if(!page) return;
+
+    const locked = isPastDatePage(page);
+    page.classList.toggle("past-date-locked", locked);
+
+    // Past pages are completely read-only.  The Action column is removed.
+    const actionHead = page.querySelector(".action-head");
+    if(actionHead) actionHead.style.display = locked ? "none" : "";
+
+    page.querySelectorAll(".action-cell").forEach(cell => {
+        cell.style.display = locked ? "none" : "";
+    });
+
+    // Disable all editing controls on past pages.
+    page.querySelectorAll("input, select, button").forEach(control => {
+        control.disabled = locked;
+    });
+}
+
 function createPage(dateString = dateKey(new Date()), rows = [], temperatures = []){
     const page = document.createElement("div");
     page.className = "page";
@@ -1316,7 +1370,7 @@ function createPage(dateString = dateKey(new Date()), rows = [], temperatures = 
                         <th>Burp<br>拍嗝</th>
                         <th>Milk<br>奶量</th>
                         <th>Diaper<br>尿布</th>
-                        <th>Action<br>操作</th>
+                        <th class="action-head">Action<br>操作</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -1350,6 +1404,7 @@ function createPage(dateString = dateKey(new Date()), rows = [], temperatures = 
         setupTemperatureSection(page, page._temperatureData);
     }
     updatePageSummary(page);
+    lockPastDatePage(page);
     return page;
 }
 
@@ -1515,6 +1570,7 @@ function addRowToPage(page, data = {}, shouldSave = true){
 
     renumberRows(page);
     updatePageSummary(page);
+    lockPastDatePage(page);
 
     if(shouldSave) saveData();
 }
@@ -1585,6 +1641,7 @@ function showPage(index){
     updatePageInfo();
     updateNavigation();
     updatePageSummary(pages[currentPage]);
+    lockPastDatePage(pages[currentPage]);
 
     const temperatureCard = document.querySelector(".temperature-card");
     if(temperatureCard){
@@ -1592,6 +1649,11 @@ function showPage(index){
             temperatureCard,
             getSavedTemperaturesForPage(pages[currentPage])
         );
+
+        const locked = isPastDatePage(pages[currentPage]);
+        temperatureCard.querySelector(".temperature-select").disabled = locked;
+        temperatureCard.querySelector(".temperature-add-btn").disabled = locked;
+        temperatureCard.classList.toggle("past-date-locked", locked);
     }
 }
 
@@ -1660,6 +1722,12 @@ function updateNavigation(){
         addButton.style.opacity = "1";
         addButton.style.cursor = "pointer";
     }
+
+    // A past page is read-only, including the page-level delete/clear action.
+    const pastPage = isPastDatePage(pages[currentPage]);
+    const deletePageButton = $("#deletePageBtn");
+    deletePageButton.disabled = pastPage;
+    deletePageButton.style.display = pastPage ? "none" : "";
 }
 
 function refreshCurrentPage(){
@@ -1794,6 +1862,9 @@ function addNextPage(){
 
 function deleteCurrentPage(){
     if(!pages.length) return;
+
+    // Previous dates are permanently read-only after the date has passed.
+    if(isPastDatePage(pages[currentPage])) return;
 
     if(pages.length === 1){
         if(!confirm(
