@@ -773,7 +773,7 @@ td.action-cell{
         <button class="icon-btn" id="deletePageBtn" title="Delete / Clear current page" aria-label="Delete or clear current page">🗑</button>
     </div>
 
-    <div class="firebase-status" id="firebaseStatus">☁️ Connecting to Firebase...</div>
+    <div class="firebase-status" id="firebaseStatus">☁️ Connecting to Cloud...</div>
 
     <section class="card">
         <div id="pages"></div>
@@ -856,10 +856,10 @@ onAuthStateChanged(auth,user=>{
     if(currentUser){
         badge.textContent="🔓 Admin editing mode";
         badge.classList.add("show");
-        setFirebaseStatus("☁️ Firebase connected • Editing enabled");
+        setFirebaseStatus("☁️ Cloud connected • Editing enabled");
     }else{
         badge.classList.remove("show");
-        setFirebaseStatus(firebaseConnected?"☁️ Firebase connected • View only":"☁️ Connecting to Firebase...");
+        setFirebaseStatus(firebaseConnected?"☁️ Cloud connected • View only":"☁️ Connecting to Cloud...");
     }
 
     updateNavigation();
