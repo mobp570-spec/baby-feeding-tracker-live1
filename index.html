@@ -1752,12 +1752,12 @@ async function saveData(){
             }))
         };
 
-        setFirebaseStatus("☁️ Saving...");
+        setFirebaseStatus("☁️ Syncing...");
         await setDoc(trackerRef, data, { merge: false });
-        setFirebaseStatus("☁️ Saved • Firebase connected");
+        setFirebaseStatus("☁️ Synced • Cloud connected");
     }catch(error){
         console.error("Firestore save error:", error);
-        setFirebaseStatus("❌ Could not save data", true);
+        setFirebaseStatus("❌ Could not sync data, true);
     }
 }
 
@@ -1825,8 +1825,8 @@ function startFirestore(){
             applyRemoteData(snapshot.data());
             setFirebaseStatus(
                 currentUser
-                    ? "☁️ Firebase connected • Editing enabled"
-                    : "☁️ Firebase connected • View only"
+                    ? "☁️ Cloud connected • Editing enabled"
+                    : "☁️ Cloud connected • View only"
             );
         }else{
             applyingRemote = true;
@@ -1839,8 +1839,8 @@ function startFirestore(){
 
             setFirebaseStatus(
                 currentUser
-                    ? "☁️ Firebase connected • Ready"
-                    : "☁️ Firebase connected • View only"
+                    ? "☁️ Cloud connected • Ready"
+                    : "☁️ Cloud connected • View only"
             );
         }
     }, error => {
