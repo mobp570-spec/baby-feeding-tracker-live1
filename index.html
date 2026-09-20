@@ -773,7 +773,7 @@ td.action-cell{
         <button class="icon-btn" id="deletePageBtn" title="Delete / Clear current page" aria-label="Delete or clear current page">🗑</button>
     </div>
 
-    <div class="firebase-status" id="firebaseStatus">☁️ Connecting to Cloud...</div>
+    <div class="firebase-status" id="firebaseStatus">☁️ Connecting to Firebase...</div>
 
     <section class="card">
         <div id="pages"></div>
@@ -856,10 +856,10 @@ onAuthStateChanged(auth,user=>{
     if(currentUser){
         badge.textContent="🔓 Admin editing mode";
         badge.classList.add("show");
-        setFirebaseStatus("☁️ Cloud connected • Editing enabled");
+        setFirebaseStatus("☁️ Firebase connected • Editing enabled");
     }else{
         badge.classList.remove("show");
-        setFirebaseStatus(firebaseConnected?"☁️ Cloud connected • View only":"☁️ Connecting to Cloud...");
+        setFirebaseStatus(firebaseConnected?"☁️ Firebase connected • View only":"☁️ Connecting to Firebase...");
     }
 
     updateNavigation();
@@ -1752,12 +1752,12 @@ async function saveData(){
             }))
         };
 
-        setFirebaseStatus("☁️ Syncing...");
+        setFirebaseStatus("☁️ Saving...");
         await setDoc(trackerRef, data, { merge: false });
-        setFirebaseStatus("☁️ Synced • Cloud connected");
+        setFirebaseStatus("☁️ Saved • Firebase connected");
     }catch(error){
         console.error("Firestore save error:", error);
-        setFirebaseStatus("❌ Could not sync data, true);
+        setFirebaseStatus("❌ Could not save data", true);
     }
 }
 
@@ -1825,8 +1825,8 @@ function startFirestore(){
             applyRemoteData(snapshot.data());
             setFirebaseStatus(
                 currentUser
-                    ? "☁️ Cloud connected • Editing enabled"
-                    : "☁️ Cloud connected • View only"
+                    ? "☁️ Firebase connected • Editing enabled"
+                    : "☁️ Firebase connected • View only"
             );
         }else{
             applyingRemote = true;
@@ -1839,8 +1839,8 @@ function startFirestore(){
 
             setFirebaseStatus(
                 currentUser
-                    ? "☁️ Cloud connected • Ready"
-                    : "☁️ Cloud connected • View only"
+                    ? "☁️ Firebase connected • Ready"
+                    : "☁️ Firebase connected • View only"
             );
         }
     }, error => {
