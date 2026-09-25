@@ -143,12 +143,11 @@ table{
     border:1px solid var(--line);
 }
 
-th:nth-child(1), td:nth-child(1){ width:7%; }
-th:nth-child(2), td:nth-child(2){ width:24%; }
-th:nth-child(3), td:nth-child(3){ width:9%; }
-th:nth-child(4), td:nth-child(4){ width:16%; }
-th:nth-child(5), td:nth-child(5){ width:17%; }
-th:nth-child(6), td:nth-child(6){ width:27%; }
+th:nth-child(1), td:nth-child(1){ width:8%; }
+th:nth-child(2), td:nth-child(2){ width:28%; }
+th:nth-child(3), td:nth-child(3){ width:12%; }
+th:nth-child(4), td:nth-child(4){ width:26%; }
+th:nth-child(5), td:nth-child(5){ width:26%; }
 
 th{
     padding:7px 2px;
@@ -327,36 +326,79 @@ select:focus,input:focus{
 
 .time-box .btn-small{ width:100%; }
 
-/* ACTION CELL */
-td.action-cell{
-    padding:4px 2px;
-    text-align:center;
-    vertical-align:middle;
+/* ROW SELECTION */
+tbody tr{
+    transition:background .18s, box-shadow .18s;
+    cursor:pointer;
+    -webkit-user-select:none;
+    user-select:none;
+    -webkit-touch-callout:none;
 }
 
-.action-buttons{
-    width:100%;
-    min-height:100%;
+tbody tr:hover{
+    background:#fffafd;
+}
+
+tbody tr.selected-row{
+    background:var(--pink-100);
+    box-shadow:inset 4px 0 0 var(--pink-500);
+}
+
+tbody tr.selected-row td:first-child{
+    color:var(--pink-700);
+    font-weight:900;
+}
+
+.selection-toolbar{
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:8px 10px;
+    border-top:1px solid var(--line);
+    background:linear-gradient(180deg,#fff9fb,#fff);
+}
+
+.selection-toolbar.show{
     display:flex;
-    flex-direction:column;
-    justify-content:center;
+}
+
+.selection-info{
+    color:var(--pink-700);
+    font-size:10px;
+    font-weight:800;
+    line-height:1.25;
+}
+
+.selection-actions{
+    display:flex;
     align-items:center;
     gap:6px;
 }
 
-.action-buttons .btn{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    width:85%;
-    min-height:28px;
-    margin:0 auto;
-    padding:6px 3px;
-    font-size:10px;
-    font-weight:800;
-    border-radius:8px;
-    white-space:nowrap;
-    text-align:center;
+.selection-actions .btn{
+    min-width:78px;
+}
+
+@media(max-width:600px){
+    .selection-toolbar{
+        padding:7px;
+        gap:5px;
+    }
+
+    .selection-info{
+        font-size:9px;
+    }
+
+    .selection-actions{
+        gap:4px;
+    }
+
+    .selection-actions .btn{
+        min-width:65px;
+        padding:6px 4px;
+        font-size:9px;
+    }
 }
 
 .summary{
@@ -573,11 +615,6 @@ td.action-cell{
 }
 
 /* PAST-DATE LOCKING */
-.page.past-date-locked .action-cell,
-.page.past-date-locked .action-head{
-    display:none !important;
-}
-
 .page.past-date-locked input,
 .page.past-date-locked select,
 .page.past-date-locked button{
@@ -665,35 +702,6 @@ td.action-cell{
 
     .time-value{ font-size:9px; }
     .time-box{ gap:3px; }
-
-    td.action-cell{
-        padding:4px 1px;
-        text-align:center;
-        vertical-align:middle;
-    }
-
-    .action-buttons{
-        width:100%;
-        display:flex;
-        flex-direction:column;
-        justify-content:center;
-        align-items:center;
-        gap:5px;
-    }
-
-    .action-buttons .btn{
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        width:88%;
-        min-height:27px;
-        margin:0 auto;
-        padding:5px 2px;
-        font-size:9px;
-        font-weight:800;
-        white-space:nowrap;
-        text-align:center;
-    }
 
     .summary{
         gap:5px;
@@ -856,6 +864,7 @@ onAuthStateChanged(auth,user=>{
         setFirebaseStatus("☁️ Firebase connected • Editing enabled");
     }else{
         badge.classList.remove("show");
+        clearAllRowSelections();
         setFirebaseStatus(firebaseConnected?"☁️ Firebase connected • View only":"☁️ Connecting to Firebase...");
     }
 
@@ -869,6 +878,11 @@ const DIAPER_OPTIONS = ["Pee/尿尿", "Poop/大便"];
 let pages = [];
 let currentPage = 0;
 let loadingData = false;
+
+// Selected rows are kept only in the current browser view.
+// They are not saved to Firebase.
+const selectedRows = new Set();
+let suppressRowClickUntil = 0;
 
 function formatDate(date){
     return new Intl.DateTimeFormat("en-GB",{
@@ -1329,18 +1343,245 @@ function lockPastDatePage(page){
     const locked = isPastDatePage(page);
     page.classList.toggle("past-date-locked", locked);
 
-    // Past pages are completely read-only.  The Action column is removed.
-    const actionHead = page.querySelector(".action-head");
-    if(actionHead) actionHead.style.display = locked ? "none" : "";
-
-    page.querySelectorAll(".action-cell").forEach(cell => {
-        cell.style.display = locked ? "none" : "";
-    });
-
     // Disable all editing controls on past pages.
     page.querySelectorAll("input, select, button").forEach(control => {
         control.disabled = locked;
     });
+}
+
+
+function updateSelectionToolbar(page){
+    if(!page) return;
+
+    const toolbar = page.querySelector(".selection-toolbar");
+    const info = page.querySelector(".selection-info");
+    if(!toolbar || !info) return;
+
+    const selected = [...selectedRows].filter(row => row && row.isConnected && row.closest(".page") === page);
+
+    if(!selected.length){
+        toolbar.classList.remove("show");
+        info.innerHTML = "0 selected<br>已选择0行";
+        return;
+    }
+
+    toolbar.classList.add("show");
+    info.innerHTML =
+        `${selected.length} selected<br>已选择${selected.length}行`;
+}
+
+function clearAllRowSelections(){
+    selectedRows.forEach(row => row?.classList?.remove("selected-row"));
+    selectedRows.clear();
+
+    pages.forEach(page => updateSelectionToolbar(page));
+}
+
+function clearRowSelection(page = pages[currentPage]){
+    [...selectedRows].forEach(row => {
+        if(!row || !row.isConnected || (page && row.closest(".page") !== page)){
+            selectedRows.delete(row);
+        }
+    });
+
+    if(page){
+        page.querySelectorAll("tbody tr.selected-row").forEach(row => {
+            if(!selectedRows.has(row)) row.classList.remove("selected-row");
+        });
+        updateSelectionToolbar(page);
+    }
+}
+
+function toggleRowSelection(row){
+    const page = row?.closest(".page");
+    if(!page || page !== pages[currentPage] || isPastDatePage(page) || !isEditor()) return;
+
+    if(selectedRows.has(row)){
+        selectedRows.delete(row);
+        row.classList.remove("selected-row");
+    }else{
+        selectedRows.add(row);
+        row.classList.add("selected-row");
+    }
+
+    updateSelectionToolbar(page);
+}
+
+function setupRowSelection(row, page){
+    let longPressTimer = null;
+    let longPressTriggered = false;
+
+    const cancelLongPress = () => {
+        if(longPressTimer){
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+        }
+    };
+
+    row.addEventListener("pointerdown", event => {
+        if(event.pointerType === "mouse" && event.button !== 0) return;
+
+        // Do not hijack controls such as selects, checkboxes or buttons.
+        if(event.target.closest("select, input, button")) return;
+
+        if(!isEditor() || isPastDatePage(page)) return;
+
+        longPressTriggered = false;
+        cancelLongPress();
+
+        longPressTimer = setTimeout(() => {
+            longPressTriggered = true;
+            suppressRowClickUntil = Date.now() + 700;
+            toggleRowSelection(row);
+
+            if(navigator.vibrate) navigator.vibrate(35);
+        }, 500);
+    });
+
+    row.addEventListener("pointerup", event => {
+        cancelLongPress();
+
+        if(event.target.closest("select, input, button")) return;
+
+        if(longPressTriggered){
+            longPressTriggered = false;
+            return;
+        }
+    });
+
+    row.addEventListener("pointercancel", cancelLongPress);
+    row.addEventListener("pointerleave", event => {
+        // Keep touch long-press behavior, but cancel when a mouse leaves the row.
+        if(event.pointerType === "mouse") cancelLongPress();
+    });
+
+    row.addEventListener("click", event => {
+        if(Date.now() < suppressRowClickUntil) return;
+        if(event.target.closest("select, input, button")) return;
+        toggleRowSelection(row);
+    });
+
+    row.addEventListener("contextmenu", event => {
+        if(isEditor() && !isPastDatePage(page)){
+            event.preventDefault();
+            toggleRowSelection(row);
+        }
+    });
+}
+
+function clearSingleRow(row, page){
+    const cells = row.cells;
+    if(!cells.length) return;
+
+    const timeCell = cells[1];
+    const burp = cells[2]?.querySelector("input");
+    const milkCell = cells[3];
+    const milkSelect = milkCell?.querySelector("select");
+    const diaper = cells[4]?.querySelector("select");
+    const medicineText = milkCell?.querySelector("span");
+
+    if(timeCell) timeCell.replaceChildren(createTimeControl());
+    if(burp) burp.checked = false;
+    if(milkSelect) milkSelect.value = "0";
+    if(diaper) diaper.value = DIAPER_OPTIONS[0];
+
+    if(milkSelect){
+        milkSelect.style.display = "";
+        if(medicineText) medicineText.style.display = "none";
+    }
+
+    if(cells[2]) cells[2].style.display = "";
+    if(cells[3]){
+        cells[3].removeAttribute("colspan");
+        cells[3].style.display = "";
+    }
+    if(cells[4]) cells[4].style.display = "";
+
+    applyMedicineMerge(
+        row,
+        milkSelect,
+        burp,
+        diaper,
+        medicineText
+    );
+}
+
+function clearSelectedRows(page){
+    if(!isEditor() || isPastDatePage(page)) return;
+
+    const selected = [...selectedRows].filter(row =>
+        row?.isConnected && row.closest(".page") === page
+    );
+
+    if(!selected.length) return;
+
+    if(!confirm(
+        `Clear ${selected.length} selected row${selected.length === 1 ? "" : "s"}?` +
+        `\n清除已选择的${selected.length}行？`
+    )) return;
+
+    selected.forEach(row => clearSingleRow(row, page));
+
+    selected.forEach(row => {
+        selectedRows.delete(row);
+        row.classList.remove("selected-row");
+    });
+
+    updatePageSummary(page);
+    updateSelectionToolbar(page);
+    saveData();
+}
+
+function deleteSelectedRows(page){
+    if(!isEditor() || isPastDatePage(page)) return;
+
+    const selected = [...selectedRows].filter(row =>
+        row?.isConnected && row.closest(".page") === page
+    );
+
+    if(!selected.length) return;
+
+    if(!confirm(
+        `Delete ${selected.length} selected row${selected.length === 1 ? "" : "s"}?` +
+        `\n删除已选择的${selected.length}行？`
+    )) return;
+
+    selected.forEach(row => {
+        selectedRows.delete(row);
+        row.remove();
+    });
+
+    renumberRows(page);
+    updatePageSummary(page);
+    updateSelectionToolbar(page);
+    saveData();
+}
+
+function setupSelectionToolbar(page){
+    const clearButton = page.querySelector(".selection-clear-btn");
+    const deleteButton = page.querySelector(".selection-delete-btn");
+
+    if(clearButton){
+        clearButton.addEventListener("click", () => {
+            if(!isEditor()){
+                requireLogin(() => clearSelectedRows(page));
+                return;
+            }
+            clearSelectedRows(page);
+        });
+    }
+
+    if(deleteButton){
+        deleteButton.addEventListener("click", () => {
+            if(!isEditor()){
+                requireLogin(() => deleteSelectedRows(page));
+                return;
+            }
+            deleteSelectedRows(page);
+        });
+    }
+
+    updateSelectionToolbar(page);
 }
 
 function createPage(dateString = dateKey(new Date()), rows = [], temperatures = []){
@@ -1367,11 +1608,22 @@ function createPage(dateString = dateKey(new Date()), rows = [], temperatures = 
                         <th>Burp<br>拍嗝</th>
                         <th>Milk<br>奶量</th>
                         <th>Diaper<br>尿布</th>
-                        <th class="action-head">Action<br>操作</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
+        </div>
+
+        <div class="selection-toolbar" aria-live="polite">
+            <div class="selection-info">0 selected<br>已选择0行</div>
+            <div class="selection-actions">
+                <button class="btn btn-soft btn-small selection-clear-btn" type="button">
+                    Clear / 清除
+                </button>
+                <button class="btn btn-danger btn-small selection-delete-btn" type="button">
+                    Delete / 删除
+                </button>
+            </div>
         </div>
 
         <div class="summary">
@@ -1395,6 +1647,8 @@ function createPage(dateString = dateKey(new Date()), rows = [], temperatures = 
     if(rows.length === 0){
         addRowToPage(page, {}, false);
     }
+
+    setupSelectionToolbar(page);
 
     page._temperatureData = Array.isArray(temperatures) ? temperatures : [];
     if(page === pages[currentPage]){
@@ -1505,61 +1759,10 @@ function addRowToPage(page, data = {}, shouldSave = true){
     diaperCell.appendChild(diaper);
     row.appendChild(diaperCell);
 
-    const actionCell = document.createElement("td");
-    actionCell.className = "action-cell";
-
-    const clearButton = document.createElement("button");
-    clearButton.className = "btn btn-soft btn-small";
-    clearButton.textContent = "Clear / 清除 ";
-
-    clearButton.addEventListener("click", () => {
-        if(!isEditor()){
-            requireLogin(() => clearButton.click());
-            return;
-        }
-
-        timeCell.replaceChildren(createTimeControl());
-        burp.checked = false;
-        milkSelect.value = "0";
-        diaper.value = DIAPER_OPTIONS[0];
-
-        // Clear always restores the normal 3 separate columns.
-        milkSelect.style.display = "";
-        if(medicineText) medicineText.style.display = "none";
-        row.cells[2].style.display = "";
-        row.cells[3].removeAttribute("colspan");
-        row.cells[4].style.display = "";
-
-        updatePageSummary(page);
-        saveData();
-    });
-
-    const deleteButton = document.createElement("button");
-    deleteButton.className = "btn btn-danger btn-small";
-    deleteButton.textContent = "Delete / 删除";
-
-    deleteButton.addEventListener("click", () => {
-        if(!isEditor()){
-            requireLogin(() => deleteButton.click());
-            return;
-        }
-
-        if(!confirm("Delete this row?")) return;
-
-        row.remove();
-        renumberRows(page);
-        updatePageSummary(page);
-        saveData();
-    });
-
-    const actionButtons = document.createElement("div");
-    actionButtons.className = "action-buttons";
-    actionButtons.append(clearButton, deleteButton);
-
-    actionCell.appendChild(actionButtons);
-    row.appendChild(actionCell);
-
     tbody.appendChild(row);
+
+    // Tap/click a row to select it, or long-press/long-tap it on touch devices.
+    setupRowSelection(row, page);
 
     // Apply the merge immediately for saved Medicine rows.
 
@@ -1628,6 +1831,8 @@ function updatePageInfo(){
 
 function showPage(index){
     if(index < 0 || index >= pages.length) return;
+
+    clearAllRowSelections();
 
     pages.forEach((page,i) => {
         page.style.display = i === index ? "block" : "none";
@@ -1784,6 +1989,7 @@ function getPageRows(page){
 
 function applyRemoteData(saved){
     applyingRemote = true;
+    clearAllRowSelections();
 
     $("#pages").replaceChildren();
     pages = [];
@@ -1885,6 +2091,10 @@ function deleteCurrentPage(){
     )) return;
 
     const deletedPage = pages[currentPage];
+
+    [...selectedRows].forEach(row => {
+        if(row?.closest(".page") === deletedPage) selectedRows.delete(row);
+    });
 
     deletedPage.remove();
     pages.splice(currentPage, 1);
