@@ -33,19 +33,11 @@ html,body{
     overflow-x:hidden;
     font-family:Arial,sans-serif;
     color:var(--ink);
-    background:
-        radial-gradient(
-            circle at 15px 15px,
-            rgba(255,195,213,.38) 0 5px,
-            transparent 6px
-        ),
-        linear-gradient(
-            135deg,
-            #fff 0%,
-            #fff7fa 48%,
-            #fff 100%
-        );
-    background-size:55px 55px,auto;
+    background-color:#fff0f4;
+    background-image:
+        linear-gradient(#ffffff 2px, transparent 3px),
+        linear-gradient(90deg, #ffffff 2px, transparent 3px);
+    background-size:32px 32px;
 }
 
 button,
@@ -100,9 +92,9 @@ select{
     flex:1;
     text-align:center;
     padding:10px;
-    border-radius:16px;
+    /*border-radius:16px;
     background:rgba(255,255,255,.88);
-    box-shadow:var(--shadow);
+    box-shadow:var(--shadow);*/
 }
 
 .brand h1{
@@ -344,6 +336,8 @@ input:focus{
 
 /* =========================================================
    BUTTONS
+   ALL BUTTONS USE THE SAME BACKGROUND
+   AS THE ADD ROW BUTTON
 ========================================================= */
 
 .btn{
@@ -365,7 +359,11 @@ input:focus{
     transform:translateY(0);
 }
 
-.btn-primary{
+/* Same background for every button */
+
+.btn-primary,
+.btn-soft,
+.btn-danger{
     background:
         linear-gradient(
             135deg,
@@ -374,16 +372,6 @@ input:focus{
         );
     color:white;
     box-shadow:0 7px 16px rgba(220,113,151,.24);
-}
-
-.btn-soft{
-    background:var(--pink-100);
-    color:var(--pink-700);
-}
-
-.btn-danger{
-    background:#fff1f3;
-    color:var(--danger);
 }
 
 .btn-small{
@@ -740,7 +728,7 @@ tbody tr.selected-row td:first-child{
     opacity:.45 !important;
     cursor:not-allowed !important;
     transform:none !important;
-    box-shadow:none;
+    box-shadow:none !important;
 }
 
 /* =========================================================
@@ -1024,6 +1012,7 @@ tbody tr.selected-row td:first-child{
     <div class="topbar">
 
         <div class="topbar-left">
+
             <button
                 class="icon-btn"
                 id="fullscreenBtn"
@@ -1031,14 +1020,17 @@ tbody tr.selected-row td:first-child{
                 aria-label="Fullscreen">
                 ⛶
             </button>
+
         </div>
 
         <div class="brand">
+
             <h1>
-                Baby Feeding Tracker ✨
+                Baby Feeding Tracker 🍼
                 <br>
                 婴儿喂养追踪器
             </h1>
+
         </div>
 
         <button
@@ -1058,13 +1050,17 @@ tbody tr.selected-row td:first-child{
     </div>
 
     <!-- MAIN PAGE CARD -->
+
     <section class="card">
+
         <div id="pages"></div>
+
     </section>
 
     <!-- INDEPENDENT ADD ROW BUTTON -->
 
     <div class="independent-add-row">
+
         <button
             class="btn btn-primary"
             id="addRowOutsideBtn"
@@ -1073,6 +1069,7 @@ tbody tr.selected-row td:first-child{
             aria-label="Add Row / 添加一行">
             +
         </button>
+
     </div>
 
     <!-- DAILY SUMMARY -->
@@ -1314,11 +1311,17 @@ const firebaseConfig = {
         "G-Z3C6Q22RWC"
 };
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(
+    firebaseConfig
+);
 
-const auth = getAuth(app);
+const auth = getAuth(
+    app
+);
 
-const db = getFirestore(app);
+const db = getFirestore(
+    app
+);
 
 const trackerRef =
     doc(
@@ -1345,7 +1348,9 @@ let firebaseConnected = false;
 ========================================================= */
 
 const $ = selector =>
-    document.querySelector(selector);
+    document.querySelector(
+        selector
+    );
 
 
 function setFirebaseStatus(
@@ -1385,6 +1390,7 @@ function requireLogin(action){
         action();
 
         return;
+
     }
 
     pendingAction =
@@ -1623,7 +1629,9 @@ $("#authBadge")
                 )
             ){
 
-                await signOut(auth);
+                await signOut(
+                    auth
+                );
 
             }
 
@@ -1663,7 +1671,9 @@ let suppressRowClickUntil =
    DATE
 ========================================================= */
 
-function formatDate(date){
+function formatDate(
+    date
+){
 
     return new Intl.DateTimeFormat(
         "en-GB",
@@ -1677,10 +1687,14 @@ function formatDate(date){
 }
 
 
-function dateKey(date){
+function dateKey(
+    date
+){
 
     const d =
-        new Date(date);
+        new Date(
+            date
+        );
 
     d.setHours(
         0,
@@ -1759,7 +1773,9 @@ function createSelect(
     if(value !== ""){
 
         select.value =
-            String(value);
+            String(
+                value
+            );
 
     }
 
@@ -1847,7 +1863,9 @@ function createMilkSelect(
         savedValue !== "custom" &&
         savedValue !== "medicine" &&
         !Number.isNaN(
-            Number(savedValue)
+            Number(
+                savedValue
+            )
         )
     ){
 
@@ -2097,11 +2115,6 @@ function createTimeControl(
 
             }
 
-
-            /* =================================================
-               LOG TIME
-               AM / PM IS FORCED TO UPPERCASE
-            ================================================= */
 
             const time =
                 new Date()
@@ -2380,7 +2393,9 @@ function formatTemperatureTimestamp(
 
 
     const date =
-        new Date(timestamp);
+        new Date(
+            timestamp
+        );
 
 
     if(
@@ -2388,7 +2403,9 @@ function formatTemperatureTimestamp(
             date.getTime()
         )
     )
-        return String(timestamp);
+        return String(
+            timestamp
+        );
 
 
     return date.toLocaleString(
@@ -2673,7 +2690,9 @@ function setupTemperatureSection(
 
 
             if(
-                Number.isNaN(temperature) ||
+                Number.isNaN(
+                    temperature
+                ) ||
                 temperature < 36 ||
                 temperature > 50
             ){
@@ -3617,7 +3636,9 @@ function setupIndependentAddRowButton(){
 
 function createPage(
     dateString =
-        dateKey(new Date()),
+        dateKey(
+            new Date()
+        ),
 
     rows = [],
 
@@ -5411,3 +5432,4 @@ startFirestore();
 
 </body>
 </html>
+```
