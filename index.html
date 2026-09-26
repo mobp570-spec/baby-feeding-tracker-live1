@@ -22,9 +22,11 @@
     --shadow:0 12px 35px rgba(172,81,112,.12);
 }
 
-*{ box-sizing:border-box; }
+*{
+    box-sizing:border-box;
+}
 
-html, body{
+html,body{
     margin:0;
     min-height:100vh;
     width:100%;
@@ -32,12 +34,25 @@ html, body{
     font-family:Arial,sans-serif;
     color:var(--ink);
     background:
-        radial-gradient(circle at 15px 15px,rgba(255,195,213,.38) 0 5px,transparent 6px),
-        linear-gradient(135deg,#fff 0%,#fff7fa 48%,#fff 100%);
+        radial-gradient(
+            circle at 15px 15px,
+            rgba(255,195,213,.38) 0 5px,
+            transparent 6px
+        ),
+        linear-gradient(
+            135deg,
+            #fff 0%,
+            #fff7fa 48%,
+            #fff 100%
+        );
     background-size:55px 55px,auto;
 }
 
-button,input,select{ font:inherit; }
+button,
+input,
+select{
+    font:inherit;
+}
 
 .app{
     width:100%;
@@ -96,6 +111,21 @@ button,input,select{ font:inherit; }
     color:var(--pink-700);
 }
 
+.firebase-status{
+    text-align:center;
+    color:var(--muted);
+    font-size:10px;
+    padding:5px 10px;
+}
+
+.firebase-status.error{
+    color:var(--danger);
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
 .card{
     width:100%;
     background:rgba(255,255,255,.94);
@@ -104,6 +134,10 @@ button,input,select{ font:inherit; }
     box-shadow:var(--shadow);
     overflow:hidden;
 }
+
+/* =========================================================
+   PAGE
+========================================================= */
 
 .page-meta{
     display:flex;
@@ -130,7 +164,10 @@ button,input,select{ font:inherit; }
     text-align:right;
 }
 
-/* TABLE */
+/* =========================================================
+   MAIN FEEDING TABLE
+========================================================= */
+
 .table-wrap{
     width:100%;
     overflow:hidden;
@@ -143,11 +180,30 @@ table{
     border:1px solid var(--line);
 }
 
-th:nth-child(1), td:nth-child(1){ width:8%; }
-th:nth-child(2), td:nth-child(2){ width:28%; }
-th:nth-child(3), td:nth-child(3){ width:12%; }
-th:nth-child(4), td:nth-child(4){ width:26%; }
-th:nth-child(5), td:nth-child(5){ width:26%; }
+th:nth-child(1),
+td:nth-child(1){
+    width:8%;
+}
+
+th:nth-child(2),
+td:nth-child(2){
+    width:28%;
+}
+
+th:nth-child(3),
+td:nth-child(3){
+    width:12%;
+}
+
+th:nth-child(4),
+td:nth-child(4){
+    width:26%;
+}
+
+th:nth-child(5),
+td:nth-child(5){
+    width:26%;
+}
 
 th{
     padding:7px 2px;
@@ -170,8 +226,15 @@ td{
     border:1px solid var(--line);
 }
 
-tbody tr{ transition:.18s; }
-tbody tr:hover{ background:#fffafd; }
+tbody tr{
+    transition:
+        background .18s,
+        box-shadow .18s;
+}
+
+tbody tr:hover{
+    background:#fffafd;
+}
 
 select{
     width:100%;
@@ -187,7 +250,8 @@ select{
     text-align:center;
 }
 
-select:focus,input:focus{
+select:focus,
+input:focus{
     outline:none;
     border-color:var(--pink-500);
     box-shadow:0 0 0 3px rgba(220,113,151,.15);
@@ -199,6 +263,10 @@ select:focus,input:focus{
     accent-color:var(--pink-500);
     cursor:pointer;
 }
+
+/* =========================================================
+   TIME
+========================================================= */
 
 .time-box{
     width:100%;
@@ -238,9 +306,9 @@ select:focus,input:focus{
     font-size:11px;
 }
 
-.feeding-cell{
-    padding:5px 3px;
-}
+/* =========================================================
+   MILK / DIAPER
+========================================================= */
 
 .feeding-controls{
     display:flex;
@@ -274,19 +342,9 @@ select:focus,input:focus{
     flex:1 1 100%;
 }
 
-@media(max-width:600px){
-    .feeding-cell{
-        padding:4px 2px;
-    }
-
-    .feeding-controls{
-        gap:3px;
-    }
-
-    .feeding-controls .check-wrap{
-        flex-basis:18px;
-    }
-}
+/* =========================================================
+   BUTTONS
+========================================================= */
 
 .btn{
     border:0;
@@ -299,11 +357,21 @@ select:focus,input:focus{
     text-align:center;
 }
 
-.btn:hover{ transform:translateY(-2px); }
-.btn:active{ transform:translateY(0); }
+.btn:hover{
+    transform:translateY(-2px);
+}
+
+.btn:active{
+    transform:translateY(0);
+}
 
 .btn-primary{
-    background:linear-gradient(135deg,var(--pink-500),var(--pink-400));
+    background:
+        linear-gradient(
+            135deg,
+            var(--pink-500),
+            var(--pink-400)
+        );
     color:white;
     box-shadow:0 7px 16px rgba(220,113,151,.24);
 }
@@ -324,56 +392,58 @@ select:focus,input:focus{
     line-height:1.2;
 }
 
-.time-box .btn-small{ width:100%; }
-
-/* ADD ROW BUTTON */
-.add-row-area{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:8px 10px 4px;
-    width: 100%;
+.time-box .btn-small{
+    width:100%;
 }
 
-.add-row-btn{
-    min-width:42px !important;
+/* =========================================================
+   INDEPENDENT ADD ROW BUTTON
+========================================================= */
+
+.independent-add-row{
     width:100%;
-    height:34px;
-    padding:4px !important;
-    font-size:20px !important;
+    margin-top:8px;
+    padding:0;
+}
+
+#addRowOutsideBtn{
+    display:block;
+    width:100%;
+    height:40px;
+    margin:0;
+    padding:4px;
+    border-radius:9px;
+    font-size:22px;
     line-height:1;
 }
 
-@media(max-width:100%){
-    .add-row-area{
-        padding:7px 7px 3px;
-        width: 100%;
+@media(max-width:600px){
+    .independent-add-row{
+        margin-top:7px;
     }
 
-    .add-row-btn{
+    #addRowOutsideBtn{
         width:100%;
-        min-width:38px !important;
-        height:32px;
-        font-size:19px !important;
+        height:34px;
+        font-size:19px;
     }
 }
 
-/* ROW SELECTION */
+/* =========================================================
+   ROW SELECTION
+========================================================= */
+
 tbody tr{
-    transition:background .18s, box-shadow .18s;
     cursor:pointer;
     -webkit-user-select:none;
     user-select:none;
     -webkit-touch-callout:none;
 }
 
-tbody tr:hover{
-    background:#fffafd;
-}
-
 tbody tr.selected-row{
     background:var(--pink-100);
-    box-shadow:inset 4px 0 0 var(--pink-500);
+    box-shadow:
+        inset 4px 0 0 var(--pink-500);
 }
 
 tbody tr.selected-row td:first-child{
@@ -388,7 +458,12 @@ tbody tr.selected-row td:first-child{
     gap:8px;
     padding:8px 10px;
     border-top:1px solid var(--line);
-    background:linear-gradient(180deg,#fff9fb,#fff);
+    background:
+        linear-gradient(
+            180deg,
+            #fff9fb,
+            #fff
+        );
 }
 
 .selection-toolbar.show{
@@ -412,34 +487,38 @@ tbody tr.selected-row td:first-child{
     min-width:78px;
 }
 
-@media(max-width:600px){
-    .selection-toolbar{
-        padding:7px;
-        gap:5px;
-    }
+/* =========================================================
+   DAILY SUMMARY
+========================================================= */
 
-    .selection-info{
-        font-size:9px;
-    }
+.daily-summary-card{
+    margin-top:10px;
+}
 
-    .selection-actions{
-        gap:4px;
-    }
+.daily-summary-section{
+    padding:10px;
+    background:
+        linear-gradient(
+            180deg,
+            #fff,
+            #fff9fb
+        );
+}
 
-    .selection-actions .btn{
-        min-width:65px;
-        padding:6px 4px;
-        font-size:9px;
-    }
+.daily-summary-title{
+    text-align:center;
+    color:var(--pink-700);
+    font-size:12px;
+    font-weight:800;
+    margin:0 0 8px;
 }
 
 .summary{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:7px;
-    padding:10px;
-    border-top:1px solid var(--line);
-    background:linear-gradient(180deg,#fff,#fff9fb);
+    padding:0;
+    background:transparent;
 }
 
 .summary-item{
@@ -461,7 +540,10 @@ tbody tr.selected-row td:first-child{
     font-weight:800;
 }
 
-/* MILK GOAL STATUS */
+/* =========================================================
+   MILK GOAL
+========================================================= */
+
 .milkTotal{
     display:inline-flex;
     align-items:center;
@@ -484,7 +566,8 @@ tbody tr.selected-row td:first-child{
 .milkTotal.status-success{
     color:var(--success);
     border-color:var(--success);
-    animation:milkSuccessPulse 1.5s ease-in-out infinite;
+    animation:
+        milkSuccessPulse 1.5s ease-in-out infinite;
 }
 
 .milkTotal.status-success::before{
@@ -494,38 +577,42 @@ tbody tr.selected-row td:first-child{
 .milkTotal.status-warning{
     color:var(--danger);
     border-color:var(--danger);
-    animation:milkWarningPulse 1s ease-in-out infinite;
+    animation:
+        milkWarningPulse 1s ease-in-out infinite;
 }
 
 @keyframes milkSuccessPulse{
     0%,100%{
         transform:scale(1);
-        box-shadow:0 0 0 0 rgba(47,157,104,.35);
+        box-shadow:
+            0 0 0 0 rgba(47,157,104,.35);
     }
+
     50%{
         transform:scale(1.06);
-        box-shadow:0 0 0 8px rgba(47,157,104,0);
+        box-shadow:
+            0 0 0 8px rgba(47,157,104,0);
     }
 }
 
 @keyframes milkWarningPulse{
     0%,100%{
         transform:scale(1);
-        box-shadow:0 0 0 0 rgba(217,93,115,.40);
+        box-shadow:
+            0 0 0 0 rgba(217,93,115,.40);
     }
+
     50%{
         transform:scale(1.08);
-        box-shadow:0 0 0 10px rgba(217,93,115,0);
+        box-shadow:
+            0 0 0 10px rgba(217,93,115,0);
     }
 }
 
-@media(prefers-reduced-motion:reduce){
-    .milkTotal{
-        animation:none !important;
-    }
-}
+/* =========================================================
+   TEMPERATURE
+========================================================= */
 
-/* TEMPERATURE */
 .temperature-card{
     margin-top:10px;
 }
@@ -533,7 +620,12 @@ tbody tr.selected-row td:first-child{
 .temperature-section{
     padding:10px;
     border-top:1px solid var(--line);
-    background:linear-gradient(180deg,#fff,#fff9fb);
+    background:
+        linear-gradient(
+            180deg,
+            #fff,
+            #fff9fb
+        );
 }
 
 .temperature-controls{
@@ -558,6 +650,7 @@ tbody tr.selected-row td:first-child{
 
 .temperature-add-btn{
     flex:0 0 auto;
+    width:20%;
 }
 
 .temperature-box{
@@ -605,32 +698,9 @@ tbody tr.selected-row td:first-child{
     text-align:right;
 }
 
-@media(max-width:600px){
-    .temperature-controls{
-        gap:5px;
-    }
-
-    .temperature-select{
-        max-width:none;
-        font-size:10px;
-        padding:8px 4px;
-    }
-
-    .temperature-entry{
-        padding:7px;
-    }
-
-    .temperature-value{
-        font-size:12px;
-    }
-
-    .temperature-time{
-        font-size:9px;
-    }
-}
-
-.status-success{ color:var(--success); }
-.status-warning{ color:var(--danger); }
+/* =========================================================
+   NAVIGATION
+========================================================= */
 
 .controls{
     display:flex;
@@ -646,13 +716,20 @@ tbody tr.selected-row td:first-child{
     min-width:90px;
 }
 
-/* PAST-DATE LOCKING */
+/* =========================================================
+   PAST DATE LOCK
+========================================================= */
+
 .page.past-date-locked input,
 .page.past-date-locked select,
 .page.past-date-locked button{
     pointer-events:none;
     cursor:not-allowed !important;
     opacity:.62;
+}
+
+.page.past-date-locked .selection-toolbar{
+    display:none !important;
 }
 
 .page.past-date-locked .temperature-add-btn{
@@ -666,9 +743,118 @@ tbody tr.selected-row td:first-child{
     box-shadow:none;
 }
 
+/* =========================================================
+   LOGIN
+========================================================= */
+
+.auth-overlay{
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    background:rgba(53,35,43,.45);
+    backdrop-filter:blur(4px);
+}
+
+.auth-overlay.show{
+    display:flex;
+}
+
+.auth-box{
+    width:min(390px,100%);
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:20px;
+    box-shadow:
+        0 20px 60px rgba(80,30,50,.25);
+}
+
+.auth-box h2{
+    margin:0 0 6px;
+    text-align:center;
+    color:var(--pink-700);
+    font-size:21px;
+}
+
+.auth-box p{
+    margin:0 0 14px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+}
+
+.auth-box label{
+    display:block;
+    margin:9px 0 5px;
+    color:var(--pink-700);
+    font-size:11px;
+    font-weight:700;
+}
+
+.auth-box input{
+    width:100%;
+    padding:10px;
+    border:1px solid var(--pink-300);
+    border-radius:10px;
+    background:#fff;
+}
+
+.auth-actions{
+    display:flex;
+    gap:7px;
+    margin-top:14px;
+}
+
+.auth-actions .btn{
+    flex:1;
+}
+
+.auth-error{
+    min-height:18px;
+    margin-top:8px;
+    color:var(--danger);
+    font-size:11px;
+    text-align:center;
+}
+
+.auth-badge{
+    position:fixed;
+    right:10px;
+    bottom:10px;
+    z-index:9998;
+    display:none;
+    padding:7px 10px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:rgba(255,255,255,.96);
+    color:var(--pink-700);
+    font-size:10px;
+    box-shadow:var(--shadow);
+    cursor:pointer;
+}
+
+.auth-badge.show{
+    display:block;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
 @media(max-width:600px){
-    .app{ padding:6px 4px 18px; }
-    .topbar{ gap:5px; margin-bottom:7px; }
+
+    .app{
+        padding:6px 4px 18px;
+    }
+
+    .topbar{
+        gap:5px;
+        margin-bottom:7px;
+    }
 
     .topbar-left{
         gap:5px;
@@ -680,28 +866,39 @@ tbody tr.selected-row td:first-child{
         border-radius:10px;
     }
 
-    .brand{ padding:8px 4px; }
-    .brand h1{ font-size:16px; }
-    .card{ border-radius:13px; }
-    .page-meta{ padding:7px; }
+    .brand{
+        padding:8px 4px;
+    }
+
+    .brand h1{
+        font-size:16px;
+    }
+
+    .card{
+        border-radius:13px;
+    }
+
+    .page-meta{
+        padding:7px;
+    }
 
     .date-badge{
         padding:6px 7px;
         font-size:10px;
     }
 
-    .page-info{ font-size:9px; }
+    .page-info{
+        font-size:9px;
+    }
 
     th{
         padding:6px 1px;
         font-size:9px;
-        border:1px solid var(--line);
     }
 
     td{
         padding:5px 1px;
         font-size:9px;
-        border:1px solid var(--line);
     }
 
     select{
@@ -725,19 +922,25 @@ tbody tr.selected-row td:first-child{
         padding:4px 2px;
     }
 
-    .manual-time{ padding:2px; }
+    .manual-time{
+        padding:2px;
+    }
 
     .manual-time select{
         font-size:8px;
         padding:2px 0;
     }
 
-    .time-value{ font-size:9px; }
-    .time-box{ gap:3px; }
+    .time-value{
+        font-size:9px;
+    }
+
+    .time-box{
+        gap:3px;
+    }
 
     .summary{
         gap:5px;
-        padding:7px;
     }
 
     .summary-item{
@@ -745,8 +948,54 @@ tbody tr.selected-row td:first-child{
         border-radius:9px;
     }
 
-    .summary-label{ font-size:9px; }
-    .summary-value{ font-size:12px; }
+    .summary-label{
+        font-size:9px;
+    }
+
+    .summary-value{
+        font-size:12px;
+    }
+
+    .temperature-controls{
+        gap:5px;
+    }
+
+    .temperature-select{
+        max-width:none;
+        font-size:10px;
+        padding:8px 4px;
+    }
+
+    .temperature-entry{
+        padding:7px;
+    }
+
+    .temperature-value{
+        font-size:12px;
+    }
+
+    .temperature-time{
+        font-size:9px;
+    }
+
+    .selection-toolbar{
+        padding:7px;
+        gap:5px;
+    }
+
+    .selection-info{
+        font-size:9px;
+    }
+
+    .selection-actions{
+        gap:4px;
+    }
+
+    .selection-actions .btn{
+        min-width:65px;
+        padding:6px 4px;
+        font-size:9px;
+    }
 
     .controls{
         gap:5px;
@@ -759,430 +1008,1265 @@ tbody tr.selected-row td:first-child{
     }
 }
 
-/* Firebase login */
-.auth-overlay{
-    position:fixed; inset:0; z-index:99999; display:none;
-    align-items:center; justify-content:center; padding:18px;
-    background:rgba(53,35,43,.45); backdrop-filter:blur(4px);
+@media(prefers-reduced-motion:reduce){
+    .milkTotal{
+        animation:none !important;
+    }
 }
-.auth-overlay.show{display:flex;}
-.auth-box{
-    width:min(390px,100%); background:#fff; border:1px solid var(--line);
-    border-radius:20px; padding:20px; box-shadow:0 20px 60px rgba(80,30,50,.25);
-}
-.auth-box h2{margin:0 0 6px;text-align:center;color:var(--pink-700);font-size:21px;}
-.auth-box p{margin:0 0 14px;text-align:center;color:var(--muted);font-size:12px;}
-.auth-box label{display:block;margin:9px 0 5px;color:var(--pink-700);font-size:11px;font-weight:700;}
-.auth-box input{
-    width:100%;padding:10px;border:1px solid var(--pink-300);
-    border-radius:10px;background:#fff;box-sizing:border-box;
-}
-.auth-actions{display:flex;gap:7px;margin-top:14px;}
-.auth-actions .btn{flex:1;}
-.auth-error{min-height:18px;margin-top:8px;color:var(--danger);font-size:11px;text-align:center;}
-.firebase-status{text-align:center;color:var(--muted);font-size:10px;padding:5px 10px;}
-.firebase-status.error{color:var(--danger);}
-.auth-badge{
-    position:fixed;right:10px;bottom:10px;z-index:9998;display:none;
-    padding:7px 10px;border:1px solid var(--line);border-radius:12px;
-    background:rgba(255,255,255,.96);color:var(--pink-700);
-    font-size:10px;box-shadow:var(--shadow);cursor:pointer;
-}
-.auth-badge.show{display:block;}
-
 </style>
-
 </head>
 
 <body>
+
 <main class="app">
 
+    <!-- TOP BAR -->
     <div class="topbar">
-        <div class="topbar-left">
-            <button class="icon-btn" id="fullscreenBtn" title="Fullscreen" aria-label="Fullscreen">⛶</button>
 
+        <div class="topbar-left">
+            <button
+                class="icon-btn"
+                id="fullscreenBtn"
+                title="Fullscreen"
+                aria-label="Fullscreen">
+                ⛶
+            </button>
         </div>
 
         <div class="brand">
-            <h1>Baby Feeding Tracker ✨ <br> 婴儿喂养追踪器</h1>
+            <h1>
+                Baby Feeding Tracker ✨
+                <br>
+                婴儿喂养追踪器
+            </h1>
         </div>
 
-        <button class="icon-btn" id="deletePageBtn" title="Delete / Clear current page" aria-label="Delete or clear current page">🗑</button>
+        <button
+            class="icon-btn"
+            id="deletePageBtn"
+            title="Delete / Clear current page"
+            aria-label="Delete or clear current page">
+            🗑
+        </button>
+
     </div>
 
-    <div class="firebase-status" id="firebaseStatus">☁️ Connecting to Firebase...</div>
+    <div
+        class="firebase-status"
+        id="firebaseStatus">
+        ☁️ Connecting to Firebase...
+    </div>
 
+    <!-- MAIN PAGE CARD -->
     <section class="card">
         <div id="pages"></div>
     </section>
 
-    <section class="card temperature-card">
-        <div class="temperature-section">
-            <div class="temperature-controls">
-                <select class="temperature-select" aria-label="Temperature">
-                    <option value="">🌡️ Select temperature / 选择体温</option>
-                </select>
-                <button class="btn btn-primary temperature-add-btn" type="button">
-                    ＋ Add Temperature<br>添加体温
-                </button>
+    <!-- INDEPENDENT ADD ROW BUTTON -->
+
+    <div class="independent-add-row">
+        <button
+            class="btn btn-primary"
+            id="addRowOutsideBtn"
+            type="button"
+            title="Add Row / 添加一行"
+            aria-label="Add Row / 添加一行">
+            +
+        </button>
+    </div>
+
+    <!-- DAILY SUMMARY -->
+
+    <section class="card daily-summary-card">
+
+        <div class="daily-summary-section">
+
+            <div class="summary">
+
+                <div class="summary-item">
+
+                    <span class="summary-label">
+                        Total Milk / 总奶量
+                    </span>
+
+                    <span
+                        class="summary-value milkTotal"
+                        id="dailyMilkTotal">
+                        0 ML
+                    </span>
+
+                </div>
+
+                <div class="summary-item">
+
+                    <span class="summary-label">
+                        Poop Count / 大便次数
+                    </span>
+
+                    <span
+                        class="summary-value"
+                        id="dailyPoopTotal">
+                        Pooped 0 time this day. 今天排便0次。
+                    </span>
+
+                </div>
+
             </div>
-            <div class="temperature-box">
-                <div class="temperature-empty">No temperature recorded yet. / 尚未记录体温。</div>
-            </div>
+
         </div>
+
     </section>
 
+    <!-- TEMPERATURE -->
+
+    <section class="card temperature-card">
+
+        <div class="temperature-section">
+
+            <div class="temperature-controls">
+
+                <select
+                    class="temperature-select"
+                    aria-label="Temperature">
+
+                    <option value="">
+                        🌡️ Select temperature / 选择体温
+                    </option>
+
+                </select>
+
+                <button
+                    class="btn btn-primary temperature-add-btn"
+                    type="button">
+
+                    ✓
+
+                </button>
+
+            </div>
+
+            <div class="temperature-box">
+
+                <div class="temperature-empty">
+                    No temperature recorded yet.
+                    / 尚未记录体温。
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- NAVIGATION -->
+
     <div class="controls">
-        <button class="btn btn-soft" id="prevPageBtn">← Previous<br>上一页</button>
-        <button class="btn btn-soft" id="nextPageBtn">Next →<br>下一页</button>
-        <button class="btn btn-soft" id="lastPageBtn">Last →|<br>最后一页</button>
+
+        <button
+            class="btn btn-soft"
+            id="prevPageBtn">
+
+            ← Previous
+            <br>
+            上一页
+
+        </button>
+
+        <button
+            class="btn btn-soft"
+            id="nextPageBtn">
+
+            Next →
+            <br>
+            下一页
+
+        </button>
+
+        <button
+            class="btn btn-soft"
+            id="lastPageBtn">
+
+            Last →|
+            <br>
+            最后一页
+
+        </button>
+
     </div>
 
 </main>
 
-<div class="auth-overlay" id="authOverlay">
-  <div class="auth-box">
-    <h2>🔐 Login Required</h2>
-    <p>Please log in to make changes to the tracker.</p>
-    <label for="authUsername">Username</label>
-    <input id="authUsername" type="text" autocomplete="username" placeholder="....">
-    <label for="authPassword">Password</label>
-    <input id="authPassword" type="password" autocomplete="current-password" placeholder="....">
-    <div class="auth-error" id="authError"></div>
-    <div class="auth-actions">
-      <button class="btn btn-soft" id="authCancelBtn">Cancel</button>
-      <button class="btn btn-primary" id="authLoginBtn">Login</button>
+
+<!-- LOGIN -->
+
+<div
+    class="auth-overlay"
+    id="authOverlay">
+
+    <div class="auth-box">
+
+        <h2>
+            🔐 Login Required
+        </h2>
+
+        <p>
+            Please log in to make changes to the tracker.
+        </p>
+
+        <label for="authUsername">
+            Username
+        </label>
+
+        <input
+            id="authUsername"
+            type="text"
+            autocomplete="username"
+            placeholder="....">
+
+        <label for="authPassword">
+            Password
+        </label>
+
+        <input
+            id="authPassword"
+            type="password"
+            autocomplete="current-password"
+            placeholder="....">
+
+        <div
+            class="auth-error"
+            id="authError">
+        </div>
+
+        <div class="auth-actions">
+
+            <button
+                class="btn btn-soft"
+                id="authCancelBtn">
+                Cancel
+            </button>
+
+            <button
+                class="btn btn-primary"
+                id="authLoginBtn">
+                Login
+            </button>
+
+        </div>
+
     </div>
-  </div>
+
 </div>
-<div class="auth-badge" id="authBadge" title="Tap to sign out"></div>
+
+<div
+    class="auth-badge"
+    id="authBadge"
+    title="Tap to sign out">
+</div>
 
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+import {
+    getFirestore,
+    doc,
+    onSnapshot,
+    setDoc
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+
+/* =========================================================
+   FIREBASE
+========================================================= */
 
 const firebaseConfig = {
-    apiKey: "AIzaSyD-VGobD51rndQnp22hef9paZT3-V_uK8Q",
-    authDomain: "baby-feeding-tracker-b2035.firebaseapp.com",
-    projectId: "baby-feeding-tracker-b2035",
-    storageBucket: "baby-feeding-tracker-b2035.firebasestorage.app",
-    messagingSenderId: "7883630691",
-    appId: "1:7883630691:web:4849ef386713ad66e3b056",
-    measurementId: "G-Z3C6Q22RWC"
+
+    apiKey:
+        "AIzaSyD-VGobD51rndQnp22hef9paZT3-V_uK8Q",
+
+    authDomain:
+        "baby-feeding-tracker-b2035.firebaseapp.com",
+
+    projectId:
+        "baby-feeding-tracker-b2035",
+
+    storageBucket:
+        "baby-feeding-tracker-b2035.firebasestorage.app",
+
+    messagingSenderId:
+        "7883630691",
+
+    appId:
+        "1:7883630691:web:4849ef386713ad66e3b056",
+
+    measurementId:
+        "G-Z3C6Q22RWC"
 };
+
 const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
+
 const db = getFirestore(app);
-const trackerRef = doc(db, "babyTracker", "main");
-const ADMIN_EMAIL = "admin@babyfeedingtracker.com";
-let currentUser = null, pendingAction = null, applyingRemote = false, firebaseConnected = false;
 
-const $ = selector => document.querySelector(selector);
-function setFirebaseStatus(message,error=false){const el=$("#firebaseStatus");if(el){el.textContent=message;el.classList.toggle("error",error);}}
-function isEditor(){return !!currentUser;}
-function requireLogin(action){if(isEditor()){action();return;}pendingAction=action;$("#authUsername").value="";$("#authPassword").value="";$("#authError").textContent="";$("#authOverlay").classList.add("show");$("#authUsername").focus();}
-function closeLogin(){$("#authOverlay").classList.remove("show");pendingAction=null;$("#authError").textContent="";}
-async function login(){const username=$("#authUsername").value.trim(),password=$("#authPassword").value,error=$("#authError");if(!username||!password){error.textContent="Please enter username and password.";return;}const email=username.toLowerCase()==="admin"?ADMIN_EMAIL:username;try{$("#authLoginBtn").disabled=true;error.textContent="Signing in...";await signInWithEmailAndPassword(auth,email,password);$("#authOverlay").classList.remove("show");const action=pendingAction;pendingAction=null;if(action)action();}catch(err){console.error(err);error.textContent=err.code==="auth/invalid-credential"||err.code==="auth/wrong-password"||err.code==="auth/user-not-found"?"Incorrect username or password.":(err.message||"Login failed.");}finally{$("#authLoginBtn").disabled=false;}}
-onAuthStateChanged(auth,user=>{
-    currentUser=user||null;
-    const badge=$("#authBadge");
-
-    if(currentUser){
-        badge.textContent="🔓 Admin editing mode";
-        badge.classList.add("show");
-        setFirebaseStatus("☁️ Firebase connected • Editing enabled");
-    }else{
-        badge.classList.remove("show");
-        clearAllRowSelections();
-        setFirebaseStatus(firebaseConnected?"☁️ Firebase connected • View only":"☁️ Connecting to Firebase...");
-    }
-
-    updateNavigation();
-});
-$("#authLoginBtn").addEventListener("click",login);$("#authCancelBtn").addEventListener("click",closeLogin);$("#authOverlay").addEventListener("click",e=>{if(e.target.id==="authOverlay")closeLogin();});$("#authPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login();});$("#authBadge").addEventListener("click",async()=>{if(currentUser&&confirm("Sign out of editing mode?"))await signOut(auth);});
-
-const MILK_OPTIONS = [60, 90, 120, 150];
-const DIAPER_OPTIONS = ["Pee/尿尿", "Poop/大便"];
-
-let pages = [];
-let currentPage = 0;
-let loadingData = false;
-
-// Selected rows are kept only in the current browser view.
-// They are not saved to Firebase.
-const selectedRows = new Set();
-let suppressRowClickUntil = 0;
-
-function formatDate(date){
-    return new Intl.DateTimeFormat("en-GB",{
-        day:"2-digit", month:"2-digit", year:"numeric"
-    }).format(date);
-}
-
-function dateKey(date){
-    const d = new Date(date);
-    d.setHours(0,0,0,0);
-
-    // Store the calendar date without converting it to UTC.
-    // This prevents Malaysia/Asia time from becoming the previous day.
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-
-    return `${y}-${m}-${day}T00:00:00`;
-}
-
-function createSelect(options, value = ""){
-    const select = document.createElement("select");
-
-    options.forEach(item => {
-        const option = document.createElement("option");
-        option.value = String(item.value ?? item);
-        option.textContent = item.label ?? item;
-        select.appendChild(option);
-    });
-
-    if(value !== "") select.value = String(value);
-    return select;
-}
-
-function createMilkSelect(value = "0", onChange = null){
-    const options = [
-        {label:"", value:"0"},
-        ...MILK_OPTIONS.map(amount => ({
-            label:`${amount} ML`,
-            value:String(amount)
-        })),
-        {label:"Medicine / 药物", value:"medicine"},
-        {label:"Type ML / 输入奶量", value:"custom"}
-    ];
-
-    const select = createSelect(options);
-    select.className = "milk-select";
-
-    const savedValue = String(value ?? "0");
-
-    if([...select.options].some(option => option.value === savedValue)){
-        select.value = savedValue;
-    }else if(savedValue !== "custom" && savedValue !== "medicine" && !Number.isNaN(Number(savedValue))){
-        addCustomMilkOption(select, savedValue);
-        select.value = savedValue;
-    }else{
-        select.value = "0";
-    }
-
-    select.addEventListener("change", () => {
-        const oldValue = String(value ?? "0");
-
-        if(!isEditor()){
-            select.value = oldValue;
-            requireLogin(() => {
-                if(select.value === "custom"){
-                    const input = prompt("Enter milk amount in ML:\n请输入奶量（ML）：");
-                    const amount = input === null ? null : Number(input.trim());
-
-                    if(amount === null || input.trim() === "" || Number.isNaN(amount) || amount < 0){
-                        select.value = "0";
-                    }else{
-                        addCustomMilkOption(select, String(amount));
-                        select.value = String(amount);
-                    }
-                }
-
-                if(onChange) onChange();
-                refreshCurrentPage();
-                saveData();
-            });
-            return;
-        }
-
-        if(select.value === "custom"){
-            const input = prompt("Enter milk amount in ML:\n请输入奶量（ML）：");
-            const amount = input === null ? null : Number(input.trim());
-
-            if(amount === null || input.trim() === "" || Number.isNaN(amount) || amount < 0){
-                select.value = "0";
-            }else{
-                addCustomMilkOption(select, String(amount));
-                select.value = String(amount);
-            }
-        }
-
-        if(onChange) onChange();
-        refreshCurrentPage();
-        saveData();
-    });
-
-    return select;
-}
-
-function addCustomMilkOption(select, amount){
-    const exists = [...select.options].some(
-        option => option.value === String(amount)
+const trackerRef =
+    doc(
+        db,
+        "babyTracker",
+        "main"
     );
 
-    if(exists) return;
+const ADMIN_EMAIL =
+    "admin@babyfeedingtracker.com";
 
-    const option = document.createElement("option");
-    option.value = String(amount);
-    option.textContent = `${amount} ML`;
+
+let currentUser = null;
+
+let pendingAction = null;
+
+let applyingRemote = false;
+
+let firebaseConnected = false;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+const $ = selector =>
+    document.querySelector(selector);
+
+
+function setFirebaseStatus(
+    message,
+    error = false
+){
+
+    const el =
+        $("#firebaseStatus");
+
+    if(el){
+
+        el.textContent =
+            message;
+
+        el.classList.toggle(
+            "error",
+            error
+        );
+
+    }
+
+}
+
+
+function isEditor(){
+
+    return !!currentUser;
+
+}
+
+
+function requireLogin(action){
+
+    if(isEditor()){
+
+        action();
+
+        return;
+    }
+
+    pendingAction =
+        action;
+
+    $("#authUsername").value =
+        "";
+
+    $("#authPassword").value =
+        "";
+
+    $("#authError").textContent =
+        "";
+
+    $("#authOverlay")
+        .classList
+        .add("show");
+
+    $("#authUsername")
+        .focus();
+
+}
+
+
+function closeLogin(){
+
+    $("#authOverlay")
+        .classList
+        .remove("show");
+
+    pendingAction =
+        null;
+
+    $("#authError").textContent =
+        "";
+
+}
+
+
+async function login(){
+
+    const username =
+        $("#authUsername")
+        .value
+        .trim();
+
+    const password =
+        $("#authPassword")
+        .value;
+
+    const error =
+        $("#authError");
+
+
+    if(!username || !password){
+
+        error.textContent =
+            "Please enter username and password.";
+
+        return;
+
+    }
+
+
+    const email =
+        username.toLowerCase() === "admin"
+            ? ADMIN_EMAIL
+            : username;
+
+
+    try{
+
+        $("#authLoginBtn")
+            .disabled = true;
+
+        error.textContent =
+            "Signing in...";
+
+
+        await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
+
+
+        $("#authOverlay")
+            .classList
+            .remove("show");
+
+
+        const action =
+            pendingAction;
+
+        pendingAction =
+            null;
+
+
+        if(action){
+
+            action();
+
+        }
+
+    }catch(err){
+
+        console.error(
+            err
+        );
+
+        error.textContent =
+            err.code === "auth/invalid-credential" ||
+            err.code === "auth/wrong-password" ||
+            err.code === "auth/user-not-found"
+                ? "Incorrect username or password."
+                : (
+                    err.message ||
+                    "Login failed."
+                );
+
+    }finally{
+
+        $("#authLoginBtn")
+            .disabled = false;
+
+    }
+
+}
+
+
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
+onAuthStateChanged(
+    auth,
+    user => {
+
+        currentUser =
+            user || null;
+
+        const badge =
+            $("#authBadge");
+
+
+        if(currentUser){
+
+            badge.textContent =
+                "🔓 Admin editing mode";
+
+            badge.classList
+                .add("show");
+
+            setFirebaseStatus(
+                "☁️ Firebase connected • Editing enabled"
+            );
+
+        }else{
+
+            badge.classList
+                .remove("show");
+
+            clearAllRowSelections();
+
+            setFirebaseStatus(
+                firebaseConnected
+                    ? "☁️ Firebase connected • View only"
+                    : "☁️ Connecting to Firebase..."
+            );
+
+        }
+
+
+        updateNavigation();
+
+    }
+);
+
+
+$("#authLoginBtn")
+    .addEventListener(
+        "click",
+        login
+    );
+
+
+$("#authCancelBtn")
+    .addEventListener(
+        "click",
+        closeLogin
+    );
+
+
+$("#authOverlay")
+    .addEventListener(
+        "click",
+        event => {
+
+            if(
+                event.target.id ===
+                "authOverlay"
+            ){
+
+                closeLogin();
+
+            }
+
+        }
+    );
+
+
+$("#authPassword")
+    .addEventListener(
+        "keydown",
+        event => {
+
+            if(event.key === "Enter"){
+
+                login();
+
+            }
+
+        }
+    );
+
+
+$("#authBadge")
+    .addEventListener(
+        "click",
+        async () => {
+
+            if(
+                currentUser &&
+                confirm(
+                    "Sign out of editing mode?"
+                )
+            ){
+
+                await signOut(auth);
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   DATA SETTINGS
+========================================================= */
+
+const MILK_OPTIONS = [
+    60,
+    90,
+    120,
+    150
+];
+
+const DIAPER_OPTIONS = [
+    "Pee/尿尿",
+    "Poop/大便"
+];
+
+
+let pages = [];
+
+let currentPage = 0;
+
+const selectedRows =
+    new Set();
+
+let suppressRowClickUntil =
+    0;
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+function formatDate(date){
+
+    return new Intl.DateTimeFormat(
+        "en-GB",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric"
+        }
+    ).format(date);
+
+}
+
+
+function dateKey(date){
+
+    const d =
+        new Date(date);
+
+    d.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    const y =
+        d.getFullYear();
+
+    const m =
+        String(
+            d.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const day =
+        String(
+            d.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    return `${y}-${m}-${day}T00:00:00`;
+
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+function createSelect(
+    options,
+    value = ""
+){
+
+    const select =
+        document.createElement(
+            "select"
+        );
+
+
+    options.forEach(
+        item => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                String(
+                    item.value ??
+                    item
+                );
+
+            option.textContent =
+                item.label ??
+                item;
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    if(value !== ""){
+
+        select.value =
+            String(value);
+
+    }
+
+
+    return select;
+
+}
+
+
+/* =========================================================
+   MILK
+========================================================= */
+
+function createMilkSelect(
+    value = "0",
+    onChange = null
+){
+
+    const options = [
+
+        {
+            label:"",
+            value:"0"
+        },
+
+        ...MILK_OPTIONS.map(
+            amount => ({
+
+                label:
+                    `${amount} ML`,
+
+                value:
+                    String(amount)
+
+            })
+        ),
+
+        {
+            label:
+                "Medicine / 药物",
+
+            value:
+                "medicine"
+        },
+
+        {
+            label:
+                "Type ML / 输入奶量",
+
+            value:
+                "custom"
+        }
+
+    ];
+
+
+    const select =
+        createSelect(
+            options
+        );
+
+    select.className =
+        "milk-select";
+
+
+    const savedValue =
+        String(
+            value ?? "0"
+        );
+
+
+    if(
+        [...select.options]
+        .some(
+            option =>
+                option.value ===
+                savedValue
+        )
+    ){
+
+        select.value =
+            savedValue;
+
+    }else if(
+        savedValue !== "custom" &&
+        savedValue !== "medicine" &&
+        !Number.isNaN(
+            Number(savedValue)
+        )
+    ){
+
+        addCustomMilkOption(
+            select,
+            savedValue
+        );
+
+        select.value =
+            savedValue;
+
+    }else{
+
+        select.value =
+            "0";
+
+    }
+
+
+    select.addEventListener(
+        "change",
+        () => {
+
+            const oldValue =
+                String(
+                    value ?? "0"
+                );
+
+
+            if(!isEditor()){
+
+                select.value =
+                    oldValue;
+
+                requireLogin(
+                    () => {
+
+                        if(
+                            select.value ===
+                            "custom"
+                        ){
+
+                            const input =
+                                prompt(
+                                    "Enter milk amount in ML:\n请输入奶量（ML）："
+                                );
+
+                            const amount =
+                                input === null
+                                    ? null
+                                    : Number(
+                                        input.trim()
+                                    );
+
+
+                            if(
+                                amount === null ||
+                                input.trim() === "" ||
+                                Number.isNaN(amount) ||
+                                amount < 0
+                            ){
+
+                                select.value =
+                                    "0";
+
+                            }else{
+
+                                addCustomMilkOption(
+                                    select,
+                                    String(amount)
+                                );
+
+                                select.value =
+                                    String(amount);
+
+                            }
+
+                        }
+
+
+                        if(onChange)
+                            onChange();
+
+
+                        refreshCurrentPage();
+
+                        saveData();
+
+                    }
+                );
+
+                return;
+
+            }
+
+
+            if(
+                select.value ===
+                "custom"
+            ){
+
+                const input =
+                    prompt(
+                        "Enter milk amount in ML:\n请输入奶量（ML）："
+                    );
+
+                const amount =
+                    input === null
+                        ? null
+                        : Number(
+                            input.trim()
+                        );
+
+
+                if(
+                    amount === null ||
+                    input.trim() === "" ||
+                    Number.isNaN(amount) ||
+                    amount < 0
+                ){
+
+                    select.value =
+                        "0";
+
+                }else{
+
+                    addCustomMilkOption(
+                        select,
+                        String(amount)
+                    );
+
+                    select.value =
+                        String(amount);
+
+                }
+
+            }
+
+
+            if(onChange)
+                onChange();
+
+
+            refreshCurrentPage();
+
+            saveData();
+
+        }
+    );
+
+
+    return select;
+
+}
+
+
+function addCustomMilkOption(
+    select,
+    amount
+){
+
+    const exists =
+        [...select.options]
+        .some(
+            option =>
+                option.value ===
+                String(amount)
+        );
+
+
+    if(exists)
+        return;
+
+
+    const option =
+        document.createElement(
+            "option"
+        );
+
+    option.value =
+        String(amount);
+
+    option.textContent =
+        `${amount} ML`;
+
 
     select.insertBefore(
         option,
-        select.querySelector('option[value="custom"]')
+        select.querySelector(
+            'option[value="custom"]'
+        )
     );
+
 }
 
-function updateFeedingMode(feedingControls, milkSelect){
-    if(!feedingControls || !milkSelect) return;
 
-    const isMedicine = milkSelect.value === "medicine";
-    feedingControls.classList.toggle("medicine-mode", isMedicine);
-}
+/* =========================================================
+   TIME
+========================================================= */
 
-function createFeedingControls(data = {}, onChange = null){
-    const feedingControls = document.createElement("div");
-    feedingControls.className = "feeding-controls";
+function createTimeControl(
+    savedTime = ""
+){
 
-    const checkWrap = document.createElement("span");
-    checkWrap.className = "check-wrap";
-
-    const burp = document.createElement("input");
-    burp.type = "checkbox";
-    burp.className = "check";
-    burp.checked = Boolean(data.burp);
-
-    burp.addEventListener("change", () => {
-        if(!isEditor()){
-            burp.checked = !burp.checked;
-            requireLogin(() => {
-                burp.checked = !burp.checked;
-                if(onChange) onChange();
-                saveData();
-            });
-            return;
-        }
-
-        if(onChange) onChange();
-        saveData();
-    });
-
-    checkWrap.appendChild(burp);
-
-    const milkSelect = createMilkSelect(data.milk ?? "0", () => {
-        updateFeedingMode(feedingControls, milkSelect);
-
-        if(milkSelect.value === "medicine"){
-            diaperSelect.value = DIAPER_OPTIONS[0];
-            burp.checked = false;
-        }
-
-        if(onChange) onChange();
-    });
-
-    const diaperSelect = createSelect(
-        DIAPER_OPTIONS,
-        data.diaper || DIAPER_OPTIONS[0]
-    );
-    diaperSelect.className = "diaper-select";
-
-    diaperSelect.addEventListener("change", () => {
-        if(!isEditor()){
-            const oldValue = data.diaper || DIAPER_OPTIONS[0];
-            diaperSelect.value = oldValue;
-            requireLogin(() => {
-                diaperSelect.value = oldValue;
-                if(onChange) onChange();
-                saveData();
-            });
-            return;
-        }
-
-        if(onChange) onChange();
-        saveData();
-    });
-
-    feedingControls.append(checkWrap, milkSelect, diaperSelect);
-    updateFeedingMode(feedingControls, milkSelect);
-
-    return {
-        container: feedingControls,
-        burp,
-        milkSelect,
-        diaperSelect
-    };
-}
-
-function createTimeControl(savedTime = ""){
     if(savedTime){
-        return createLoggedTime(savedTime);
+
+        return createLoggedTime(
+            savedTime
+        );
+
     }
 
-    const container = document.createElement("div");
-    container.className = "time-box";
 
-    const logButton = document.createElement("button");
-    logButton.className = "btn btn-primary btn-small";
-    logButton.innerHTML = "Log Time<br>记录时间";
+    const container =
+        document.createElement(
+            "div"
+        );
 
-    logButton.addEventListener("click", () => {
-        if(!isEditor()){
-            requireLogin(() => logButton.click());
-            return;
+    container.className =
+        "time-box";
+
+
+    const logButton =
+        document.createElement(
+            "button"
+        );
+
+    logButton.className =
+        "btn btn-primary btn-small";
+
+    logButton.innerHTML =
+        "Log Time<br>记录时间";
+
+
+    logButton.addEventListener(
+        "click",
+        () => {
+
+            if(!isEditor()){
+
+                requireLogin(
+                    () =>
+                        logButton.click()
+                );
+
+                return;
+
+            }
+
+
+            /* =================================================
+               LOG TIME
+               AM / PM IS FORCED TO UPPERCASE
+            ================================================= */
+
+            const time =
+                new Date()
+                .toLocaleTimeString(
+                    "en-US",
+                    {
+                        hour:"numeric",
+                        minute:"2-digit",
+                        hour12:true
+                    }
+                )
+                .replace(
+                    /\b(am|pm)\b/i,
+                    match =>
+                        match.toUpperCase()
+                );
+
+
+            container.replaceWith(
+                createLoggedTime(
+                    time
+                )
+            );
+
+            saveData();
+
         }
+    );
 
-        const time = new Date().toLocaleTimeString([],{
-            hour:"numeric",
-            minute:"2-digit",
-            hour12:true
-        });
 
-        container.replaceWith(createLoggedTime(time));
-        saveData();
-    });
+    const manual =
+        document.createElement(
+            "div"
+        );
 
-    const manual = document.createElement("div");
-    manual.className = "manual-time";
+    manual.className =
+        "manual-time";
 
-    const hours = createSelect([
-        {label:"HH", value:""},
-        ...Array.from({length:12}, (_,i) => ({
-            label:String(i + 1),
-            value:String(i + 1)
-        }))
-    ]);
 
-    const minutes = createSelect([
-        {label:"MM", value:""},
-        ...Array.from({length:60}, (_,i) => {
-            const value = String(i).padStart(2,"0");
-            return {label:value, value};
-        })
-    ]);
+    const hours =
+        createSelect(
+            [
+                {
+                    label:"HH",
+                    value:""
+                },
 
-    const period = createSelect(["AM","PM"]);
+                ...Array.from(
+                    {
+                        length:12
+                    },
+                    (_,i) => ({
 
-    const setButton = document.createElement("button");
-    setButton.className = "btn btn-soft btn-small";
-    setButton.textContent = "✓";
+                        label:
+                            String(i + 1),
 
-    setButton.addEventListener("click", () => {
-        if(!isEditor()){
-            requireLogin(() => setButton.click());
-            return;
+                        value:
+                            String(i + 1)
+
+                    })
+                )
+
+            ]
+        );
+
+
+    const minutes =
+        createSelect(
+            [
+                {
+                    label:"MM",
+                    value:""
+                },
+
+                ...Array.from(
+                    {
+                        length:60
+                    },
+                    (_,i) => {
+
+                        const value =
+                            String(i)
+                            .padStart(
+                                2,
+                                "0"
+                            );
+
+                        return {
+                            label:value,
+                            value
+                        };
+
+                    }
+                )
+
+            ]
+        );
+
+
+    const period =
+        createSelect(
+            [
+                "AM",
+                "PM"
+            ]
+        );
+
+
+    const setButton =
+        document.createElement(
+            "button"
+        );
+
+    setButton.className =
+        "btn btn-soft btn-small";
+
+    setButton.textContent =
+        "✓";
+
+
+    setButton.addEventListener(
+        "click",
+        () => {
+
+            if(!isEditor()){
+
+                requireLogin(
+                    () =>
+                        setButton.click()
+                );
+
+                return;
+
+            }
+
+
+            if(
+                !hours.value ||
+                !minutes.value
+            ){
+
+                alert(
+                    "Please select the time.\n请选择时间。"
+                );
+
+                return;
+
+            }
+
+
+            const time =
+                `${hours.value}:${minutes.value} ${period.value}`;
+
+
+            container.replaceWith(
+                createLoggedTime(
+                    time
+                )
+            );
+
+            saveData();
+
         }
+    );
 
-        if(!hours.value || !minutes.value){
-            alert("Please select the time.\n请选择时间。");
-            return;
-        }
-
-        const time = `${hours.value}:${minutes.value} ${period.value}`;
-        container.replaceWith(createLoggedTime(time));
-        saveData();
-    });
 
     manual.append(
         hours,
@@ -1192,341 +2276,1901 @@ function createTimeControl(savedTime = ""){
         setButton
     );
 
-    container.append(logButton, manual);
+
+    container.append(
+        logButton,
+        manual
+    );
+
+
     return container;
+
 }
 
-function createLoggedTime(time){
-    const span = document.createElement("span");
-    span.className = "time-value";
-    span.textContent = time;
+
+function createLoggedTime(
+    time
+){
+
+    const span =
+        document.createElement(
+            "span"
+        );
+
+    span.className =
+        "time-value";
+
+    span.textContent =
+        time;
+
     return span;
+
 }
 
-const TEMPERATURE_OPTIONS = Array.from({length:141}, (_, i) => {
-    const value = (36 + i / 10).toFixed(1);
-    return {label:`${value}°C`, value};
-});
 
-function populateTemperatureSelect(select){
-    if(!select || select.options.length > 1) return;
+/* =========================================================
+   TEMPERATURE
+========================================================= */
 
-    TEMPERATURE_OPTIONS.forEach(item => {
-        const option = document.createElement("option");
-        option.value = item.value;
-        option.textContent = item.label;
-        select.appendChild(option);
-    });
+const TEMPERATURE_OPTIONS =
+    Array.from(
+        {
+            length:141
+        },
+        (_,i) => {
+
+            const value =
+                (
+                    36 +
+                    i / 10
+                ).toFixed(1);
+
+            return {
+                label:
+                    `${value}°C`,
+
+                value
+            };
+
+        }
+    );
+
+
+function populateTemperatureSelect(
+    select
+){
+
+    if(
+        !select ||
+        select.options.length > 1
+    )
+        return;
+
+
+    TEMPERATURE_OPTIONS.forEach(
+        item => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                item.value;
+
+            option.textContent =
+                item.label;
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
 }
 
-function formatTemperatureTimestamp(timestamp){
-    if(!timestamp) return "";
-    const date = new Date(timestamp);
-    if(Number.isNaN(date.getTime())) return String(timestamp);
 
-    return date.toLocaleString([], {
-        day:"2-digit",
-        month:"2-digit",
-        year:"numeric",
-        hour:"numeric",
-        minute:"2-digit",
-        hour12:true
-    });
+function formatTemperatureTimestamp(
+    timestamp
+){
+
+    if(!timestamp)
+        return "";
+
+
+    const date =
+        new Date(timestamp);
+
+
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    )
+        return String(timestamp);
+
+
+    return date.toLocaleString(
+        [],
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric",
+            hour:"numeric",
+            minute:"2-digit",
+            hour12:true
+        }
+    );
+
 }
 
-function getTemperatureData(page){
-    if(!page) return [];
 
-    return [...page.querySelectorAll(".temperature-entry")].map(entry => ({
-        temperature: entry.dataset.temperature || "",
-        timestamp: entry.dataset.timestamp || ""
-    }));
+function getTemperatureData(
+    card
+){
+
+    if(!card)
+        return [];
+
+
+    return [
+        ...card.querySelectorAll(
+            ".temperature-entry"
+        )
+    ].map(
+        entry => ({
+
+            temperature:
+                entry.dataset.temperature ||
+                "",
+
+            timestamp:
+                entry.dataset.timestamp ||
+                ""
+
+        })
+    );
+
 }
+
 
 function syncCurrentPageTemperatures(){
-    const card = document.querySelector(".temperature-card");
-    if(pages[currentPage] && card){
-        pages[currentPage]._temperatureData = getTemperatureData(card);
+
+    const card =
+        document.querySelector(
+            ".temperature-card"
+        );
+
+
+    if(
+        pages[currentPage] &&
+        card
+    ){
+
+        pages[currentPage]
+            ._temperatureData =
+            getTemperatureData(
+                card
+            );
+
     }
+
 }
 
-function getSavedTemperaturesForPage(page){
-    return page?._temperatureData || [];
+
+function getSavedTemperaturesForPage(
+    page
+){
+
+    return page?._temperatureData ||
+        [];
+
 }
 
-function renderTemperatures(page, temperatures = []){
-    const select = page.querySelector(".temperature-select");
-    const box = page.querySelector(".temperature-box");
 
-    if(!select || !box) return;
+function renderTemperatures(
+    card,
+    temperatures = []
+){
 
-    populateTemperatureSelect(select);
+    if(!card)
+        return;
+
+
+    const select =
+        card.querySelector(
+            ".temperature-select"
+        );
+
+    const box =
+        card.querySelector(
+            ".temperature-box"
+        );
+
+
+    if(!select || !box)
+        return;
+
+
+    populateTemperatureSelect(
+        select
+    );
+
+
     box.replaceChildren();
 
+
     if(!temperatures.length){
-        const empty = document.createElement("div");
-        empty.className = "temperature-empty";
-        empty.textContent = "No temperature recorded yet. / 尚未记录体温。";
-        box.appendChild(empty);
+
+        const empty =
+            document.createElement(
+                "div"
+            );
+
+        empty.className =
+            "temperature-empty";
+
+        empty.textContent =
+            "No temperature recorded yet. / 尚未记录体温。";
+
+        box.appendChild(
+            empty
+        );
+
         return;
+
     }
 
-    temperatures.forEach(item => {
-        const entry = document.createElement("div");
-        entry.className = "temperature-entry";
-        entry.dataset.temperature = String(item.temperature ?? "");
-        entry.dataset.timestamp = String(item.timestamp ?? "");
 
-        const value = document.createElement("span");
-        const temperatureNumber = Number(item.temperature);
+    temperatures.forEach(
+        item => {
 
-        value.className = "temperature-value";
-        value.classList.toggle(
-            "temperature-high",
-            temperatureNumber >= 37.6
-        );
-        value.textContent = `${temperatureNumber.toFixed(1)}°C`;
+            const entry =
+                document.createElement(
+                    "div"
+                );
 
-        const time = document.createElement("span");
-        time.className = "temperature-time";
-        time.textContent = formatTemperatureTimestamp(item.timestamp);
+            entry.className =
+                "temperature-entry";
 
-        entry.append(value, time);
-        box.appendChild(entry);
-    });
+
+            entry.dataset.temperature =
+                String(
+                    item.temperature ?? ""
+                );
+
+
+            entry.dataset.timestamp =
+                String(
+                    item.timestamp ?? ""
+                );
+
+
+            const value =
+                document.createElement(
+                    "span"
+                );
+
+
+            const temperatureNumber =
+                Number(
+                    item.temperature
+                );
+
+
+            value.className =
+                "temperature-value";
+
+
+            value.classList.toggle(
+                "temperature-high",
+                temperatureNumber >= 37.6
+            );
+
+
+            value.textContent =
+                `${temperatureNumber.toFixed(1)}°C`;
+
+
+            const time =
+                document.createElement(
+                    "span"
+                );
+
+            time.className =
+                "temperature-time";
+
+            time.textContent =
+                formatTemperatureTimestamp(
+                    item.timestamp
+                );
+
+
+            entry.append(
+                value,
+                time
+            );
+
+
+            box.appendChild(
+                entry
+            );
+
+        }
+    );
+
 }
 
-function setupTemperatureSection(page, temperatures = []){
-    const temperatureCard = document.querySelector(".temperature-card");
-    if(!temperatureCard) return;
 
-    const select = temperatureCard.querySelector(".temperature-select");
-    const addButton = temperatureCard.querySelector(".temperature-add-btn");
+function setupTemperatureSection(
+    temperatures = []
+){
 
-    populateTemperatureSelect(select);
-    renderTemperatures(temperatureCard, temperatures);
-
-    addButton.onclick = () => {
-        if(!isEditor()){
-            requireLogin(() => addButton.click());
-            return;
-        }
-
-        if(!select.value){
-            alert("Please select a temperature.\n请选择体温。");
-            return;
-        }
-
-        const temperature = Number(select.value);
-        if(Number.isNaN(temperature) || temperature < 36 || temperature > 50){
-            alert("Please select a temperature from 36°C to 50°C.\n请选择36°C至50°C之间的体温。");
-            return;
-        }
-
-        const box = temperatureCard.querySelector(".temperature-box");
-        const empty = box.querySelector(".temperature-empty");
-        if(empty) empty.remove();
-
-        const timestamp = new Date().toISOString();
-        const entry = document.createElement("div");
-        entry.className = "temperature-entry";
-        entry.dataset.temperature = temperature.toFixed(1);
-        entry.dataset.timestamp = timestamp;
-
-        const value = document.createElement("span");
-        value.className = "temperature-value";
-        value.classList.toggle(
-            "temperature-high",
-            temperature >= 37.6
+    const temperatureCard =
+        document.querySelector(
+            ".temperature-card"
         );
-        value.textContent = `${temperature.toFixed(1)}°C`;
 
-        const time = document.createElement("span");
-        time.className = "temperature-time";
-        time.textContent = formatTemperatureTimestamp(timestamp);
 
-        entry.append(value, time);
-        box.appendChild(entry);
+    if(!temperatureCard)
+        return;
 
-        select.value = "";
-        saveData();
-    };
+
+    const select =
+        temperatureCard.querySelector(
+            ".temperature-select"
+        );
+
+
+    const addButton =
+        temperatureCard.querySelector(
+            ".temperature-add-btn"
+        );
+
+
+    populateTemperatureSelect(
+        select
+    );
+
+
+    renderTemperatures(
+        temperatureCard,
+        temperatures
+    );
+
+
+    addButton.onclick =
+        () => {
+
+            if(!isEditor()){
+
+                requireLogin(
+                    () =>
+                        addButton.click()
+                );
+
+                return;
+
+            }
+
+
+            if(!select.value){
+
+                alert(
+                    "Please select a temperature.\n请选择体温。"
+                );
+
+                return;
+
+            }
+
+
+            const temperature =
+                Number(
+                    select.value
+                );
+
+
+            if(
+                Number.isNaN(temperature) ||
+                temperature < 36 ||
+                temperature > 50
+            ){
+
+                alert(
+                    "Please select a temperature from 36°C to 50°C.\n请选择36°C至50°C之间的体温。"
+                );
+
+                return;
+
+            }
+
+
+            const box =
+                temperatureCard.querySelector(
+                    ".temperature-box"
+                );
+
+
+            const empty =
+                box.querySelector(
+                    ".temperature-empty"
+                );
+
+
+            if(empty)
+                empty.remove();
+
+
+            const timestamp =
+                new Date()
+                .toISOString();
+
+
+            const entry =
+                document.createElement(
+                    "div"
+                );
+
+            entry.className =
+                "temperature-entry";
+
+
+            entry.dataset.temperature =
+                temperature.toFixed(1);
+
+
+            entry.dataset.timestamp =
+                timestamp;
+
+
+            const value =
+                document.createElement(
+                    "span"
+                );
+
+            value.className =
+                "temperature-value";
+
+
+            value.classList.toggle(
+                "temperature-high",
+                temperature >= 37.6
+            );
+
+
+            value.textContent =
+                `${temperature.toFixed(1)}°C`;
+
+
+            const time =
+                document.createElement(
+                    "span"
+                );
+
+            time.className =
+                "temperature-time";
+
+
+            time.textContent =
+                formatTemperatureTimestamp(
+                    timestamp
+                );
+
+
+            entry.append(
+                value,
+                time
+            );
+
+
+            box.appendChild(
+                entry
+            );
+
+
+            select.value =
+                "";
+
+
+            saveData();
+
+        };
+
 }
+
+
+/* =========================================================
+   DATE LOCKING
+========================================================= */
+
 function getStartOfToday(){
-    const today = new Date();
-    today.setHours(0,0,0,0);
+
+    const today =
+        new Date();
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
     return today;
-}
 
-function isPastDatePage(page){
-    if(!page) return false;
-
-    const pageDate = new Date(page.dataset.date);
-    if(Number.isNaN(pageDate.getTime())) return false;
-
-    pageDate.setHours(0,0,0,0);
-    return pageDate.getTime() < getStartOfToday().getTime();
-}
-
-function lockPastDatePage(page){
-    if(!page) return;
-
-    const locked = isPastDatePage(page);
-    page.classList.toggle("past-date-locked", locked);
-
-    // Disable all editing controls on past pages.
-    page.querySelectorAll("input, select, button").forEach(control => {
-        control.disabled = locked;
-    });
 }
 
 
-function updateSelectionToolbar(page){
-    if(!page) return;
+function isPastDatePage(
+    page
+){
 
-    const toolbar = page.querySelector(".selection-toolbar");
-    const info = page.querySelector(".selection-info");
-    if(!toolbar || !info) return;
+    if(!page)
+        return false;
 
-    const selected = [...selectedRows].filter(row => row && row.isConnected && row.closest(".page") === page);
+
+    const pageDate =
+        new Date(
+            page.dataset.date
+        );
+
+
+    if(
+        Number.isNaN(
+            pageDate.getTime()
+        )
+    )
+        return false;
+
+
+    pageDate.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    return (
+        pageDate.getTime() <
+        getStartOfToday().getTime()
+    );
+
+}
+
+
+function lockPastDatePage(
+    page
+){
+
+    if(!page)
+        return;
+
+
+    const locked =
+        isPastDatePage(
+            page
+        );
+
+
+    page.classList.toggle(
+        "past-date-locked",
+        locked
+    );
+
+
+    page.querySelectorAll(
+        "input, select, button"
+    ).forEach(
+        control => {
+
+            control.disabled =
+                locked;
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ROW SELECTION
+========================================================= */
+
+function updateSelectionToolbar(
+    page
+){
+
+    if(!page)
+        return;
+
+
+    const toolbar =
+        page.querySelector(
+            ".selection-toolbar"
+        );
+
+
+    const info =
+        page.querySelector(
+            ".selection-info"
+        );
+
+
+    if(!toolbar || !info)
+        return;
+
+
+    const selected =
+        [
+            ...selectedRows
+        ].filter(
+            row =>
+                row &&
+                row.isConnected &&
+                row.closest(".page") === page
+        );
+
 
     if(!selected.length){
-        toolbar.classList.remove("show");
-        info.innerHTML = "0 selected<br>已选择0行";
+
+        toolbar.classList.remove(
+            "show"
+        );
+
+        info.innerHTML =
+            "0 selected<br>已选择0行";
+
         return;
+
     }
 
-    toolbar.classList.add("show");
+
+    toolbar.classList.add(
+        "show"
+    );
+
+
     info.innerHTML =
-        `${selected.length} selected<br>已选择${selected.length}行`;
+        `${selected.length} selected<br>` +
+        `已选择${selected.length}行`;
+
 }
+
 
 function clearAllRowSelections(){
-    selectedRows.forEach(row => row?.classList?.remove("selected-row"));
+
+    selectedRows.forEach(
+        row =>
+            row?.classList
+                ?.remove(
+                    "selected-row"
+                )
+    );
+
+
     selectedRows.clear();
 
-    pages.forEach(page => updateSelectionToolbar(page));
+
+    pages.forEach(
+        page =>
+            updateSelectionToolbar(
+                page
+            )
+    );
+
 }
 
-function clearRowSelection(page = pages[currentPage]){
-    [...selectedRows].forEach(row => {
-        if(!row || !row.isConnected || (page && row.closest(".page") !== page)){
-            selectedRows.delete(row);
-        }
-    });
 
-    if(page){
-        page.querySelectorAll("tbody tr.selected-row").forEach(row => {
-            if(!selectedRows.has(row)) row.classList.remove("selected-row");
-        });
-        updateSelectionToolbar(page);
-    }
-}
+function toggleRowSelection(
+    row
+){
 
-function toggleRowSelection(row){
-    const page = row?.closest(".page");
-    if(!page || page !== pages[currentPage] || isPastDatePage(page) || !isEditor()) return;
+    const page =
+        row?.closest(
+            ".page"
+        );
 
-    if(selectedRows.has(row)){
-        selectedRows.delete(row);
-        row.classList.remove("selected-row");
+
+    if(
+        !page ||
+        page !== pages[currentPage] ||
+        isPastDatePage(page) ||
+        !isEditor()
+    )
+        return;
+
+
+    if(
+        selectedRows.has(
+            row
+        )
+    ){
+
+        selectedRows.delete(
+            row
+        );
+
+        row.classList.remove(
+            "selected-row"
+        );
+
     }else{
-        selectedRows.add(row);
-        row.classList.add("selected-row");
+
+        selectedRows.add(
+            row
+        );
+
+        row.classList.add(
+            "selected-row"
+        );
+
     }
 
-    updateSelectionToolbar(page);
+
+    updateSelectionToolbar(
+        page
+    );
+
 }
 
-function setupRowSelection(row, page){
-    let longPressTimer = null;
-    let longPressTriggered = false;
 
-    const cancelLongPress = () => {
-        if(longPressTimer){
-            clearTimeout(longPressTimer);
-            longPressTimer = null;
+function setupRowSelection(
+    row,
+    page
+){
+
+    let longPressTimer =
+        null;
+
+    let longPressTriggered =
+        false;
+
+
+    const cancelLongPress =
+        () => {
+
+            if(longPressTimer){
+
+                clearTimeout(
+                    longPressTimer
+                );
+
+                longPressTimer =
+                    null;
+
+            }
+
+        };
+
+
+    row.addEventListener(
+        "pointerdown",
+        event => {
+
+            if(
+                event.pointerType ===
+                    "mouse" &&
+                event.button !== 0
+            )
+                return;
+
+
+            if(
+                event.target.closest(
+                    "select, input, button"
+                )
+            )
+                return;
+
+
+            if(
+                !isEditor() ||
+                isPastDatePage(page)
+            )
+                return;
+
+
+            longPressTriggered =
+                false;
+
+
+            cancelLongPress();
+
+
+            longPressTimer =
+                setTimeout(
+                    () => {
+
+                        longPressTriggered =
+                            true;
+
+                        suppressRowClickUntil =
+                            Date.now() + 700;
+
+
+                        toggleRowSelection(
+                            row
+                        );
+
+
+                        if(
+                            navigator.vibrate
+                        )
+                            navigator.vibrate(
+                                35
+                            );
+
+                    },
+                    500
+                );
+
         }
-    };
+    );
 
-    row.addEventListener("pointerdown", event => {
-        if(event.pointerType === "mouse" && event.button !== 0) return;
 
-        // Do not hijack controls such as selects, checkboxes or buttons.
-        if(event.target.closest("select, input, button")) return;
+    row.addEventListener(
+        "pointerup",
+        event => {
 
-        if(!isEditor() || isPastDatePage(page)) return;
+            cancelLongPress();
 
-        longPressTriggered = false;
-        cancelLongPress();
 
-        longPressTimer = setTimeout(() => {
-            longPressTriggered = true;
-            suppressRowClickUntil = Date.now() + 700;
-            toggleRowSelection(row);
+            if(
+                event.target.closest(
+                    "select, input, button"
+                )
+            )
+                return;
 
-            if(navigator.vibrate) navigator.vibrate(35);
-        }, 500);
-    });
 
-    row.addEventListener("pointerup", event => {
-        cancelLongPress();
+            if(longPressTriggered){
 
-        if(event.target.closest("select, input, button")) return;
+                longPressTriggered =
+                    false;
 
-        if(longPressTriggered){
-            longPressTriggered = false;
-            return;
+                return;
+
+            }
+
         }
-    });
+    );
 
-    row.addEventListener("pointercancel", cancelLongPress);
-    row.addEventListener("pointerleave", event => {
-        // Keep touch long-press behavior, but cancel when a mouse leaves the row.
-        if(event.pointerType === "mouse") cancelLongPress();
-    });
 
-    row.addEventListener("click", event => {
-        if(Date.now() < suppressRowClickUntil) return;
-        if(event.target.closest("select, input, button")) return;
-        toggleRowSelection(row);
-    });
+    row.addEventListener(
+        "pointercancel",
+        cancelLongPress
+    );
 
-    row.addEventListener("contextmenu", event => {
-        if(isEditor() && !isPastDatePage(page)){
-            event.preventDefault();
-            toggleRowSelection(row);
+
+    row.addEventListener(
+        "pointerleave",
+        event => {
+
+            if(
+                event.pointerType ===
+                "mouse"
+            )
+                cancelLongPress();
+
         }
-    });
+    );
+
+
+    row.addEventListener(
+        "click",
+        event => {
+
+            if(
+                Date.now() <
+                suppressRowClickUntil
+            )
+                return;
+
+
+            if(
+                event.target.closest(
+                    "select, input, button"
+                )
+            )
+                return;
+
+
+            toggleRowSelection(
+                row
+            );
+
+        }
+    );
+
+
+    row.addEventListener(
+        "contextmenu",
+        event => {
+
+            if(
+                isEditor() &&
+                !isPastDatePage(page)
+            ){
+
+                event.preventDefault();
+
+                toggleRowSelection(
+                    row
+                );
+
+            }
+
+        }
+    );
+
 }
 
-function clearSingleRow(row, page){
-    const cells = row.cells;
-    if(!cells.length) return;
 
-    const timeCell = cells[1];
-    const burp = cells[2]?.querySelector("input");
-    const milkCell = cells[3];
-    const milkSelect = milkCell?.querySelector("select");
-    const diaper = cells[4]?.querySelector("select");
-    const medicineText = milkCell?.querySelector("span");
+/* =========================================================
+   CLEAR / DELETE
+========================================================= */
 
-    if(timeCell) timeCell.replaceChildren(createTimeControl());
-    if(burp) burp.checked = false;
-    if(milkSelect) milkSelect.value = "0";
-    if(diaper) diaper.value = DIAPER_OPTIONS[0];
+function clearSingleRow(
+    row
+){
+
+    const cells =
+        row.cells;
+
+
+    if(!cells.length)
+        return;
+
+
+    const timeCell =
+        cells[1];
+
+
+    const burp =
+        cells[2]
+        ?.querySelector(
+            "input"
+        );
+
+
+    const milkCell =
+        cells[3];
+
+
+    const milkSelect =
+        milkCell
+        ?.querySelector(
+            "select"
+        );
+
+
+    const diaper =
+        cells[4]
+        ?.querySelector(
+            "select"
+        );
+
+
+    const medicineText =
+        milkCell
+        ?.querySelector(
+            "span"
+        );
+
+
+    if(timeCell){
+
+        timeCell.replaceChildren(
+            createTimeControl()
+        );
+
+    }
+
+
+    if(burp)
+        burp.checked = false;
+
+
+    if(milkSelect)
+        milkSelect.value =
+            "0";
+
+
+    if(diaper)
+        diaper.value =
+            DIAPER_OPTIONS[0];
+
 
     if(milkSelect){
-        milkSelect.style.display = "";
-        if(medicineText) medicineText.style.display = "none";
+
+        milkSelect.style.display =
+            "";
+
+        if(medicineText)
+            medicineText.style.display =
+                "none";
+
     }
 
-    if(cells[2]) cells[2].style.display = "";
+
+    if(cells[2])
+        cells[2].style.display =
+            "";
+
+
     if(cells[3]){
-        cells[3].removeAttribute("colspan");
-        cells[3].style.display = "";
+
+        cells[3]
+            .removeAttribute(
+                "colspan"
+            );
+
+        cells[3].style.display =
+            "";
+
     }
-    if(cells[4]) cells[4].style.display = "";
+
+
+    if(cells[4])
+        cells[4].style.display =
+            "";
+
+}
+
+
+function clearSelectedRows(
+    page
+){
+
+    if(
+        !isEditor() ||
+        isPastDatePage(page)
+    )
+        return;
+
+
+    const selected =
+        [...selectedRows]
+        .filter(
+            row =>
+                row?.isConnected &&
+                row.closest(".page") === page
+        );
+
+
+    if(!selected.length)
+        return;
+
+
+    if(
+        !confirm(
+            `Clear ${selected.length} selected row${selected.length === 1 ? "" : "s"}?` +
+            `\n清除已选择的${selected.length}行？`
+        )
+    )
+        return;
+
+
+    selected.forEach(
+        row =>
+            clearSingleRow(
+                row
+            )
+    );
+
+
+    selected.forEach(
+        row => {
+
+            selectedRows.delete(
+                row
+            );
+
+            row.classList.remove(
+                "selected-row"
+            );
+
+        }
+    );
+
+
+    updatePageSummary(
+        page
+    );
+
+
+    updateSelectionToolbar(
+        page
+    );
+
+
+    saveData();
+
+}
+
+
+function deleteSelectedRows(
+    page
+){
+
+    if(
+        !isEditor() ||
+        isPastDatePage(page)
+    )
+        return;
+
+
+    const selected =
+        [...selectedRows]
+        .filter(
+            row =>
+                row?.isConnected &&
+                row.closest(".page") === page
+        );
+
+
+    if(!selected.length)
+        return;
+
+
+    if(
+        !confirm(
+            `Delete ${selected.length} selected row${selected.length === 1 ? "" : "s"}?` +
+            `\n删除已选择的${selected.length}行？`
+        )
+    )
+        return;
+
+
+    selected.forEach(
+        row => {
+
+            selectedRows.delete(
+                row
+            );
+
+            row.remove();
+
+        }
+    );
+
+
+    renumberRows(
+        page
+    );
+
+
+    updatePageSummary(
+        page
+    );
+
+
+    updateSelectionToolbar(
+        page
+    );
+
+
+    saveData();
+
+}
+
+
+function setupSelectionToolbar(
+    page
+){
+
+    const clearButton =
+        page.querySelector(
+            ".selection-clear-btn"
+        );
+
+
+    const deleteButton =
+        page.querySelector(
+            ".selection-delete-btn"
+        );
+
+
+    if(clearButton){
+
+        clearButton.addEventListener(
+            "click",
+            () => {
+
+                if(!isEditor()){
+
+                    requireLogin(
+                        () =>
+                            clearSelectedRows(
+                                page
+                            )
+                    );
+
+                    return;
+
+                }
+
+
+                clearSelectedRows(
+                    page
+                );
+
+            }
+        );
+
+    }
+
+
+    if(deleteButton){
+
+        deleteButton.addEventListener(
+            "click",
+            () => {
+
+                if(!isEditor()){
+
+                    requireLogin(
+                        () =>
+                            deleteSelectedRows(
+                                page
+                            )
+                    );
+
+                    return;
+
+                }
+
+
+                deleteSelectedRows(
+                    page
+                );
+
+            }
+        );
+
+    }
+
+
+    updateSelectionToolbar(
+        page
+    );
+
+}
+
+
+/* =========================================================
+   INDEPENDENT ADD ROW
+========================================================= */
+
+function setupIndependentAddRowButton(){
+
+    const addButton =
+        $("#addRowOutsideBtn");
+
+
+    if(!addButton)
+        return;
+
+
+    addButton.addEventListener(
+        "click",
+        () => {
+
+            if(!isEditor()){
+
+                requireLogin(
+                    () =>
+                        addButton.click()
+                );
+
+                return;
+
+            }
+
+
+            const page =
+                pages[currentPage];
+
+
+            if(!page)
+                return;
+
+
+            if(!isCurrentDatePage(page)){
+
+                alert(
+                    "You can only add a row on today's date.\n" +
+                    "只能在当天添加记录。"
+                );
+
+                return;
+
+            }
+
+
+            addRowToPage(
+                page
+            );
+
+
+            window.scrollTo(
+                {
+                    top:
+                        document.body.scrollHeight,
+
+                    behavior:
+                        "smooth"
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CREATE PAGE
+========================================================= */
+
+function createPage(
+    dateString =
+        dateKey(new Date()),
+
+    rows = [],
+
+    temperatures = []
+){
+
+    const page =
+        document.createElement(
+            "div"
+        );
+
+
+    page.className =
+        "page";
+
+
+    const date =
+        new Date(
+            dateString
+        );
+
+
+    date.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    page.dataset.date =
+        dateKey(
+            date
+        );
+
+
+    page.innerHTML = `
+
+        <div class="page-meta">
+
+            <div class="date-badge">
+
+                🗓️
+
+                <span>
+                    ${formatDate(date)}
+                </span>
+
+            </div>
+
+            <div class="page-info"></div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Line
+                            <br>
+                            行号
+                        </th>
+
+                        <th>
+                            Time
+                            <br>
+                            时间
+                        </th>
+
+                        <th>
+                            Burp
+                            <br>
+                            拍嗝
+                        </th>
+
+                        <th>
+                            Milk
+                            <br>
+                            奶量
+                        </th>
+
+                        <th>
+                            Diaper
+                            <br>
+                            尿布
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody></tbody>
+
+            </table>
+
+        </div>
+
+
+        <div
+            class="selection-toolbar"
+            aria-live="polite">
+
+            <div class="selection-info">
+                0 selected
+                <br>
+                已选择0行
+            </div>
+
+            <div class="selection-actions">
+
+                <button
+                    class="btn btn-soft btn-small selection-clear-btn"
+                    type="button">
+
+                    Clear / 清除
+
+                </button>
+
+                <button
+                    class="btn btn-danger btn-small selection-delete-btn"
+                    type="button">
+
+                    Delete / 删除
+
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    $("#pages")
+        .appendChild(
+            page
+        );
+
+
+    pages.push(
+        page
+    );
+
+
+    rows.forEach(
+        row =>
+            addRowToPage(
+                page,
+                row,
+                false
+            )
+    );
+
+
+    if(rows.length === 0){
+
+        addRowToPage(
+            page,
+            {},
+            false
+        );
+
+    }
+
+
+    setupSelectionToolbar(
+        page
+    );
+
+
+    page._temperatureData =
+        Array.isArray(
+            temperatures
+        )
+            ? temperatures
+            : [];
+
+
+    updatePageSummary(
+        page
+    );
+
+
+    lockPastDatePage(
+        page
+    );
+
+
+    return page;
+
+}
+
+
+/* =========================================================
+   MEDICINE MODE
+========================================================= */
+
+function applyMedicineMerge(
+    row,
+    milkSelect,
+    burp,
+    diaper,
+    medicineText = null
+){
+
+    const isMedicine =
+        milkSelect.value ===
+        "medicine";
+
+
+    if(isMedicine){
+
+        burp.checked =
+            false;
+
+
+        diaper.value =
+            DIAPER_OPTIONS[0];
+
+
+        milkSelect.style.display =
+            "none";
+
+
+        if(medicineText){
+
+            medicineText.textContent =
+                "Medicine / 药物";
+
+            medicineText.style.display =
+                "inline";
+
+        }
+
+
+        row.cells[2]
+            .style.display =
+            "none";
+
+
+        row.cells[3]
+            .colSpan =
+                3;
+
+
+        row.cells[4]
+            .style.display =
+                "none";
+
+
+    }else{
+
+        milkSelect.style.display =
+            "";
+
+
+        if(medicineText)
+            medicineText.style.display =
+                "none";
+
+
+        row.cells[2]
+            .style.display =
+                "";
+
+
+        row.cells[3]
+            .removeAttribute(
+                "colspan"
+            );
+
+
+        row.cells[4]
+            .style.display =
+                "";
+
+    }
+
+}
+
+
+/* =========================================================
+   ADD ROW TO PAGE
+========================================================= */
+
+function addRowToPage(
+    page,
+    data = {},
+    shouldSave = true
+){
+
+    const tbody =
+        page.querySelector(
+            "tbody"
+        );
+
+
+    const row =
+        document.createElement(
+            "tr"
+        );
+
+
+    /* LINE */
+
+    const lineCell =
+        document.createElement(
+            "td"
+        );
+
+    row.appendChild(
+        lineCell
+    );
+
+
+    /* TIME */
+
+    const timeCell =
+        document.createElement(
+            "td"
+        );
+
+    timeCell.appendChild(
+        createTimeControl(
+            data.time || ""
+        )
+    );
+
+    row.appendChild(
+        timeCell
+    );
+
+
+    /* BURP */
+
+    const burpCell =
+        document.createElement(
+            "td"
+        );
+
+
+    const burp =
+        document.createElement(
+            "input"
+        );
+
+    burp.type =
+        "checkbox";
+
+    burp.className =
+        "check";
+
+    burp.checked =
+        Boolean(
+            data.burp
+        );
+
+
+    burp.addEventListener(
+        "change",
+        () => {
+
+            if(!isEditor()){
+
+                burp.checked =
+                    !burp.checked;
+
+
+                requireLogin(
+                    () => {
+
+                        burp.checked =
+                            !burp.checked;
+
+                        saveData();
+
+                    }
+                );
+
+                return;
+
+            }
+
+
+            saveData();
+
+        }
+    );
+
+
+    burpCell.appendChild(
+        burp
+    );
+
+
+    row.appendChild(
+        burpCell
+    );
+
+
+    /* MILK */
+
+    const milkCell =
+        document.createElement(
+            "td"
+        );
+
+
+    const medicineText =
+        document.createElement(
+            "span"
+        );
+
+
+    medicineText.textContent =
+        "Medicine / 药物";
+
+    medicineText.style.display =
+        "none";
+
+    medicineText.style.fontWeight =
+        "700";
+
+
+    let diaper;
+
+
+    const milkSelect =
+        createMilkSelect(
+            data.milk ?? "0",
+            () => {
+
+                applyMedicineMerge(
+                    row,
+                    milkSelect,
+                    burp,
+                    diaper,
+                    medicineText
+                );
+
+                updatePageSummary(
+                    page
+                );
+
+                saveData();
+
+            }
+        );
+
+
+    milkCell.append(
+        milkSelect,
+        medicineText
+    );
+
+
+    row.appendChild(
+        milkCell
+    );
+
+
+    /* DIAPER */
+
+    const diaperCell =
+        document.createElement(
+            "td"
+        );
+
+
+    diaper =
+        createSelect(
+            DIAPER_OPTIONS,
+            data.diaper ||
+                DIAPER_OPTIONS[0]
+        );
+
+
+    diaper.className =
+        "diaper-select";
+
+
+    diaper.addEventListener(
+        "change",
+        () => {
+
+            if(!isEditor()){
+
+                const oldValue =
+                    data.diaper ||
+                    DIAPER_OPTIONS[0];
+
+
+                diaper.value =
+                    oldValue;
+
+
+                requireLogin(
+                    () => {
+
+                        diaper.value =
+                            oldValue;
+
+                        updatePageSummary(
+                            page
+                        );
+
+                        saveData();
+
+                    }
+                );
+
+                return;
+
+            }
+
+
+            updatePageSummary(
+                page
+            );
+
+
+            saveData();
+
+        }
+    );
+
+
+    diaperCell.appendChild(
+        diaper
+    );
+
+
+    row.appendChild(
+        diaperCell
+    );
+
+
+    tbody.appendChild(
+        row
+    );
+
+
+    setupRowSelection(
+        row,
+        page
+    );
+
 
     applyMedicineMerge(
         row,
@@ -1535,701 +4179,1235 @@ function clearSingleRow(row, page){
         diaper,
         medicineText
     );
-}
 
-function clearSelectedRows(page){
-    if(!isEditor() || isPastDatePage(page)) return;
 
-    const selected = [...selectedRows].filter(row =>
-        row?.isConnected && row.closest(".page") === page
+    renumberRows(
+        page
     );
 
-    if(!selected.length) return;
 
-    if(!confirm(
-        `Clear ${selected.length} selected row${selected.length === 1 ? "" : "s"}?` +
-        `\n清除已选择的${selected.length}行？`
-    )) return;
-
-    selected.forEach(row => clearSingleRow(row, page));
-
-    selected.forEach(row => {
-        selectedRows.delete(row);
-        row.classList.remove("selected-row");
-    });
-
-    updatePageSummary(page);
-    updateSelectionToolbar(page);
-    saveData();
-}
-
-function deleteSelectedRows(page){
-    if(!isEditor() || isPastDatePage(page)) return;
-
-    const selected = [...selectedRows].filter(row =>
-        row?.isConnected && row.closest(".page") === page
+    updatePageSummary(
+        page
     );
 
-    if(!selected.length) return;
 
-    if(!confirm(
-        `Delete ${selected.length} selected row${selected.length === 1 ? "" : "s"}?` +
-        `\n删除已选择的${selected.length}行？`
-    )) return;
+    lockPastDatePage(
+        page
+    );
 
-    selected.forEach(row => {
-        selectedRows.delete(row);
-        row.remove();
-    });
 
-    renumberRows(page);
-    updatePageSummary(page);
-    updateSelectionToolbar(page);
-    saveData();
-}
-
-function setupSelectionToolbar(page){
-    const clearButton = page.querySelector(".selection-clear-btn");
-    const deleteButton = page.querySelector(".selection-delete-btn");
-
-    if(clearButton){
-        clearButton.addEventListener("click", () => {
-            if(!isEditor()){
-                requireLogin(() => clearSelectedRows(page));
-                return;
-            }
-            clearSelectedRows(page);
-        });
-    }
-
-    if(deleteButton){
-        deleteButton.addEventListener("click", () => {
-            if(!isEditor()){
-                requireLogin(() => deleteSelectedRows(page));
-                return;
-            }
-            deleteSelectedRows(page);
-        });
-    }
-
-    updateSelectionToolbar(page);
-}
-
-function setupAddRowButton(page){
-    const addButton = page.querySelector(".add-row-btn");
-    if(!addButton) return;
-
-    addButton.addEventListener("click", () => {
-        if(!isEditor()){
-            requireLogin(() => addButton.click());
-            return;
-        }
-
-        if(page !== pages[currentPage]){
-            showPage(pages.indexOf(page));
-        }
-
-        if(!isCurrentDatePage(page)){
-            alert("You can only add a row on today's date.\n只能在当天添加记录。");
-            return;
-        }
-
-        addRowToPage(page);
-
-        window.scrollTo({
-            top:document.body.scrollHeight,
-            behavior:"smooth"
-        });
-    });
-}
-
-function createPage(dateString = dateKey(new Date()), rows = [], temperatures = []){
-    const page = document.createElement("div");
-    page.className = "page";
-
-    const date = new Date(dateString);
-    date.setHours(0,0,0,0);
-
-    page.dataset.date = dateKey(date);
-
-    page.innerHTML = `
-        <div class="page-meta">
-            <div class="date-badge">🗓️ <span>${formatDate(date)}</span></div>
-            <div class="page-info"></div>
-        </div>
-
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Line<br>行号</th>
-                        <th>Time<br>时间</th>
-                        <th>Burp<br>拍嗝</th>
-                        <th>Milk<br>奶量</th>
-                        <th>Diaper<br>尿布</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <div class="add-row-area">
-            <button class="btn btn-primary add-row-btn" type="button" title="Add Row / 添加一行" aria-label="Add Row / 添加一行">+</button>
-        </div>
-
-        <div class="selection-toolbar" aria-live="polite">
-            <div class="selection-info">0 selected<br>已选择0行</div>
-            <div class="selection-actions">
-                <button class="btn btn-soft btn-small selection-clear-btn" type="button">
-                    Clear / 清除
-                </button>
-                <button class="btn btn-danger btn-small selection-delete-btn" type="button">
-                    Delete / 删除
-                </button>
-            </div>
-        </div>
-
-        <div class="summary">
-            <div class="summary-item">
-                <span class="summary-label">Total Milk / 总奶量</span>
-                <span class="summary-value milkTotal">0 ML</span>
-            </div>
-
-            <div class="summary-item">
-                <span class="summary-label">Poop Count / 大便次数</span>
-                <span class="summary-value poopTotal">0 time today</span>
-            </div>
-        </div>
-    `;
-
-    $("#pages").appendChild(page);
-    pages.push(page);
-
-    setupAddRowButton(page);
-
-    rows.forEach(row => addRowToPage(page, row, false));
-
-    if(rows.length === 0){
-        addRowToPage(page, {}, false);
-    }
-
-    setupSelectionToolbar(page);
-
-    page._temperatureData = Array.isArray(temperatures) ? temperatures : [];
-    if(page === pages[currentPage]){
-        setupTemperatureSection(page, page._temperatureData);
-    }
-    updatePageSummary(page);
-    lockPastDatePage(page);
-    return page;
-}
-
-function applyMedicineMerge(row, milkSelect, burp, diaper, medicineText = null){
-    const isMedicine = milkSelect.value === "medicine";
-
-    if(isMedicine){
-        burp.checked = false;
-        diaper.value = DIAPER_OPTIONS[0];
-
-        // Show Medicine as plain text instead of the dropdown.
-        milkSelect.style.display = "none";
-        if(medicineText){
-            medicineText.textContent = "Medicine / 药物";
-            medicineText.style.display = "inline";
-        }
-
-        // Hide Burp and Diaper cells and span the Milk cell across all 3 columns.
-        row.cells[2].style.display = "none";
-        row.cells[3].colSpan = 3;
-        row.cells[4].style.display = "none";
-    }else{
-        milkSelect.style.display = "";
-        if(medicineText) medicineText.style.display = "none";
-        row.cells[2].style.display = "";
-        row.cells[3].removeAttribute("colspan");
-        row.cells[4].style.display = "";
-    }
-}
-
-function addRowToPage(page, data = {}, shouldSave = true){
-    const tbody = page.querySelector("tbody");
-    const row = document.createElement("tr");
-
-    const lineCell = document.createElement("td");
-    row.appendChild(lineCell);
-
-    const timeCell = document.createElement("td");
-    timeCell.appendChild(createTimeControl(data.time || ""));
-    row.appendChild(timeCell);
-
-    const burpCell = document.createElement("td");
-    const burp = document.createElement("input");
-    burp.type = "checkbox";
-    burp.className = "check";
-    burp.checked = Boolean(data.burp);
-
-    burp.addEventListener("change", () => {
-        if(!isEditor()){
-            burp.checked = !burp.checked;
-            requireLogin(() => {
-                burp.checked = !burp.checked;
-                saveData();
-            });
-            return;
-        }
+    if(shouldSave)
         saveData();
-    });
 
-    burpCell.appendChild(burp);
-    row.appendChild(burpCell);
+}
 
-    const milkCell = document.createElement("td");
-    const medicineText = document.createElement("span");
-    medicineText.textContent = "Medicine / 药物";
-    medicineText.style.display = "none";
-    medicineText.style.fontWeight = "700";
 
-    const milkSelect = createMilkSelect(data.milk ?? "0", () => {
-        applyMedicineMerge(row, milkSelect, burp, diaper, medicineText);
-        updatePageSummary(page);
-        saveData();
-    });
+/* =========================================================
+   RENUMBER
+========================================================= */
 
-    milkCell.append(milkSelect, medicineText);
-    row.appendChild(milkCell);
+function renumberRows(
+    page
+){
 
-    const diaperCell = document.createElement("td");
-    const diaper = createSelect(
-        DIAPER_OPTIONS,
-        data.diaper || DIAPER_OPTIONS[0]
-    );
+    [
+        ...page.querySelectorAll(
+            "tbody tr"
+        )
+    ].forEach(
+        (row,index) => {
 
-    diaper.addEventListener("change", () => {
-        if(!isEditor()){
-            const oldValue = data.diaper || DIAPER_OPTIONS[0];
-            diaper.value = oldValue;
+            row.cells[0]
+                .textContent =
+                    index + 1;
 
-            requireLogin(() => {
-                diaper.value = oldValue;
-                updatePageSummary(page);
-                saveData();
-            });
-            return;
         }
-
-        updatePageSummary(page);
-        saveData();
-    });
-
-    diaperCell.appendChild(diaper);
-    row.appendChild(diaperCell);
-
-    tbody.appendChild(row);
-
-    // Tap/click a row to select it, or long-press/long-tap it on touch devices.
-    setupRowSelection(row, page);
-
-    // Apply the merge immediately for saved Medicine rows.
-
-    applyMedicineMerge(row, milkSelect, burp, diaper, medicineText);
-
-    renumberRows(page);
-    updatePageSummary(page);
-    lockPastDatePage(page);
-
-    if(shouldSave) saveData();
-}
-
-function renumberRows(page){
-    [...page.querySelectorAll("tbody tr")].forEach((row,index) => {
-        row.cells[0].textContent = index + 1;
-    });
-}
-
-function updatePageSummary(page){
-    const milkSelects = page.querySelectorAll(
-        "tbody td:nth-child(4) select"
     );
 
-    const diaperSelects = page.querySelectorAll(
-        "tbody td:nth-child(5) select"
-    );
+}
 
-    const total = [...milkSelects].reduce((sum, select) => {
-        return sum + (Number(select.value) || 0);
-    }, 0);
 
-    const poopCount = [...diaperSelects]
-        .filter(select => select.value === "Poop/大便")
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+function updatePageSummary(
+    page
+){
+
+    if(!page)
+        return;
+
+
+    const milkSelects =
+        page.querySelectorAll(
+            "tbody td:nth-child(4) select"
+        );
+
+
+    const diaperSelects =
+        page.querySelectorAll(
+            "tbody td:nth-child(5) select"
+        );
+
+
+    const total =
+        [...milkSelects]
+        .reduce(
+            (sum,select) =>
+                sum +
+                (
+                    Number(
+                        select.value
+                    ) || 0
+                ),
+            0
+        );
+
+
+    const poopCount =
+        [...diaperSelects]
+        .filter(
+            select =>
+                select.value ===
+                "Poop/大便"
+        )
         .length;
 
-    const milkTotal = page.querySelector(".milkTotal");
-    const milkGoalReached = total >= 720;
 
-    milkTotal.className = `summary-value milkTotal ${
-        milkGoalReached ? "status-success" : "status-warning"
-    }`;
+    const milkTotal =
+        document.querySelector(
+            "#dailyMilkTotal"
+        );
 
-    milkTotal.setAttribute(
-        "aria-label",
-        milkGoalReached
-            ? "Milk goal reached: 720 ML or more"
-            : "Milk goal not reached: below 720 ML"
-    );
 
-    milkTotal.textContent = `${total} ML`;
+    const poopTotal =
+        document.querySelector(
+            "#dailyPoopTotal"
+        );
 
-    page.querySelector(".poopTotal").textContent =
-    poopCount === 0
-        ? "Pooped 0 time this day. 今天排便0次。"
-        : `Pooped ${poopCount} time${poopCount === 1 ? "" : "s"} this day. 今天大便${poopCount}次。`;
+
+    const milkGoalReached =
+        total >= 720;
+
+
+    if(milkTotal){
+
+        milkTotal.className =
+            `summary-value milkTotal ${
+                milkGoalReached
+                    ? "status-success"
+                    : "status-warning"
+            }`;
+
+
+        milkTotal.textContent =
+            `${total} ML`;
+
+    }
+
+
+    if(poopTotal){
+
+        poopTotal.textContent =
+            poopCount === 0
+
+                ? "Pooped 0 time this day. 今天排便0次。"
+
+                : `Pooped ${poopCount} time${
+                    poopCount === 1
+                        ? ""
+                        : "s"
+                  } this day. 今天大便${poopCount}次。`;
+
+    }
+
 }
+
+
+/* =========================================================
+   PAGE INFO
+========================================================= */
 
 function updatePageInfo(){
-    const current = pages[currentPage];
-    if(!current) return;
 
-    current.querySelector(".page-info").innerHTML =
-        `Page ${currentPage + 1} of ${pages.length}<br>` +
-        `第${currentPage + 1}页，共${pages.length}页`;
+    const current =
+        pages[currentPage];
+
+
+    if(!current)
+        return;
+
+
+    current.querySelector(
+        ".page-info"
+    ).innerHTML =
+
+        `Page ${
+            currentPage + 1
+        } of ${
+            pages.length
+        }<br>` +
+
+        `第${
+            currentPage + 1
+        }页，共${
+            pages.length
+        }页`;
+
 }
 
-function showPage(index){
-    if(index < 0 || index >= pages.length) return;
+
+/* =========================================================
+   SHOW PAGE
+========================================================= */
+
+function showPage(
+    index
+){
+
+    if(
+        index < 0 ||
+        index >= pages.length
+    )
+        return;
+
 
     clearAllRowSelections();
 
-    pages.forEach((page,i) => {
-        page.style.display = i === index ? "block" : "none";
-    });
 
-    currentPage = index;
+    pages.forEach(
+        (page,i) => {
+
+            page.style.display =
+                i === index
+                    ? "block"
+                    : "none";
+
+        }
+    );
+
+
+    currentPage =
+        index;
+
 
     updatePageInfo();
-    updateNavigation();
-    updatePageSummary(pages[currentPage]);
-    lockPastDatePage(pages[currentPage]);
 
-    const temperatureCard = document.querySelector(".temperature-card");
+    updateNavigation();
+
+    updatePageSummary(
+        pages[currentPage]
+    );
+
+    lockPastDatePage(
+        pages[currentPage]
+    );
+
+
+    const temperatureCard =
+        document.querySelector(
+            ".temperature-card"
+        );
+
+
     if(temperatureCard){
+
         renderTemperatures(
             temperatureCard,
-            getSavedTemperaturesForPage(pages[currentPage])
+            getSavedTemperaturesForPage(
+                pages[currentPage]
+            )
         );
 
-        const locked = isPastDatePage(pages[currentPage]);
-        temperatureCard.querySelector(".temperature-select").disabled = locked;
-        temperatureCard.querySelector(".temperature-add-btn").disabled = locked;
-        temperatureCard.classList.toggle("past-date-locked", locked);
+
+        const locked =
+            isPastDatePage(
+                pages[currentPage]
+            );
+
+
+        temperatureCard
+            .querySelector(
+                ".temperature-select"
+            )
+            .disabled =
+                locked;
+
+
+        temperatureCard
+            .querySelector(
+                ".temperature-add-btn"
+            )
+            .disabled =
+                locked;
+
+
+        temperatureCard
+            .classList
+            .toggle(
+                "past-date-locked",
+                locked
+            );
+
     }
+
 }
+
+
+/* =========================================================
+   NORMALIZE DATES
+========================================================= */
 
 function normalizePageDatesToToday(){
-    if(!pages.length) return false;
 
-    const today = new Date();
-    today.setHours(0,0,0,0);
+    if(!pages.length)
+        return false;
 
-    const lastIndex = pages.length - 1;
-    let changed = false;
 
-    pages.forEach((page, index) => {
-        const target = new Date(today);
-        target.setDate(today.getDate() - (lastIndex - index));
+    const today =
+        new Date();
 
-        const targetKey = dateKey(target);
 
-        if(page.dataset.date !== targetKey){
-            page.dataset.date = targetKey;
-            const dateSpan = page.querySelector(".date-badge span");
-            if(dateSpan) dateSpan.textContent = formatDate(target);
-            changed = true;
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    const lastIndex =
+        pages.length - 1;
+
+
+    let changed =
+        false;
+
+
+    pages.forEach(
+        (page,index) => {
+
+            const target =
+                new Date(
+                    today
+                );
+
+
+            target.setDate(
+                today.getDate() -
+                (
+                    lastIndex -
+                    index
+                )
+            );
+
+
+            const targetKey =
+                dateKey(
+                    target
+                );
+
+
+            if(
+                page.dataset.date !==
+                targetKey
+            ){
+
+                page.dataset.date =
+                    targetKey;
+
+
+                const dateSpan =
+                    page.querySelector(
+                        ".date-badge span"
+                    );
+
+
+                if(dateSpan)
+                    dateSpan.textContent =
+                        formatDate(
+                            target
+                        );
+
+
+                changed =
+                    true;
+
+            }
+
         }
-    });
+    );
+
 
     return changed;
+
 }
 
-function isCurrentDatePage(page){
-    if(!page) return false;
 
-    const pageDate = new Date(page.dataset.date);
-    const today = new Date();
+/* =========================================================
+   CURRENT DATE
+========================================================= */
 
-    pageDate.setHours(0,0,0,0);
-    today.setHours(0,0,0,0);
+function isCurrentDatePage(
+    page
+){
 
-    return pageDate.getTime() === today.getTime();
+    if(!page)
+        return false;
+
+
+    const pageDate =
+        new Date(
+            page.dataset.date
+        );
+
+
+    const today =
+        new Date();
+
+
+    pageDate.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    return (
+        pageDate.getTime() ===
+        today.getTime()
+    );
+
 }
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
 
 function updateNavigation(){
-    $("#prevPageBtn").style.display =
-        currentPage === 0 ? "none" : "";
 
-    $("#nextPageBtn").innerHTML =
-        currentPage < pages.length - 1
+    $("#prevPageBtn")
+        .style.display =
+            currentPage === 0
+                ? "none"
+                : "";
+
+
+    $("#nextPageBtn")
+        .innerHTML =
+
+        currentPage <
+        pages.length - 1
+
             ? "Next →<br>下一页"
+
             : "Next Day →<br>下一天";
 
-    // Hide the Last Page button when already on the final page.
-    $("#lastPageBtn").style.display =
-        currentPage === pages.length - 1 ? "none" : "";
 
-    const addButton = pages[currentPage]?.querySelector(".add-row-btn");
-    const isCurrentDate = isCurrentDatePage(pages[currentPage]);
+    $("#lastPageBtn")
+        .style.display =
+
+        currentPage ===
+        pages.length - 1
+
+            ? "none"
+            : "";
+
+
+    const addButton =
+        $("#addRowOutsideBtn");
+
+
+    const isCurrentDate =
+        isCurrentDatePage(
+            pages[currentPage]
+        );
+
 
     if(addButton){
-        addButton.disabled = !isCurrentDate;
-        addButton.textContent = "+";
-        addButton.style.opacity = isCurrentDate ? "1" : "0.45";
-        addButton.style.cursor = isCurrentDate ? "pointer" : "not-allowed";
+
+        addButton.disabled =
+            !isCurrentDate;
+
+
+        addButton.textContent =
+            "+";
+
+
+        addButton.style.opacity =
+            isCurrentDate
+                ? "1"
+                : "0.45";
+
+
+        addButton.style.cursor =
+            isCurrentDate
+                ? "pointer"
+                : "not-allowed";
+
     }
 
-    // A past page is read-only, including the page-level delete/clear action.
-    const pastPage = isPastDatePage(pages[currentPage]);
-    const deletePageButton = $("#deletePageBtn");
-    deletePageButton.disabled = pastPage;
-    deletePageButton.style.display = pastPage ? "none" : "";
+
+    const pastPage =
+        isPastDatePage(
+            pages[currentPage]
+        );
+
+
+    const deletePageButton =
+        $("#deletePageBtn");
+
+
+    deletePageButton.disabled =
+        pastPage;
+
+
+    deletePageButton.style.display =
+        pastPage
+            ? "none"
+            : "";
+
 }
+
+
+/* =========================================================
+   REFRESH
+========================================================= */
 
 function refreshCurrentPage(){
-    if(pages[currentPage]){
-        updatePageSummary(pages[currentPage]);
+
+    if(
+        pages[currentPage]
+    ){
+
+        updatePageSummary(
+            pages[currentPage]
+        );
+
     }
+
 }
+
+
+/* =========================================================
+   FIREBASE SAVE
+========================================================= */
 
 async function saveData(){
-    if(applyingRemote || !isEditor()) return;
+
+    if(
+        applyingRemote ||
+        !isEditor()
+    )
+        return;
+
 
     try{
-        // Keep the currently visible temperature entries in sync before saving.
+
         syncCurrentPageTemperatures();
 
+
         const data = {
+
             currentPage,
-            pages: pages.map(page => ({
-                date: page.dataset.date || dateKey(new Date()),
-                rows: getPageRows(page),
-                temperatures: getSavedTemperaturesForPage(page)
-            }))
+
+            pages:
+                pages.map(
+                    page => ({
+
+                        date:
+                            page.dataset.date ||
+                            dateKey(
+                                new Date()
+                            ),
+
+                        rows:
+                            getPageRows(
+                                page
+                            ),
+
+                        temperatures:
+                            getSavedTemperaturesForPage(
+                                page
+                            )
+
+                    })
+                )
+
         };
 
-        setFirebaseStatus("☁️ Saving...");
-        await setDoc(trackerRef, data, { merge: false });
-        setFirebaseStatus("☁️ Saved • Firebase connected");
+
+        setFirebaseStatus(
+            "☁️ Saving..."
+        );
+
+
+        await setDoc(
+            trackerRef,
+            data,
+            {
+                merge:false
+            }
+        );
+
+
+        setFirebaseStatus(
+            "☁️ Saved • Firebase connected"
+        );
+
+
     }catch(error){
-        console.error("Firestore save error:", error);
-        setFirebaseStatus("❌ Could not save data", true);
+
+        console.error(
+            "Firestore save error:",
+            error
+        );
+
+
+        setFirebaseStatus(
+            "❌ Could not save data",
+            true
+        );
+
     }
-}
 
-function getPageRows(page){
-    return [...page.querySelectorAll("tbody tr")].map(row => {
-        const cells = row.cells;
-
-        const medicineMode = cells[2]?.style.display === "none"
-            && cells[3]?.colSpan === 3;
-
-        const milkCell = medicineMode ? cells[3] : cells[3];
-        const milkSelect = milkCell?.querySelector("select");
-
-        return {
-            time: cells[1]?.querySelector(".time-value")?.textContent || "",
-            burp: medicineMode
-                ? false
-                : Boolean(cells[2]?.querySelector("input")?.checked),
-            milk: milkSelect?.value || "0",
-            diaper: medicineMode
-                ? DIAPER_OPTIONS[0]
-                : (cells[4]?.querySelector("select")?.value || DIAPER_OPTIONS[0])
-        };
-    });
 }
 
 
-function applyRemoteData(saved){
-    applyingRemote = true;
+/* =========================================================
+   GET ROW DATA
+========================================================= */
+
+function getPageRows(
+    page
+){
+
+    return [
+        ...page.querySelectorAll(
+            "tbody tr"
+        )
+    ].map(
+        row => {
+
+            const cells =
+                row.cells;
+
+
+            const medicineMode =
+                cells[2]?.style.display ===
+                    "none" &&
+
+                cells[3]?.colSpan ===
+                    3;
+
+
+            const milkCell =
+                cells[3];
+
+
+            const milkSelect =
+                milkCell
+                    ?.querySelector(
+                        "select"
+                    );
+
+
+            return {
+
+                time:
+                    cells[1]
+                        ?.querySelector(
+                            ".time-value"
+                        )
+                        ?.textContent ||
+                    "",
+
+
+                burp:
+                    medicineMode
+                        ? false
+                        : Boolean(
+                            cells[2]
+                                ?.querySelector(
+                                    "input"
+                                )
+                                ?.checked
+                        ),
+
+
+                milk:
+                    milkSelect
+                        ?.value ||
+                    "0",
+
+
+                diaper:
+                    medicineMode
+
+                        ? DIAPER_OPTIONS[0]
+
+                        : (
+                            cells[4]
+                                ?.querySelector(
+                                    "select"
+                                )
+                                ?.value ||
+                            DIAPER_OPTIONS[0]
+                        )
+
+            };
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   APPLY REMOTE FIREBASE DATA
+========================================================= */
+
+function applyRemoteData(
+    saved
+){
+
+    applyingRemote =
+        true;
+
+
     clearAllRowSelections();
 
-    $("#pages").replaceChildren();
+
+    $("#pages")
+        .replaceChildren();
+
+
     pages = [];
 
-    if(saved?.pages?.length){
-        saved.pages.forEach(pageData => {
-            createPage(
-                pageData.date || dateKey(new Date()),
-                pageData.rows || [],
-                pageData.temperatures || []
-            );
-        });
 
-        currentPage = Math.min(
-            Number.isInteger(saved.currentPage) ? saved.currentPage : 0,
-            pages.length - 1
+    if(
+        saved?.pages?.length
+    ){
+
+        saved.pages.forEach(
+            pageData => {
+
+                createPage(
+
+                    pageData.date ||
+                        dateKey(
+                            new Date()
+                        ),
+
+                    pageData.rows ||
+                        [],
+
+                    pageData.temperatures ||
+                        []
+
+                );
+
+            }
         );
+
+
+        currentPage =
+            Math.min(
+
+                Number.isInteger(
+                    saved.currentPage
+                )
+                    ? saved.currentPage
+                    : 0,
+
+                pages.length - 1
+
+            );
+
     }else{
+
         createPage();
-        currentPage = 0;
+
+        currentPage =
+            0;
+
     }
 
-    // Keep the newest page on today's local calendar date.
-    // Older pages become previous days while keeping all their rows/data.
+
     normalizePageDatesToToday();
 
-    applyingRemote = false;
-    showPage(currentPage);
+
+    applyingRemote =
+        false;
+
+
+    showPage(
+        currentPage
+    );
+
 }
+
+
+/* =========================================================
+   FIRESTORE LISTENER
+========================================================= */
 
 function startFirestore(){
-    onSnapshot(trackerRef, snapshot => {
-        firebaseConnected = true;
 
-        if(snapshot.exists()){
-            applyRemoteData(snapshot.data());
-            setFirebaseStatus(
-                currentUser
-                    ? "☁️ Firebase connected • Editing enabled"
-                    : "☁️ Firebase connected • View only"
+    onSnapshot(
+        trackerRef,
+
+        snapshot => {
+
+            firebaseConnected =
+                true;
+
+
+            if(
+                snapshot.exists()
+            ){
+
+                applyRemoteData(
+                    snapshot.data()
+                );
+
+
+                setFirebaseStatus(
+
+                    currentUser
+
+                        ? "☁️ Firebase connected • Editing enabled"
+
+                        : "☁️ Firebase connected • View only"
+
+                );
+
+            }else{
+
+                applyingRemote =
+                    true;
+
+
+                $("#pages")
+                    .replaceChildren();
+
+
+                pages = [];
+
+
+                createPage(
+                    dateKey(
+                        new Date()
+                    )
+                );
+
+
+                currentPage =
+                    0;
+
+
+                applyingRemote =
+                    false;
+
+
+                showPage(
+                    0
+                );
+
+
+                setFirebaseStatus(
+
+                    currentUser
+
+                        ? "☁️ Firebase connected • Ready"
+
+                        : "☁️ Firebase connected • View only"
+
+                );
+
+            }
+
+        },
+
+        error => {
+
+            console.error(
+                "Firestore listener error:",
+                error
             );
-        }else{
-            applyingRemote = true;
-            $("#pages").replaceChildren();
-            pages = [];
-            createPage(dateKey(new Date()));
-            currentPage = 0;
-            applyingRemote = false;
-            showPage(0);
+
 
             setFirebaseStatus(
-                currentUser
-                    ? "☁️ Firebase connected • Ready"
-                    : "☁️ Firebase connected • View only"
+                "❌ Could not connect to Firestore",
+                true
             );
+
         }
-    }, error => {
-        console.error("Firestore listener error:", error);
-        setFirebaseStatus("❌ Could not connect to Firestore", true);
-    });
+    );
+
 }
+
+
+/* =========================================================
+   NEXT PAGE
+========================================================= */
 
 function addNextPage(){
-    const lastPage = pages[pages.length - 1];
-    const nextDate = new Date(lastPage.dataset.date);
 
-    nextDate.setDate(nextDate.getDate() + 1);
+    const lastPage =
+        pages[
+            pages.length - 1
+        ];
 
-    createPage(dateKey(nextDate));
-    showPage(pages.length - 1);
+
+    const nextDate =
+        new Date(
+            lastPage.dataset.date
+        );
+
+
+    nextDate.setDate(
+        nextDate.getDate() + 1
+    );
+
+
+    createPage(
+        dateKey(
+            nextDate
+        )
+    );
+
+
+    showPage(
+        pages.length - 1
+    );
+
+
     saveData();
+
 }
+
+
+/* =========================================================
+   DELETE CURRENT PAGE
+========================================================= */
 
 function deleteCurrentPage(){
-    if(!pages.length) return;
 
-    // Previous dates are permanently read-only after the date has passed.
-    if(isPastDatePage(pages[currentPage])) return;
-
-    if(pages.length === 1){
-        if(!confirm(
-            "Clear all records on this page?\n清除此页面的所有记录？"
-        )) return;
-
-        const page = pages[0];
-
-        page.querySelector("tbody").replaceChildren();
-        addRowToPage(page, {}, false);
-
-        currentPage = 0;
-
-        showPage(0);
-        saveData();
+    if(!pages.length)
         return;
+
+
+    if(
+        isPastDatePage(
+            pages[currentPage]
+        )
+    )
+        return;
+
+
+    if(
+        pages.length === 1
+    ){
+
+        if(
+            !confirm(
+                "Clear all records on this page?\n清除此页面的所有记录？"
+            )
+        )
+            return;
+
+
+        const page =
+            pages[0];
+
+
+        page.querySelector(
+            "tbody"
+        ).replaceChildren();
+
+
+        addRowToPage(
+            page,
+            {},
+            false
+        );
+
+
+        currentPage =
+            0;
+
+
+        showPage(
+            0
+        );
+
+
+        saveData();
+
+
+        return;
+
     }
 
-    if(!confirm(
-        "Delete this page and all its records?\n删除此页面及所有记录？"
-    )) return;
 
-    const deletedPage = pages[currentPage];
+    if(
+        !confirm(
+            "Delete this page and all its records?\n删除此页面及所有记录？"
+        )
+    )
+        return;
 
-    [...selectedRows].forEach(row => {
-        if(row?.closest(".page") === deletedPage) selectedRows.delete(row);
-    });
+
+    const deletedPage =
+        pages[currentPage];
+
+
+    [
+        ...selectedRows
+    ].forEach(
+        row => {
+
+            if(
+                row?.closest(
+                    ".page"
+                ) ===
+                deletedPage
+            ){
+
+                selectedRows.delete(
+                    row
+                );
+
+            }
+
+        }
+    );
+
 
     deletedPage.remove();
-    pages.splice(currentPage, 1);
 
-    currentPage = Math.min(currentPage, pages.length - 1);
 
-    showPage(currentPage);
+    pages.splice(
+        currentPage,
+        1
+    );
+
+
+    currentPage =
+        Math.min(
+            currentPage,
+            pages.length - 1
+        );
+
+
+    showPage(
+        currentPage
+    );
+
+
     saveData();
+
 }
 
-$("#prevPageBtn").addEventListener("click", () => {
-    showPage(currentPage - 1);
 
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
-    });
-});
+/* =========================================================
+   NAV BUTTONS
+========================================================= */
 
-$("#nextPageBtn").addEventListener("click", () => {
-    if(!isEditor()){
-        requireLogin(() => $("#nextPageBtn").click());
-        return;
+$("#prevPageBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            showPage(
+                currentPage - 1
+            );
+
+
+            window.scrollTo(
+                {
+                    top:0,
+                    behavior:"smooth"
+                }
+            );
+
+        }
+    );
+
+
+$("#nextPageBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            if(!isEditor()){
+
+                requireLogin(
+                    () =>
+                        $("#nextPageBtn")
+                            .click()
+                );
+
+                return;
+
+            }
+
+
+            if(
+                currentPage <
+                pages.length - 1
+            ){
+
+                showPage(
+                    currentPage + 1
+                );
+
+            }else{
+
+                addNextPage();
+
+            }
+
+
+            window.scrollTo(
+                {
+                    top:0,
+                    behavior:"smooth"
+                }
+            );
+
+        }
+    );
+
+
+$("#lastPageBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            if(!isEditor()){
+
+                requireLogin(
+                    () =>
+                        $("#lastPageBtn")
+                            .click()
+                );
+
+                return;
+
+            }
+
+
+            if(pages.length){
+
+                showPage(
+                    pages.length - 1
+                );
+
+            }
+
+
+            window.scrollTo(
+                {
+                    top:0,
+                    behavior:"smooth"
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   DELETE PAGE
+========================================================= */
+
+$("#deletePageBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            if(!isEditor()){
+
+                requireLogin(
+                    () =>
+                        $("#deletePageBtn")
+                            .click()
+                );
+
+                return;
+
+            }
+
+
+            deleteCurrentPage();
+
+        }
+    );
+
+
+/* =========================================================
+   FULLSCREEN
+========================================================= */
+
+$("#fullscreenBtn")
+    .addEventListener(
+        "click",
+        async () => {
+
+            if(
+                document.fullscreenElement
+            ){
+
+                await document.exitFullscreen();
+
+            }else{
+
+                await document
+                    .documentElement
+                    .requestFullscreen();
+
+            }
+
+        }
+    );
+
+
+document.addEventListener(
+    "fullscreenchange",
+    () => {
+
+        $("#fullscreenBtn")
+            .textContent =
+                document.fullscreenElement
+                    ? "✕"
+                    : "⛶";
+
     }
+);
 
-    if(currentPage < pages.length - 1){
-        showPage(currentPage + 1);
-    }else{
-        addNextPage();
-    }
 
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
-    });
-});
+/* =========================================================
+   START
+========================================================= */
 
-$("#lastPageBtn").addEventListener("click", () => {
-    if(!isEditor()){
-        requireLogin(() => $("#lastPageBtn").click());
-        return;
-    }
-
-    if(pages.length){
-        showPage(pages.length - 1);
-    }
-
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
-    });
-});
-
-$("#deletePageBtn").addEventListener("click", () => {
-    if(!isEditor()){
-        requireLogin(() => $("#deletePageBtn").click());
-        return;
-    }
-    deleteCurrentPage();
-});
-
-$("#fullscreenBtn").addEventListener("click", async () => {
-    if(document.fullscreenElement){
-        await document.exitFullscreen();
-    }else{
-        await document.documentElement.requestFullscreen();
-    }
-});
-
-document.addEventListener("fullscreenchange", () => {
-    $("#fullscreenBtn").textContent =
-        document.fullscreenElement ? "✕" : "⛶";
-});
+setupIndependentAddRowButton();
 
 startFirestore();
+
 </script>
+
 </body>
 </html>
