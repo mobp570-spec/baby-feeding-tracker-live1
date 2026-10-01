@@ -336,14 +336,9 @@ input:focus{
 
 
 /* =========================================================
-   SIMPLE TIME PICKER
+   CUTE ONE-LINE TIME PICKER
 ========================================================= */
-
-.timepicker-btn{
-    width:100%;
-    margin-top:2px;
-}
-
+.timepicker-btn{width:100%;margin-top:2px;}
 .timepicker-overlay{
     position:fixed;
     inset:0;
@@ -352,217 +347,27 @@ input:focus{
     align-items:center;
     justify-content:center;
     padding:10px;
-    background:rgba(53,35,43,.35);
+    background:rgba(53,35,43,.28);
+    backdrop-filter:blur(3px);
 }
 
 .timepicker-overlay.show{
     display:flex;
 }
-
-.timepicker-box{
-    width:min(520px,100%);
-    background:#fff;
-    border:2px solid var(--pink-200);
-    border-radius:24px;
-    padding:16px 14px 14px;
-    box-shadow:0 15px 45px rgba(80,30,50,.18);
-}
-
-.timepicker-head{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-}
-
-.timepicker-title{
-    margin:0;
-    color:var(--pink-700);
-    font-size:clamp(20px,5vw,28px);
-}
-
-.timepicker-close{
-    width:44px;
-    height:44px;
-    border:0;
-    border-radius:50%;
-    background:var(--pink-100);
-    color:var(--pink-700);
-    font-size:27px;
-    cursor:pointer;
-}
-
-.timepicker-hint{
-    margin:7px 0 12px;
-    padding:8px 4px;
-    border-top:2px solid var(--pink-200);
-    border-bottom:2px solid var(--pink-200);
-    color:var(--muted);
-    text-align:center;
-    font-size:13px;
-    line-height:1.3;
-}
-
-.timepicker-wheels{
-    display:grid;
-    grid-template-columns:1fr 1fr .9fr;
-    gap:10px;
-    padding:10px;
-    border:2px solid var(--pink-100);
-    border-radius:24px;
-}
-
-.time-wheel-wrap{
-    position:relative;
-    height:225px;
-    overflow:hidden;
-    border:2px solid #f1dfe5;
-    border-radius:20px;
-    background:#fff;
-}
-
-.time-wheel-wrap::before,
-.time-wheel-wrap::after{
-    content:"";
-    position:absolute;
-    left:0;
-    right:0;
-    z-index:2;
-    pointer-events:none;
-}
-
-.time-wheel-wrap::before{
-    top:0;
-    height:65px;
-    background:linear-gradient(#fff,rgba(255,255,255,0));
-}
-
-.time-wheel-wrap::after{
-    bottom:0;
-    height:65px;
-    background:linear-gradient(rgba(255,255,255,0),#fff);
-}
-
-.time-wheel{
-    height:100%;
-    overflow-y:auto;
-    scroll-snap-type:y mandatory;
-    scrollbar-width:none;
-    -webkit-overflow-scrolling:touch;
-}
-
-.time-wheel::-webkit-scrollbar{
-    display:none;
-}
-
-.time-wheel-track{
-    padding:88px 0;
-}
-
-.time-wheel-item{
-    height:48px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    scroll-snap-align:center;
-    color:#b79aa6;
-    font-size:24px;
-    user-select:none;
-}
-
-.time-wheel-item.selected{
-    color:var(--pink-700);
-    font-size:31px;
-    font-weight:900;
-}
-
-.time-wheel-center{
-    position:absolute;
-    left:7px;
-    right:7px;
-    top:86px;
-    height:50px;
-    border-top:2px solid var(--pink-300);
-    border-bottom:2px solid var(--pink-300);
-    border-radius:12px;
-    pointer-events:none;
-    z-index:3;
-}
-
-.timepicker-preview{
-    padding:10px 0 5px;
-    color:var(--pink-700);
-    text-align:center;
-    font-size:32px;
-    font-weight:900;
-}
-
-.timepicker-actions{
-    display:flex;
-    gap:8px;
-    margin-top:6px;
-}
-
-.timepicker-actions .btn{
-    flex:1;
-    min-height:46px;
-    font-size:13px;
-}
-
-@media(max-width:600px){
-    .timepicker-box{
-        border-radius:20px;
-        padding:12px 8px 10px;
-    }
-
-    .timepicker-title{
-        font-size:19px;
-    }
-
-    .timepicker-hint{
-        font-size:12px;
-        margin-bottom:8px;
-    }
-
-    .timepicker-wheels{
-        gap:5px;
-        padding:6px;
-        border-radius:18px;
-    }
-
-    .time-wheel-wrap{
-        height:215px;
-        border-radius:16px;
-    }
-
-    .time-wheel-track{
-        padding:83px 0;
-    }
-
-    .time-wheel-center{
-        top:81px;
-        height:50px;
-    }
-
-    .time-wheel-item{
-        height:48px;
-        font-size:21px;
-    }
-
-    .time-wheel-item.selected{
-        font-size:28px;
-    }
-
-    .timepicker-preview{
-        font-size:29px;
-        padding:8px 0 4px;
-    }
-
-    .timepicker-actions .btn{
-        min-height:43px;
-        font-size:12px;
-    }
-}
+.timepicker-overlay.show{display:flex;}
+.timepicker-box{width:min(520px,100%);background:#fff;border:2px solid var(--pink-200);border-radius:24px 24px 18px 18px;padding:14px 12px 12px;box-shadow:0 15px 45px rgba(80,30,50,.18);}
+.timepicker-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.timepicker-title{margin:0;color:var(--pink-700);font-size:19px;}
+.timepicker-close{width:38px;height:38px;border:0;border-radius:50%;background:var(--pink-100);color:var(--pink-700);font-size:24px;cursor:pointer;}
+.timepicker-hint{margin:6px 0 10px;color:var(--muted);text-align:center;font-size:11px;}
+.timepicker-one-line{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 7px;border:2px solid var(--pink-100);border-radius:18px;background:linear-gradient(135deg,#fffafd,#fff0f4);}
+.timepicker-one-line select{width:auto;min-width:72px;padding:9px 7px;border:1px solid var(--pink-300);border-radius:12px;background:#fff;color:var(--pink-700);font-size:18px;font-weight:900;text-align:center;box-shadow:0 3px 9px rgba(220,113,151,.08);}
+.timepicker-one-line .time-colon{font-size:23px;font-weight:900;color:var(--pink-400);}
+.timepicker-one-line select.period{min-width:78px;}
+.timepicker-preview{padding:8px 0 2px;color:var(--pink-700);text-align:center;font-size:14px;font-weight:800;}
+.timepicker-actions{display:flex;gap:8px;margin-top:7px;}
+.timepicker-actions .btn{flex:1;min-height:42px;font-size:12px;}
+@media(max-width:600px){.timepicker-box{padding:12px 8px 10px;}.timepicker-one-line{gap:4px;padding:8px 4px;}.timepicker-one-line select{min-width:64px;font-size:16px;padding:8px 4px;}.timepicker-one-line select.period{min-width:70px;}.timepicker-one-line .time-colon{font-size:20px;}}
 
 /* =========================================================
    BUTTONS
@@ -1424,78 +1229,27 @@ tbody tr.selected-row td:first-child{
 </main>
 
 
-<!-- SIMPLE TIME PICKER -->
-
+<!-- CUTE ONE-LINE TIME PICKER -->
 <div class="timepicker-overlay" id="timePickerOverlay">
-    <div class="timepicker-box" role="dialog" aria-modal="true" aria-labelledby="timePickerTitle">
-
+    <div class="timepicker-box" role="dialog" aria-modal="true">
         <div class="timepicker-head">
-            <h2 class="timepicker-title" id="timePickerTitle">
-                Manual Time / 手动更改
-            </h2>
-
-            <button
-                class="timepicker-close"
-                id="timePickerClose"
-                type="button"
-                aria-label="Close time picker">
-                ×
-            </button>
+            <h2 class="timepicker-title">Manual Time / 手动更改</h2>
+            <button class="timepicker-close" id="timePickerClose" type="button">×</button>
         </div>
-
-        <div class="timepicker-hint">
-            Swipe the wheels to choose the time
-            <br>
-            滑动选择时间
+        <div class="timepicker-one-line">
+            <select id="timePickerHour" aria-label="Hour"></select>
+            <span class="time-colon">:</span>
+            <select id="timePickerMinute" aria-label="Minute"></select>
+            <select id="timePickerPeriod" class="period" aria-label="AM or PM">
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+            </select>
         </div>
-
-        <div class="timepicker-wheels">
-
-            <div class="time-wheel-wrap">
-                <div class="time-wheel" id="timePickerHours">
-                    <div class="time-wheel-track"></div>
-                </div>
-                <div class="time-wheel-center"></div>
-            </div>
-
-            <div class="time-wheel-wrap">
-                <div class="time-wheel" id="timePickerMinutes">
-                    <div class="time-wheel-track"></div>
-                </div>
-                <div class="time-wheel-center"></div>
-            </div>
-
-            <div class="time-wheel-wrap">
-                <div class="time-wheel" id="timePickerPeriod">
-                    <div class="time-wheel-track"></div>
-                </div>
-                <div class="time-wheel-center"></div>
-            </div>
-
-        </div>
-
-        <div class="timepicker-preview" id="timePickerPreview">
-            12:00 AM
-        </div>
-
+        <div class="timepicker-preview" id="timePickerPreview">12:00 AM</div>
         <div class="timepicker-actions">
-
-            <button
-                class="btn btn-soft"
-                id="timePickerCancel"
-                type="button">
-                Cancel
-            </button>
-
-            <button
-                class="btn btn-primary"
-                id="timePickerSave"
-                type="button">
-                ✓ Save Time
-            </button>
-
+            <button class="btn btn-soft" id="timePickerCancel" type="button">Cancel</button>
+            <button class="btn btn-primary" id="timePickerSave" type="button">✓ </button>
         </div>
-
     </div>
 </div>
 
@@ -2524,526 +2278,37 @@ function createTimeControl(
    SIMPLE TIME PICKER
 ========================================================= */
 
-function openCuteTimePicker(
-    initialTime = "",
-    onSave = null
-){
+function openCuteTimePicker(initialTime = "", onSave = null){
+    const overlay = $("#timePickerOverlay");
+    const hourSelect = $("#timePickerHour");
+    const minuteSelect = $("#timePickerMinute");
+    const periodSelect = $("#timePickerPeriod");
+    const preview = $("#timePickerPreview");
+    if(!overlay || !hourSelect || !minuteSelect || !periodSelect) return;
 
-    const overlay =
-        $("#timePickerOverlay");
-
-    if(!overlay)
-        return;
-
-
-    const hoursWheel =
-        $("#timePickerHours");
-
-    const minutesWheel =
-        $("#timePickerMinutes");
-
-    const periodWheel =
-        $("#timePickerPeriod");
-
-    const preview =
-        $("#timePickerPreview");
-
-
-    const hourTrack =
-        hoursWheel.querySelector(
-            ".time-wheel-track"
-        );
-
-    const minuteTrack =
-        minutesWheel.querySelector(
-            ".time-wheel-track"
-        );
-
-    const periodTrack =
-        periodWheel.querySelector(
-            ".time-wheel-track"
-        );
-
-
-    const hours =
-        Array.from(
-            {length:12},
-            (_,i) =>
-                String(i + 1)
-        );
-
-    const minutes =
-        Array.from(
-            {length:60},
-            (_,i) =>
-                String(i).padStart(
-                    2,
-                    "0"
-                )
-        );
-
-    const periods =
-        [
-            "AM",
-            "PM"
-        ];
-
-
-    hourTrack.replaceChildren();
-    minuteTrack.replaceChildren();
-    periodTrack.replaceChildren();
-
-
-    function makeItems(
-        track,
-        values
-    ){
-
-        values.forEach(
-            value => {
-
-                const item =
-                    document.createElement(
-                        "div"
-                    );
-
-                item.className =
-                    "time-wheel-item";
-
-                item.textContent =
-                    value;
-
-                item.dataset.value =
-                    value;
-
-                item.addEventListener(
-                    "click",
-                    () => {
-
-                        const items =
-                            [
-                                ...track.querySelectorAll(
-                                    ".time-wheel-item"
-                                )
-                            ];
-
-                        const index =
-                            items.indexOf(
-                                item
-                            );
-
-                        const target =
-                            index *
-                            48;
-
-                        const wheel =
-                            track.parentElement;
-
-                        wheel.scrollTo({
-                            top:target,
-                            behavior:"smooth"
-                        });
-
-                    }
-                );
-
-                track.appendChild(
-                    item
-                );
-
-            }
-        );
-
+    hourSelect.replaceChildren();
+    minuteSelect.replaceChildren();
+    for(let i=1;i<=12;i++){
+        const o=document.createElement("option"); o.value=String(i); o.textContent=String(i).padStart(2,"0"); hourSelect.appendChild(o);
+    }
+    for(let i=0;i<60;i++){
+        const o=document.createElement("option"); o.value=String(i).padStart(2,"0"); o.textContent=String(i).padStart(2,"0"); minuteSelect.appendChild(o);
     }
 
-
-    makeItems(
-        hourTrack,
-        hours
-    );
-
-    makeItems(
-        minuteTrack,
-        minutes
-    );
-
-    makeItems(
-        periodTrack,
-        periods
-    );
-
-
-    let selectedHour =
-        12;
-
-    let selectedMinute =
-        "00";
-
-    let selectedPeriod =
-        "AM";
-
-
-    const match =
-        String(
-            initialTime || ""
-        ).match(
-            /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i
-        );
-
-
-    if(match){
-
-        selectedHour =
-            Number(
-                match[1]
-            );
-
-        selectedMinute =
-            match[2];
-
-        selectedPeriod =
-            match[3].toUpperCase();
-
-    }else{
-
-        const now =
-            new Date();
-
-        selectedHour =
-            Number(
-                new Intl.DateTimeFormat(
-                    "en-US",
-                    {
-                        hour:"numeric",
-                        hour12:true
-                    }
-                ).format(now)
-            );
-
-        selectedMinute =
-            String(
-                now.getMinutes()
-            ).padStart(
-                2,
-                "0"
-            );
-
-        selectedPeriod =
-            now.getHours() >= 12
-                ? "PM"
-                : "AM";
-
-    }
-
-
-    function setWheelValue(
-        wheel,
-        values,
-        value
-    ){
-
-        const index =
-            Math.max(
-                0,
-                values.indexOf(
-                    String(value)
-                )
-            );
-
-        wheel.scrollTop =
-            index * 48;
-
-    }
-
-
-    setWheelValue(
-        hoursWheel,
-        hours,
-        selectedHour
-    );
-
-    setWheelValue(
-        minutesWheel,
-        minutes,
-        selectedMinute
-    );
-
-    setWheelValue(
-        periodWheel,
-        periods,
-        selectedPeriod
-    );
-
-
-    function updateWheel(
-        wheel,
-        values,
-        setter
-    ){
-
-        const index =
-            Math.max(
-                0,
-                Math.min(
-                    values.length - 1,
-                    Math.round(
-                        wheel.scrollTop / 48
-                    )
-                )
-            );
-
-        setter(
-            values[index]
-        );
-
-        const items =
-            [
-                ...wheel.querySelectorAll(
-                    ".time-wheel-item"
-                )
-            ];
-
-        items.forEach(
-            (item,i) => {
-
-                item.classList.toggle(
-                    "selected",
-                    i === index
-                );
-
-            }
-        );
-
-        updatePreview();
-
-    }
-
-
-    function updatePreview(){
-
-        preview.textContent =
-            `${String(selectedHour).padStart(2,"0")}:${selectedMinute} ${selectedPeriod}`;
-
-    }
-
-
-    let scrollTimer =
-        null;
-
-
-    function attachWheel(
-        wheel,
-        values,
-        setter
-    ){
-
-        wheel.addEventListener(
-            "scroll",
-            () => {
-
-                clearTimeout(
-                    scrollTimer
-                );
-
-                scrollTimer =
-                    setTimeout(
-                        () => {
-
-                            updateWheel(
-                                wheel,
-                                values,
-                                setter
-                            );
-
-                        },
-                        60
-                    );
-
-            },
-            {
-                passive:true
-            }
-        );
-
-    }
-
-
-    attachWheel(
-        hoursWheel,
-        hours,
-        value => {
-            selectedHour =
-                Number(value);
-        }
-    );
-
-    attachWheel(
-        minutesWheel,
-        minutes,
-        value => {
-            selectedMinute =
-                value;
-        }
-    );
-
-    attachWheel(
-        periodWheel,
-        periods,
-        value => {
-            selectedPeriod =
-                value;
-        }
-    );
-
-
-    updateWheel(
-        hoursWheel,
-        hours,
-        value => {
-            selectedHour =
-                Number(value);
-        }
-    );
-
-    updateWheel(
-        minutesWheel,
-        minutes,
-        value => {
-            selectedMinute =
-                value;
-        }
-    );
-
-    updateWheel(
-        periodWheel,
-        periods,
-        value => {
-            selectedPeriod =
-                value;
-        }
-    );
-
-
-    function closePicker(){
-
-        overlay.classList.remove(
-            "show"
-        );
-
-        document.body.style.overflow =
-            "";
-
-    }
-
-
-    const closeButton =
-        $("#timePickerClose");
-
-    const cancelButton =
-        $("#timePickerCancel");
-
-    const saveButton =
-        $("#timePickerSave");
-
-
-    closeButton.onclick =
-        closePicker;
-
-    cancelButton.onclick =
-        closePicker;
-
-
-    overlay.onclick =
-        event => {
-
-            if(
-                event.target ===
-                overlay
-            ){
-
-                closePicker();
-
-            }
-
-        };
-
-
-    saveButton.onclick =
-        () => {
-
-            const time =
-                `${selectedHour}:${selectedMinute} ${selectedPeriod}`;
-
-            closePicker();
-
-            if(onSave)
-                onSave(time);
-
-        };
-
-
-    overlay.classList.add(
-        "show"
-    );
-
-    document.body.style.overflow =
-        "hidden";
-
-    updatePreview();
-
-    requestAnimationFrame(
-        () => {
-
-            setWheelValue(
-                hoursWheel,
-                hours,
-                selectedHour
-            );
-
-            setWheelValue(
-                minutesWheel,
-                minutes,
-                selectedMinute
-            );
-
-            setWheelValue(
-                periodWheel,
-                periods,
-                selectedPeriod
-            );
-
-            updateWheel(
-                hoursWheel,
-                hours,
-                value => {
-                    selectedHour =
-                        Number(value);
-                }
-            );
-
-            updateWheel(
-                minutesWheel,
-                minutes,
-                value => {
-                    selectedMinute =
-                        value;
-                }
-            );
-
-            updateWheel(
-                periodWheel,
-                periods,
-                value => {
-                    selectedPeriod =
-                        value;
-                }
-            );
-
-        }
-    );
-
+    let hour=12, minute="00", period="AM";
+    const match=String(initialTime||"").match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if(match){hour=Number(match[1]); minute=match[2]; period=match[3].toUpperCase();}
+    else{const now=new Date(); hour=now.getHours()%12||12; minute=String(now.getMinutes()).padStart(2,"0"); period=now.getHours()>=12?"PM":"AM";}
+
+    hourSelect.value=String(hour); minuteSelect.value=minute; periodSelect.value=period;
+    function updatePreview(){preview.textContent=`${String(hourSelect.value).padStart(2,"0")}:${minuteSelect.value} ${periodSelect.value}`;}
+    hourSelect.onchange=updatePreview; minuteSelect.onchange=updatePreview; periodSelect.onchange=updatePreview;
+    function closePicker(){overlay.classList.remove("show");document.body.style.overflow="";}
+    $("#timePickerClose").onclick=closePicker; $("#timePickerCancel").onclick=closePicker;
+    overlay.onclick=e=>{if(e.target===overlay) closePicker();};
+    $("#timePickerSave").onclick=()=>{const time=`${Number(hourSelect.value)}:${minuteSelect.value} ${periodSelect.value}`;closePicker();if(onSave) onSave(time);};
+    overlay.classList.add("show"); document.body.style.overflow="hidden"; updatePreview();
 }
-
 
 function createLoggedTime(
     time
@@ -3058,7 +2323,7 @@ function createLoggedTime(
         "time-value";
 
     span.textContent =
-        time;
+        String(time || "").replace(/\b(am|pm)\b/gi, match => match.toUpperCase());
 
     return span;
 
