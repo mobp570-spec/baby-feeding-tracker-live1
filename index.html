@@ -1036,10 +1036,120 @@ tbody tr.selected-row td:first-child{
         animation:none !important;
     }
 }
+
+/* =========================================================
+   FALLING FLOWER EMOJI 🌸
+========================================================= */
+
+.falling-flowers{
+    position:fixed;
+    inset:0;
+    z-index:9990;
+    pointer-events:none;
+    overflow:hidden;
+}
+
+.falling-flower{
+    position:absolute;
+    top:-60px;
+    user-select:none;
+    pointer-events:none;
+    will-change:transform;
+    animation-name:fallingFlower;
+    animation-timing-function:linear;
+    animation-iteration-count:infinite;
+}
+
+/* @keyframes fallingFlower{
+
+    0%{
+        transform:
+            translate3d(
+                0,
+                -70px,
+                0
+            )
+            rotate(0deg);
+        opacity:0;
+    }
+
+    8%{
+        opacity:.9;
+    }
+
+    50%{
+        transform:
+            translate3d(
+                var(--sway),
+                50vh,
+                0
+            )
+            rotate(180deg);
+        opacity:.9;
+    }
+
+    92%{
+        opacity:.9;
+    }
+
+    100%{
+        transform:
+            translate3d(
+                var(--sway-end),
+                115vh,
+                0
+            )
+            rotate(360deg);
+        opacity:0;
+    }
+} */
+@keyframes fallingFlower{
+
+    0%{
+        transform: translate3d(0,-70px,0) rotate(0deg);
+        opacity:0;
+    }
+
+    8%{
+        opacity:.6;
+    }
+
+    70%{
+        opacity:.6;
+    }
+
+    88%{
+        opacity:.35;
+    }
+
+    100%{
+        transform: translate3d(
+            var(--sway-end),
+            115vh,
+            0
+        ) rotate(360deg);
+        opacity:0;
+    }
+}
+
+@media(prefers-reduced-motion:reduce){
+
+    .falling-flowers{
+        display:none;
+    }
+
+}
 </style>
 </head>
 
 <body>
+    
+    <!-- FALLING FLOWER EMOJI 🌸 -->
+<div
+    class="falling-flowers"
+    id="fallingFlowers"
+    aria-hidden="true">
+</div>
 
 <main class="app">
 
@@ -1322,6 +1432,159 @@ tbody tr.selected-row td:first-child{
 
 
 <script type="module">
+    
+    /* =========================================================
+   FALLING FLOWER EMOJI 🌸
+   - Random flower sizes
+   - Random falling positions
+   - Random gentle horizontal movement
+   - Normal falling speed
+   - Automatically loops forever
+========================================================= */
+
+function createFallingFlower(){
+
+    const container =
+        document.getElementById(
+            "fallingFlowers"
+        );
+
+    if(!container)
+        return;
+
+
+    const flower =
+        document.createElement(
+            "span"
+        );
+
+    flower.className =
+        "falling-flower";
+
+    flower.textContent =
+        "🌸";
+
+
+    /* Random size: approximately 18px - 34px */
+
+    const size =
+        18 +
+        Math.random() * 16;
+
+
+    /* Random starting horizontal position */
+
+    const left =
+        Math.random() * 100;
+
+
+    /* Gentle horizontal sway */
+
+    const sway =
+        -60 +
+        Math.random() * 120;
+
+    const swayEnd =
+        -80 +
+        Math.random() * 160;
+
+
+    /* Normal falling speed:
+       approximately 8 - 13 seconds */
+
+    const duration =
+        8 +
+        Math.random() * 5;
+
+
+    /* Random delay so flowers don't appear together */
+
+    const delay =
+        Math.random() * -13;
+
+
+    flower.style.left =
+        `${left}%`;
+
+    flower.style.fontSize =
+        `${size}px`;
+
+    flower.style.setProperty(
+        "--sway",
+        `${sway}px`
+    );
+
+    flower.style.setProperty(
+        "--sway-end",
+        `${swayEnd}px`
+    );
+
+    flower.style.animationDuration =
+        `${duration}s`;
+
+    flower.style.animationDelay =
+        `${delay}s`;
+
+
+    container.appendChild(
+        flower
+    );
+
+
+    /* Remove old flower after it finishes */
+
+    flower.addEventListener(
+        "animationend",
+        () => {
+
+            flower.remove();
+
+        },
+        {
+            once:true
+        }
+    );
+
+}
+
+
+/* Create an initial group of flowers */
+
+function startFallingFlowers(){
+
+    const container =
+        document.getElementById(
+            "fallingFlowers"
+        );
+
+    if(!container)
+        return;
+
+
+    /* Start with several flowers already falling */
+
+    for(
+        let i = 0;
+        i < 8;
+        i++
+    ){
+
+        createFallingFlower();
+
+    }
+
+
+    /* Keep creating new flowers forever */
+
+    setInterval(
+        createFallingFlower,
+        1100
+    );
+
+}
+
+
+startFallingFlowers();
 
 import {
     initializeApp
