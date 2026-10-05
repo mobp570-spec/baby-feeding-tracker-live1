@@ -1055,6 +1055,88 @@ tbody tr.selected-row td:first-child{
     }
 }
 
+
+/* =========================================================
+   COLLAPSIBLE TEMPERATURE / FOOD SECTIONS
+========================================================= */
+
+.section-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:9px 10px;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(135deg,#fffafd,#fff0f4);
+}
+
+.section-header-title{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    min-width:0;
+    color:var(--pink-700);
+    font-size:12px;
+    font-weight:900;
+}
+
+.section-toggle{
+    flex:0 0 auto;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    min-height:30px;
+    padding:5px 9px;
+    border:1px solid var(--pink-200);
+    border-radius:999px;
+    background:rgba(255,255,255,.92);
+    color:var(--pink-700);
+    font-size:10px;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 3px 10px rgba(172,81,112,.08);
+    transition:.2s ease;
+}
+
+.section-toggle:hover{
+    transform:translateY(-1px);
+    background:var(--pink-50);
+    box-shadow:0 5px 14px rgba(172,81,112,.12);
+}
+
+.temperature-card.section-collapsed .temperature-section,
+.food-card.section-collapsed .food-section{
+    display:none;
+}
+
+.temperature-card.section-collapsed .section-header,
+.food-card.section-collapsed .section-header{
+    border-bottom:0;
+    border-radius:18px;
+}
+
+@media(max-width:600px){
+    .section-header{
+        padding:7px 8px;
+    }
+
+    .section-header-title{
+        font-size:10px;
+    }
+
+    .section-toggle{
+        min-height:27px;
+        padding:4px 8px;
+        font-size:9px;
+    }
+
+    .temperature-card.section-collapsed .section-header,
+    .food-card.section-collapsed .section-header{
+        border-radius:13px;
+    }
+}
+
 /* =========================================================
    DAILY SUMMARY
 ========================================================= */
@@ -1849,9 +1931,24 @@ tbody tr.selected-row td:first-child{
     </section>
 
     <!-- TEMPERATURE -->
-    <section class="card temperature-card">
+    <section class="card temperature-card" id="temperatureCard">
 
-        <div class="temperature-section">
+        <div class="section-header">
+            <div class="section-header-title">
+                🌡️ Temperature / 体温
+            </div>
+
+            <button
+                class="section-toggle"
+                id="temperatureToggleBtn"
+                type="button"
+                aria-expanded="true"
+                aria-controls="temperatureSection">
+                ▲ Hide / 隐藏
+            </button>
+        </div>
+
+        <div class="temperature-section" id="temperatureSection">
 
             <div class="temperature-controls">
 
@@ -1898,11 +1995,22 @@ tbody tr.selected-row td:first-child{
     <!-- FOOD RECORD -->
     <section class="card food-card" id="foodCard">
 
-        <div class="food-section">
-
-            <div class="food-title">
+        <div class="section-header">
+            <div class="section-header-title">
                 🍎 Food Record 6+ months / 食物记录
             </div>
+
+            <button
+                class="section-toggle"
+                id="foodToggleBtn"
+                type="button"
+                aria-expanded="true"
+                aria-controls="foodSection">
+                ▲ Hide / 隐藏
+            </button>
+        </div>
+
+        <div class="food-section" id="foodSection">
 
             <div class="food-entry-controls">
 
@@ -7725,14 +7833,100 @@ document.addEventListener(
 
 
 /* =========================================================
+   COLLAPSIBLE TEMPERATURE / FOOD SECTIONS
+========================================================= */
+
+function setupCollapsibleSections(){
+
+    const sections = [
+        {
+            card: document.querySelector(".temperature-card"),
+            button: document.querySelector("#temperatureToggleBtn"),
+            storageKey: "babyTracker_temperatureHidden"
+        },
+        {
+            card: document.querySelector(".food-card"),
+            button: document.querySelector("#foodToggleBtn"),
+            storageKey: "babyTracker_foodHidden"
+        }
+    ];
+
+    sections.forEach(section => {
+
+        if(!section.card || !section.button)
+            return;
+
+        let hidden = false;
+
+        try{
+            hidden =
+                localStorage.getItem(section.storageKey) === "true";
+        }catch(error){
+            hidden = false;
+        }
+
+        function update(){
+
+            section.card.classList.toggle(
+                "section-collapsed",
+                hidden
+            );
+
+            section.button.setAttribute(
+                "aria-expanded",
+                String(!hidden)
+            );
+
+            section.button.textContent =
+                hidden
+                    ? "▼ Show / 显示"
+                    : "▲ Hide / 隐藏";
+
+            section.button.title =
+                hidden
+                    ? "Show section / 显示"
+                    : "Hide section / 隐藏";
+        }
+
+        section.button.addEventListener(
+            "click",
+            () => {
+
+                hidden = !hidden;
+
+                try{
+                    localStorage.setItem(
+                        section.storageKey,
+                        String(hidden)
+                    );
+                }catch(error){
+                    /* Ignore storage errors. */
+                }
+
+                update();
+
+            }
+        );
+
+        update();
+
+    });
+
+}
+
+
+/* =========================================================
    START
 ========================================================= */
 
 setupIndependentAddRowButton();
 
+
 setupFoodRecord();
 
 setupTemperatureSection();
+
+setupCollapsibleSections();
 
 startFirestore();
 
