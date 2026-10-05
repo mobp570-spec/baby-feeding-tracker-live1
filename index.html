@@ -779,12 +779,17 @@ tbody tr.selected-row td:first-child{
 
 .food-table th:nth-child(1),
 .food-table td:nth-child(1){
-    width:55%;
+    width:46%;
 }
 
 .food-table th:nth-child(2),
 .food-table td:nth-child(2){
-    width:45%;
+    width:30%;
+}
+
+.food-table th:nth-child(3),
+.food-table td:nth-child(3){
+    width:24%;
 }
 
 .food-table-wrap{
@@ -808,8 +813,8 @@ tbody tr.selected-row td:first-child{
 }
 
 .food-table td{
-    padding:8px 4px;
-    height:38px;
+    padding:6px 3px;
+    height:34px;
     box-sizing:border-box;
     text-align:center;
     vertical-align:middle;
@@ -835,6 +840,62 @@ tbody tr.selected-row td:first-child{
     color:var(--pink-700);
     font-weight:700;
     white-space:nowrap;
+}
+
+.food-reaction-cell{
+    padding:4px 2px !important;
+}
+
+.food-reaction-buttons{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+}
+
+.food-reaction-btn{
+    width:22px;
+    height:22px;
+    min-width:22px;
+    padding:0;
+    border:2px solid transparent;
+    border-radius:50%;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:800;
+    line-height:1;
+    transition:transform .16s, box-shadow .16s, opacity .16s, border-color .16s;
+}
+
+.food-reaction-btn.like{
+    background:#dff7e8;
+    color:#16834d;
+    border-color:#8ed9ad;
+}
+
+.food-reaction-btn.dislike{
+    background:#ffe1e6;
+    color:#c83f5b;
+    border-color:#f2a1b2;
+}
+
+.food-reaction-btn:hover{
+    transform:scale(1.08);
+}
+
+.food-reaction-btn.selected{
+    border-color:currentColor;
+    box-shadow:0 0 0 3px rgba(53,35,43,.08);
+    transform:scale(1.08);
+}
+
+.food-reaction-btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+    transform:none;
 }
 
 @media(max-width:600px){
@@ -868,7 +929,19 @@ tbody tr.selected-row td:first-child{
 
     .food-table td{
         font-size:9px;
-        padding:6px 2px;
+        padding:5px 2px;
+        height:32px;
+    }
+
+    .food-reaction-buttons{
+        gap:3px;
+    }
+
+    .food-reaction-btn{
+        width:20px;
+        height:20px;
+        min-width:20px;
+        font-size:12px;
     }
 }
 
@@ -1775,6 +1848,10 @@ tbody tr.selected-row td:first-child{
                             </th>
                             <th>
                                 Time / 时间
+                            </th>
+                            <th>
+                                Like / Dislike<br>
+                                喜欢 / 不喜欢
                             </th>
                         </tr>
                     </thead>
@@ -3695,6 +3772,16 @@ function setupTemperatureSection(
 
         if(foodCheckButton)
             foodCheckButton.disabled = locked;
+
+        foodCard
+            .querySelectorAll(
+                ".food-reaction-btn"
+            )
+            .forEach(
+                button => {
+                    button.disabled = locked;
+                }
+            );
 
     }
 
@@ -6211,7 +6298,7 @@ function renderFoodRecords(
         const cell =
             document.createElement("td");
 
-        cell.colSpan = 2;
+        cell.colSpan = 3;
         cell.className = "food-empty";
         cell.textContent =
             "No food recorded yet. / 尚未记录食物。";
@@ -6251,9 +6338,77 @@ function renderFoodRecords(
                     item.timestamp
                 );
 
+            const reactionCell =
+                document.createElement("td");
+
+            reactionCell.className =
+                "food-reaction-cell";
+
+            const reactionButtons =
+                document.createElement("div");
+
+            reactionButtons.className =
+                "food-reaction-buttons";
+
+            const likeButton =
+                document.createElement("button");
+
+            likeButton.type = "button";
+            likeButton.className =
+                "food-reaction-btn like" +
+                (
+                    item.reaction === "like"
+                        ? " selected"
+                        : ""
+                );
+            likeButton.dataset.reaction = "like";
+            likeButton.title = "Like / 喜欢";
+            likeButton.setAttribute(
+                "aria-label",
+                "Like / 喜欢"
+            );
+            likeButton.textContent = "✓";
+
+            const dislikeButton =
+                document.createElement("button");
+
+            dislikeButton.type = "button";
+            dislikeButton.className =
+                "food-reaction-btn dislike" +
+                (
+                    item.reaction === "dislike"
+                        ? " selected"
+                        : ""
+                );
+            dislikeButton.dataset.reaction = "dislike";
+            dislikeButton.title = "Dislike / 不喜欢";
+            dislikeButton.setAttribute(
+                "aria-label",
+                "Dislike / 不喜欢"
+            );
+            dislikeButton.textContent = "X";
+
+            // Show only the currently selected reaction.
+            // If nothing is selected, show both choices.
+            if(item.reaction === "like"){
+                reactionButtons.append(likeButton);
+            }else if(item.reaction === "dislike"){
+                reactionButtons.append(dislikeButton);
+            }else{
+                reactionButtons.append(
+                    likeButton,
+                    dislikeButton
+                );
+            }
+
+            reactionCell.appendChild(
+                reactionButtons
+            );
+
             row.append(
                 foodCell,
-                timeCell
+                timeCell,
+                reactionCell
             );
 
             body.appendChild(row);
@@ -6500,6 +6655,73 @@ function setupFoodRecord(){
     if(foodTableBody){
 
         /*
+           Like / Dislike belongs to the individual food record.
+           Clicking it does not select the row for deletion.
+        */
+        foodTableBody.addEventListener(
+            "click",
+            event => {
+
+                const reactionButton =
+                    event.target.closest(
+                        ".food-reaction-btn"
+                    );
+
+                if(!reactionButton ||
+                    !foodTableBody.contains(reactionButton))
+                    return;
+
+                event.stopPropagation();
+
+                if(!isEditor()){
+
+                    requireLogin(
+                        () =>
+                            reactionButton.click()
+                    );
+
+                    return;
+
+                }
+
+                const page =
+                    pages[currentPage];
+
+                if(!page ||
+                    !isCurrentDatePage(page) ||
+                    !Array.isArray(page._foodData))
+                    return;
+
+                const row =
+                    reactionButton.closest(
+                        "tr[data-index]"
+                    );
+
+                if(!row)
+                    return;
+
+                const index =
+                    Number(row.dataset.index);
+
+                if(!Number.isInteger(index) ||
+                    !page._foodData[index])
+                    return;
+
+                const reaction =
+                    reactionButton.dataset.reaction;
+
+                page._foodData[index].reaction =
+                    page._foodData[index].reaction === reaction
+                        ? ""
+                        : reaction;
+
+                rerenderFoodRows();
+                saveData();
+
+            }
+        );
+
+        /*
            Event delegation makes tapping work even after the food table
            has been re-rendered by showPage(), Firebase, or adding food.
            Tap once to select, tap again to deselect. Multiple rows can be
@@ -6516,6 +6738,13 @@ function setupFoodRecord(){
 
                 if(!row ||
                     !foodTableBody.contains(row))
+                    return;
+
+                if(
+                    event.target.closest(
+                        ".food-reaction-btn"
+                    )
+                )
                     return;
 
                 if(!isCurrentDatePage(
